@@ -214,7 +214,10 @@ namespace PathfindingTest.Units.Projectiles
             this.y = -20;
             this.maxRange = 1;
 
-            Console.Out.WriteLine("Disposing projectile " + this.multiplayerData.serverID);
+            if (Game1.GetInstance().IsMultiplayerGame())
+            {
+                Console.Out.WriteLine("Disposing projectile " + this.multiplayerData.serverID);
+            }
         }
     }
 }

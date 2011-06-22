@@ -27,6 +27,7 @@ namespace AStarCollisionMap.Collision
 
         public OnCollisionChanged collisionChangedListeners { get; set; }
         public Game game { get; set; }
+        public GraphicsDevice graphicsDevice { get; set; }
 
         private const int VERTICAL_COLLISION_CHECK_SPACING = 50, HORIZONTAL_COLLISION_CHECK_SPACING = 50,
             NODE_REMOVE_DISTANCE = 25;
@@ -349,6 +350,18 @@ namespace AStarCollisionMap.Collision
         public CollisionMap(Game game, int width, int height, String collisionMapPath, String collisionMapName)
         {
             this.game = game;
+            this.graphicsDevice = game.GraphicsDevice;
+            Init(width, height, collisionMapPath, collisionMapName);
+        }
+
+        public CollisionMap(GraphicsDevice graphicsDevice, int width, int height)
+        {
+            this.graphicsDevice = graphicsDevice;
+            Init(width, height, "", "");
+        }
+
+        private void Init(int width, int height, String collisionMapPath, String collisionMapName)
+        {
             this.mapWidth = width;
             this.mapHeight = height;
             this.collisionMapPath = collisionMapPath;
@@ -360,7 +373,6 @@ namespace AStarCollisionMap.Collision
 
             this.tree = new QuadRoot(new Rectangle(0, 0, width, height), this);
             this.tree.CreateTree(1);
-            // collisionMap.GetData(data);
         }
     }
 }

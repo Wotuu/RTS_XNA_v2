@@ -17,6 +17,9 @@ namespace AStarCollisionMap.QuadTree
         public Boolean isLeaf { get; set; }
         public CollisionTexture collisionTexture { get; set; }
 
+        public int imageX { get; set; }
+        public int imageY { get; set; }
+
         /// <summary>
         /// Gets the depth of this node in the tree.
         /// </summary>
@@ -63,12 +66,12 @@ namespace AStarCollisionMap.QuadTree
         internal void Draw(SpriteBatch sb)
         {
             // If it ain't on the screen
-            Rectangle viewPort = new Rectangle( 0, 0, this.tree.collisionMap.game.GraphicsDevice.Adapter.CurrentDisplayMode.Width,
-                this.tree.collisionMap.game.GraphicsDevice.Adapter.CurrentDisplayMode.Height);
-            if( !(viewPort.Contains( new Point( this.rectangle.Left, this.rectangle.Top ) )
-                || viewPort.Contains( new Point( this.rectangle.Right, this.rectangle.Top ) )
-                || viewPort.Contains( new Point( this.rectangle.Left, this.rectangle.Bottom ) )
-                || viewPort.Contains( new Point( this.rectangle.Right, this.rectangle.Bottom ) )) ) return;
+            Rectangle viewPort = new Rectangle(0, 0, this.tree.collisionMap.graphicsDevice.Adapter.CurrentDisplayMode.Width,
+                this.tree.collisionMap.graphicsDevice.Adapter.CurrentDisplayMode.Height);
+            if (!(viewPort.Contains(new Point(this.rectangle.Left, this.rectangle.Top))
+                || viewPort.Contains(new Point(this.rectangle.Right, this.rectangle.Top))
+                || viewPort.Contains(new Point(this.rectangle.Left, this.rectangle.Bottom))
+                || viewPort.Contains(new Point(this.rectangle.Right, this.rectangle.Bottom)))) return;
 
 
             if (this.children == null)
@@ -129,24 +132,28 @@ namespace AStarCollisionMap.QuadTree
             this.tree = tree;
             this.parent = parent;
             this.rectangle = rectangle;
+            this.imageX = this.rectangle.X / this.rectangle.Width;
+            this.imageY = this.rectangle.Y / this.rectangle.Height;
 
             // Console.Out.WriteLine("Creating quad with " + this.rectangle + " this.GetDepth() = " + this.GetDepth() + ", maxDepth = " + tree.depth);
             if (this.GetDepth() == tree.depth)
             {
                 this.isLeaf = true;
+                tree.leafList.AddLast(this);
 
-                int imageX = this.rectangle.X / this.rectangle.Width;
-                int imageY = this.rectangle.Y / this.rectangle.Height;
+                if (tree.collisionMap.game != null)
+                {
 
-                if (!tree.collisionMap.drawMode)
-                {
-                    this.collisionTexture = new CollisionTexture(this, tree.collisionMap.game.Content.Load<Texture2D>
-                    (tree.collisionMap.collisionMapPath + "/" + tree.collisionMap.collisionMapName + "_" + imageX + "_" + imageY));
-                }
-                else
-                {
-                    this.collisionTexture = new CollisionTexture(this, new Texture2D(tree.collisionMap.game.GraphicsDevice, 
-                        this.rectangle.Width, this.rectangle.Height));
+                    if (!tree.collisionMap.drawMode)
+                    {
+                        this.collisionTexture = new CollisionTexture(this, tree.collisionMap.game.Content.Load<Texture2D>
+                        (tree.collisionMap.collisionMapPath + "/" + tree.collisionMap.collisionMapName + "_" + imageX + "_" + imageY));
+                    }
+                    else
+                    {
+                        this.collisionTexture = new CollisionTexture(this, new Texture2D(tree.collisionMap.game.GraphicsDevice,
+                            this.rectangle.Width, this.rectangle.Height));
+                    }
                 }
             }
         }

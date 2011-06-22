@@ -307,7 +307,7 @@ namespace XNAInterfaceComponents.ChildComponents
                 String keyString = e.key.ToString();
                 if (keyString.Equals("Left"))
                 {
-                    if (this.caret.index > 1)
+                    if (this.caret.index > 0)
                     {
                         // Console.Out.WriteLine(this.caret.index);
                         this.caret.index--;
@@ -326,12 +326,10 @@ namespace XNAInterfaceComponents.ChildComponents
                         int rowCount = this.text.Split(new char[] { '\n' }).Length;
                         if (this.caret.row < rowCount - 1)
                         {
-                            this.caret.index = 1;
+                            this.caret.index = 0;
                             this.caret.row++;
                         }
                     }
-                    // Console.Out.WriteLine(this.caret.index);
-                    // Console.Out.WriteLine(this.caret.row);
                 }
                 else if (keyString.Equals("Up"))
                 {
@@ -364,6 +362,29 @@ namespace XNAInterfaceComponents.ChildComponents
                     }
                     // this.OnFocusLost();
                 }
+                else if (keyString.Equals("Home"))
+                {
+                    this.caret.index = 0;
+                }
+                else if (keyString.Equals("End"))
+                {
+                    this.caret.index = this.text.Length;
+                }
+                else if (keyString.Equals("PageUp"))
+                {
+                    this.caret.row = 0;
+                    return;
+                }
+                else if (keyString.Equals("PageDown"))
+                {
+                    this.caret.row = this.rows - 1;
+                    return;
+                }
+                else if (keyString.Equals("Tab") || keyString.Equals("ScrollLock") || keyString.Equals("Insert"))
+                {
+                    // Do nothing
+                    return;
+                }
                 else if (keyString.Equals("F1") ||
                     keyString.Equals("F2") ||
                     keyString.Equals("F3") ||
@@ -378,6 +399,7 @@ namespace XNAInterfaceComponents.ChildComponents
                     keyString.Equals("F12"))
                 {
                     // Do nothing
+                    return;
                 }
                 else
                 {
@@ -489,6 +511,17 @@ namespace XNAInterfaceComponents.ChildComponents
                         if (e.modifiers.Contains(KeyEvent.Modifier.SHIFT)) typedChar = "(";
                         else typedChar = "9";
                     }
+                    // Remaining num pads and whatnot
+                    else if (keyString.Contains("0")) typedChar = "0";
+                    else if (keyString.Contains("1")) typedChar = "1";
+                    else if (keyString.Contains("2")) typedChar = "2";
+                    else if (keyString.Contains("3")) typedChar = "3";
+                    else if (keyString.Contains("4")) typedChar = "4";
+                    else if (keyString.Contains("5")) typedChar = "5";
+                    else if (keyString.Contains("6")) typedChar = "6";
+                    else if (keyString.Contains("7")) typedChar = "7";
+                    else if (keyString.Contains("8")) typedChar = "8";
+                    else if (keyString.Contains("9")) typedChar = "9";
                     else
                     {
                         if (keyString.Length == 1)

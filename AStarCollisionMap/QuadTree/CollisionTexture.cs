@@ -11,7 +11,17 @@ namespace AStarCollisionMap.QuadTree
     public class CollisionTexture
     {
         public Quad quad { get; set; }
-        public Texture2D texture { get; set; }
+        private Texture2D _texture { get; set; }
+        public Texture2D texture { 
+            get{
+                return _texture;
+            }
+            set
+            {
+                this._texture = value;
+                this.textureData = this.TextureToBoolean();
+            }
+        }
 
         private Boolean[] textureData { get; set; }
 
@@ -108,7 +118,6 @@ namespace AStarCollisionMap.QuadTree
         {
             this.quad = quad;
             this.texture = texture;
-            this.textureData = this.TextureToBoolean();
         }
     }
 }

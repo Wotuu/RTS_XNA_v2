@@ -22,6 +22,8 @@ namespace AStarCollisionMap.QuadTree
 
         public CollisionMap collisionMap { get; set; }
 
+        public LinkedList<Quad> leafList = new LinkedList<Quad>();
+
         public QuadRoot(Rectangle rect, CollisionMap map)
         {
             this.drawColor = Color.Green;

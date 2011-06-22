@@ -88,7 +88,11 @@ namespace XNAInterfaceComponents.Misc
                 Rectangle drawLocation = parent.GetScreenBounds();
                 String toMeasure = "";
                 Char[] array = this.GetTextOnCaretRow().ToCharArray();
-                if (array.Length == 0) toMeasure = "I"; 
+                if (index == 1 && array.Length == 0)
+                {
+                    // nothing :3
+                }
+                else if (array.Length == 0) toMeasure = "I"; 
                 else
                 {
                     for (int i = parent.hiddenCharacters.Length; i < this.index && i < array.Length; i++)

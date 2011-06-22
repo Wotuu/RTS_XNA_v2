@@ -272,7 +272,7 @@ namespace PathfindingTest.Buildings
                 case Unit.Type.Engineer:
                     if (this.type == Type.Fortress)
                     {
-                        newUnit = new ProductionUnit(100f, 5.0, type);
+                        newUnit = new ProductionUnit(100f, 1.0, type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -280,7 +280,7 @@ namespace PathfindingTest.Buildings
                 case Unit.Type.Melee:
                     if (this.type == Type.Barracks)
                     {
-                        newUnit = new ProductionUnit(100f, 5.0, type);
+                        newUnit = new ProductionUnit(100f, 1.0, type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -288,7 +288,7 @@ namespace PathfindingTest.Buildings
                 case Unit.Type.HeavyMelee:
                     if (this.type == Type.Factory)
                     {
-                        newUnit = new ProductionUnit(100f, 5.0, type);
+                        newUnit = new ProductionUnit(100f, 1.0, type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -296,7 +296,7 @@ namespace PathfindingTest.Buildings
                 case Unit.Type.Fast:
                     if (this.type == Type.Barracks)
                     {
-                        newUnit = new ProductionUnit(100f, 5.0, type);
+                        newUnit = new ProductionUnit(100f, 1.0, type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -304,7 +304,7 @@ namespace PathfindingTest.Buildings
                 case Unit.Type.Ranged:
                     if (this.type == Type.Barracks)
                     {
-                        newUnit = new ProductionUnit(100f, 5.0, type);
+                        newUnit = new ProductionUnit(100f, 1.0, type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -312,7 +312,7 @@ namespace PathfindingTest.Buildings
                 case Unit.Type.HeavyRanged:
                     if (this.type == Type.Factory)
                     {
-                        newUnit = new ProductionUnit(100f, 5.0, type);
+                        newUnit = new ProductionUnit(100f, 1.0, type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
