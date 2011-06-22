@@ -35,21 +35,14 @@ namespace PathfindingTest.Collision
         public void Reverse()
         {
             CollisionChangedEvent e = new CollisionChangedEvent();
-            e.collision = collision;
+            e.collisionMap = collision;
             e.collisionAdded = false;
             e.changedRect = this.rect;
-            e.oldData = (Boolean[])collision.data.Clone();
 
-            Boolean color = false;
-            for (int i = rect.Left; i < rect.Right; i++)
+            foreach (CollisionChangedEvent.QuadPart part in e.changedQuads)
             {
-                for (int j = rect.Top; j < rect.Bottom; j++)
-                {
-                    collision.data[collision.PointToIndex(i, j)] = color;
-                }
+                part.quad.collisionTexture.UpdateCollision(part.rectangle, false);
             }
-            collision.texture = collision.BoolToTexture(Game1.GetInstance().GraphicsDevice, collision.data, collision.mapWidth, collision.collisionMapTextureScale);
-            e.newData = collision.data;
 
             LinkedList<Node> processedNodes = new LinkedList<Node>();
             foreach (Node node in createdNodes)

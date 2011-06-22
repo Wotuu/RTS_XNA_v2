@@ -111,8 +111,6 @@ namespace PathfindingTest
 
             XNAMessageDialog.CLIENT_WINDOW_WIDTH = graphics.PreferredBackBufferWidth;
             XNAMessageDialog.CLIENT_WINDOW_HEIGHT = graphics.PreferredBackBufferHeight;
-
-            (collision = new RTSCollisionMap(this, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight)).PlaceNodesAroundEdges();
             graphics.PreferMultiSampling = true;
 
             StateManager.GetInstance().gameState = StateManager.State.MainMenu;
@@ -242,8 +240,8 @@ namespace PathfindingTest
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            try
-            {
+            /*try
+            {*/
                 GameTimeManager.GetInstance().OnStartDraw();
                 GraphicsDevice.Clear(Color.CornflowerBlue);
 
@@ -310,7 +308,7 @@ namespace PathfindingTest
                 draws++;
 
                 base.Draw(gameTime);
-            }
+            /*}
             catch (Exception e)
             {
                 if (exceptionsCount < 0) exceptionsCount = 1;
@@ -318,7 +316,7 @@ namespace PathfindingTest
 
                 if (exceptionsCount > 3)
                     throw e; 
-            }
+            }*/
         }
 
         void MouseClickListener.OnMouseClick(MouseEvent e)

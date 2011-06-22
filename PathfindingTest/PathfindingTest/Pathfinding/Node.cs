@@ -87,9 +87,9 @@ namespace PathfindingTest.Pathfinding
             /*foreach (PathfindingNodeConnection conn in this.connections)
             {
                 new DrawableNodeConnection(conn).Draw(sb);
-            }*/
+            }
             // }
-            /*for (int i = 0; i < this.connections.Count; i++)
+            for (int i = 0; i < this.connections.Count; i++)
             {
                 PathfindingNodeConnection conn = this.connections.ElementAt(i);
                 conn.Draw(sb, game);

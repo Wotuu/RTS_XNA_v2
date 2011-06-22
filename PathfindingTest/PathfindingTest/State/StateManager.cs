@@ -14,6 +14,7 @@ using SocketLibrary.Users;
 using PathfindingTest.UI.Menus.Multiplayer.Panels;
 using PathfindingTest.Multiplayer.SocketConnection.InGame;
 using PathfindingTest.Buildings;
+using PathfindingTest.Collision;
 
 namespace PathfindingTest.State
 {
@@ -36,6 +37,9 @@ namespace PathfindingTest.State
                 {
                     Game1 game = Game1.GetInstance();
                     game.players = new LinkedList<Player>();
+
+                    (game.collision = new RTSCollisionMap(game, game.graphics.PreferredBackBufferWidth, game.graphics.PreferredBackBufferHeight,
+                        "CollisionMap/Map1", "map1")).PlaceNodesAroundEdges();
 
                     (game.quadTree = new QuadRoot(new Rectangle(0, 0,
                         game.graphics.PreferredBackBufferWidth, game.graphics.PreferredBackBufferHeight)

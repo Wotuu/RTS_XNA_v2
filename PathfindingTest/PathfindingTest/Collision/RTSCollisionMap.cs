@@ -50,30 +50,12 @@ namespace PathfindingTest.Collision
         public BuildingMesh PlaceBuilding(Rectangle rect)
         {
             CollisionChangedEvent e = new CollisionChangedEvent();
-            e.collision = this;
+            e.collisionMap = this;
             e.changedRect = rect;
             e.collisionAdded = true;
 
-
-
             long ticks = DateTime.UtcNow.Ticks;
-            e.oldData = (Boolean[])data.Clone();
-            Console.Out.WriteLine("Clone time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms");
-
-
-            ticks = DateTime.UtcNow.Ticks;
-            Boolean color = true;
-            // Update collisionmap data
-            for (int i = rect.Left; i < rect.Right; i++)
-            {
-                for (int j = rect.Top; j < rect.Bottom; j++)
-                {
-                    data[PointToIndex(i, j)] = color;
-                }
-            }
-            // Update collisionmap texture
-            this.texture = BoolToTexture(Game1.GetInstance().graphics.GraphicsDevice, this.data, mapWidth, collisionMapTextureScale);
-            e.newData = data;
+            this.UpdateCollisionMap(rect, true);
             Console.Out.WriteLine("Data put time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms");
 
 
@@ -132,7 +114,7 @@ namespace PathfindingTest.Collision
         /// <param name="sb"></param>
         public void DrawMap(SpriteBatch sb)
         {
-            sb.Draw(texture, new Rectangle(0, 0, mapWidth, mapHeight), new Color(255, 255, 255, 63));
+            this.tree.Draw(sb);
             //sb.Draw(collisionMap, new Rectangle(0, 0, screenWidth, screenHeight), new Color(255, 255, 255, 63));
             // CheckCollisionBetween(new Point(0, 0), new Point(100, 100));
         }
@@ -149,8 +131,8 @@ namespace PathfindingTest.Collision
             }
         }
 
-        public RTSCollisionMap(Game game, int width, int height)
-            : base(game, width, height)
+        public RTSCollisionMap(Game game, int width, int height, String collisionMapPath, String collisionMapName)
+            : base(game, width, height, collisionMapPath, collisionMapName)
         {
 
         }
