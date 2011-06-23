@@ -244,23 +244,23 @@ namespace MapEditor
 
         private void CollisionPaint(object sender, MouseEventArgs e)
         {
-            Rectangle colrect = new Rectangle(e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, 10, 10);
-            CollisionMap.GetData<int>(CollisionData);
-
-            for (int x = 0; x < colrect.Width; x++)
-            {
-                for (int y = 0; y < colrect.Height; y++)
-                {
-                    CollisionData[PointToIndex(colrect.X + x, colrect.Y + y)] = (int)Color.Black.PackedValue;
-                }
-            }
-            Texture2D copyfromtexture = new  Texture2D(GraphicsDevice, CollisionMap.Width, CollisionMap.Height);
-            copyfromtexture.SetData(CollisionData);
-
-
+            //Rectangle colrect = new Rectangle(e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, 10, 10);
+            //CollisionMap.GetData<int>(CollisionData);
+            //GraphicsDevice.Textures[0] = null; 
+            //for (int x = 0; x < colrect.Width; x++)
+            //{
+            //    for (int y = 0; y < colrect.Height; y++)
+            //    {
+            //        CollisionData[PointToIndex(colrect.X + x, colrect.Y + y)] = (int)Color.Black.PackedValue;
+            //    }
+            //}
+            ////Texture2D copyfromtexture = new  Texture2D(GraphicsDevice, CollisionMap.Width, CollisionMap.Height);
+            //CollisionMap.SetData(CollisionData);
 
 
-            CollisionMap = copyfromtexture;
+
+
+           // CollisionMap = copyfromtexture;
            
         }
 
