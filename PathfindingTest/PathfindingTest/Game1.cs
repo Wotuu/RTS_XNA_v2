@@ -443,6 +443,7 @@ namespace PathfindingTest
             {
                 if (player.multiplayerID == id) return player;
             }
+            Console.Error.WriteLine("Cannot find player with id = " + id);
             return null;
         }
     }

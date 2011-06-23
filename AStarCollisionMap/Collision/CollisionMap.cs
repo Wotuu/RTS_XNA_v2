@@ -89,22 +89,45 @@ namespace AStarCollisionMap.Collision
             e.changedRect = rect;
             e.collisionAdded = add;
 
+
+            LinkedList<Quad> quadList = new LinkedList<Quad>();
+            double checkInterval = 3.0;
+
+            quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left, rect.Top)));
+            // top line
+            for (int i = 0; i < checkInterval; i++)
+                quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left + (i * (int)(rect.Width / checkInterval)), rect.Top)));
+
+            quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Right, rect.Top)));
+
+            // right line
+            for (int i = 0; i < checkInterval; i++)
+                quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Right, rect.Top + (int)(i * (rect.Height / checkInterval)))));
+
+            quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left, rect.Bottom)));
+
+            // bottom line
+            for (int i = 0; i < checkInterval; i++)
+                quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left + (int)(i * (rect.Width / checkInterval)), rect.Bottom)));
+
+            quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Right, rect.Bottom)));
+
+            // left line
+            for (int i = 0; i < checkInterval; i++)
+                quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left, rect.Top + (int)(i * (rect.Height / checkInterval)))));
+
             LinkedList<Quad> affectedQuads = new LinkedList<Quad>();
 
-            Quad[] quads = new Quad[4];
-            quads[0] = this.tree.GetQuadByPoint(new Point(rect.Left, rect.Top));
-            quads[1] = this.tree.GetQuadByPoint(new Point(rect.Right, rect.Top));
-            quads[2] = this.tree.GetQuadByPoint(new Point(rect.Left, rect.Bottom));
-            quads[3] = this.tree.GetQuadByPoint(new Point(rect.Right, rect.Bottom));
-
-            for (int i = 0; i < quads.Length; i++)
+            for (int i = 0; i < quadList.Count; i++)
             {
-                if (!affectedQuads.Contains(quads[i])) affectedQuads.AddLast(quads[i]);
+                Quad quad = quadList.ElementAt(i);
+                if (!affectedQuads.Contains(quad)) affectedQuads.AddLast(quad);
             }
 
             // Update each of the quads.
             foreach (Quad q in affectedQuads)
             {
+                Console.Out.WriteLine(q.rectangle);
                 Rectangle updatedRect = Rectangle.Intersect(q.rectangle, rect);
                 updatedRect.X = updatedRect.X - q.rectangle.X;
                 updatedRect.Y = updatedRect.Y - q.rectangle.Y;
@@ -344,35 +367,38 @@ namespace AStarCollisionMap.Collision
         /// <param name="e">The event</param>
         public void FireCollisionChangedEvent(CollisionChangedEvent e)
         {
-            collisionChangedListeners(e);
+            if (collisionChangedListeners != null) collisionChangedListeners(e);
         }
 
-        public CollisionMap(Game game, int width, int height, String collisionMapPath, String collisionMapName)
+        public CollisionMap(Game game, int width, int height, String collisionMapPath, String collisionMapName,
+            Boolean drawMode, int quadDepth)
         {
             this.game = game;
             this.graphicsDevice = game.GraphicsDevice;
-            Init(width, height, collisionMapPath, collisionMapName);
+            Init(width, height, collisionMapPath, collisionMapName, drawMode, quadDepth);
         }
 
-        public CollisionMap(GraphicsDevice graphicsDevice, int width, int height)
+        public CollisionMap(GraphicsDevice graphicsDevice, int width, int height,
+            Boolean drawMode, int quadDepth)
         {
             this.graphicsDevice = graphicsDevice;
-            Init(width, height, "", "");
+            Init(width, height, "", "", drawMode, quadDepth);
         }
 
-        private void Init(int width, int height, String collisionMapPath, String collisionMapName)
+        private void Init(int width, int height, String collisionMapPath, String collisionMapName, Boolean drawMode, int quadDepth)
         {
             this.mapWidth = width;
             this.mapHeight = height;
             this.collisionMapPath = collisionMapPath;
             this.collisionMapName = collisionMapName;
+            this.drawMode = drawMode;
 
             // this.drawMode = true;
 
             this.dataLength = width * height;
 
             this.tree = new QuadRoot(new Rectangle(0, 0, width, height), this);
-            this.tree.CreateTree(1);
+            this.tree.CreateTree(quadDepth);
         }
     }
 }

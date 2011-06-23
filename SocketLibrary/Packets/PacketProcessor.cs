@@ -54,20 +54,17 @@ namespace SocketLibrary.Packets
             Console.Out.WriteLine("Starting processing thread!");
             while (isRunning)
             {
-                lock (packets)
+                while (packets.Count > 0)
                 {
-                    while (packets.Count > 0)
+                    if (onProcessPacket == null)
                     {
-                        if (onProcessPacket == null)
-                        {
-                            Console.Out.WriteLine("There are packets in the queue, but noone is listening to them!!");
-                        }
-                        else
-                        {
-                            // Console.Out.WriteLine("Processing packet " + packets.First.Value.GetHeader());
-                            onProcessPacket(packets.First.Value);
-                            packets.Remove(packets.First.Value);
-                        }
+                        Console.Out.WriteLine("There are packets in the queue, but noone is listening to them!!");
+                    }
+                    else
+                    {
+                        // Console.Out.WriteLine("Processing packet " + packets.First.Value.GetHeader());
+                        onProcessPacket(packets.First.Value);
+                        packets.RemoveFirst();
                     }
                 }
                 Thread.Sleep(10);

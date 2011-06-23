@@ -253,29 +253,39 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                                 lobby.leaveGameButton.visible = false;
                             }
                         }
-                        else
+                        else if (menu is GameLobby)
                         {
-                            if (menu is GameLobby)
-                            {
+                            Game1.GetInstance().multiplayerGame = new MultiplayerGame(ChatServerConnectionManager.GetInstance().user.channelID,
+                                "<Gamename>", "<Mapname>");
 
-                                Game1.GetInstance().multiplayerGame = new MultiplayerGame(ChatServerConnectionManager.GetInstance().user.channelID,
-                                    "<Gamename>", "<Mapname>");
+                            StateManager.GetInstance().gameState = StateManager.State.GameInit;
+                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
 
-                                StateManager.GetInstance().gameState = StateManager.State.GameInit;
-                                MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
-                                StateManager.GetInstance().gameState = StateManager.State.GameRunning;
-                                int count = 0;
-                                foreach (Player player in Game1.GetInstance().players)
-                                {
-                                    player.SpawnStartUnits(new Point(200 * (count + 1), 200 * (count + 1)));
-                                    count++;
-                                }
+                            ComponentManager.GetInstance().UnloadAllPanels();
 
-                                ComponentManager.GetInstance().UnloadAllPanels();
-
-                            }
+                            Packet doneLoadingPacket = new Packet(Headers.DONE_LOADING);
+                            doneLoadingPacket.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
+                            ChatServerConnectionManager.GetInstance().SendPacket(doneLoadingPacket);
                         }
 
+                        break;
+                    }
+                case Headers.DONE_LOADING:
+                    {
+                        int playerID = PacketUtil.DecodePacketInt(p, 0);
+                        Game1.GetInstance().GetPlayerByMultiplayerID(playerID).doneLoading = true;
+                        foreach (Player player in Game1.GetInstance().players)
+                        {
+                            if (!player.doneLoading) return;
+                        }
+
+                        StateManager.GetInstance().gameState = StateManager.State.GameRunning;
+                        int count = 0;
+                        foreach (Player player in Game1.GetInstance().players)
+                        {
+                            player.SpawnStartUnits(new Point(200 * (count + 1), 200 * (count + 1)));
+                            count++;
+                        }
                         break;
                     }
             }

@@ -132,7 +132,7 @@ namespace PathfindingTest.Collision
         }
 
         public RTSCollisionMap(Game game, int width, int height, String collisionMapPath, String collisionMapName)
-            : base(game, width, height, collisionMapPath, collisionMapName)
+            : base(game, width, height, collisionMapPath, collisionMapName, false, 1)
         {
 
         }

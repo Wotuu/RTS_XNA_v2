@@ -30,36 +30,23 @@ namespace SocketLibrary.Protocol
         public const byte GAME_NEW_UNIT = 0x31;
 
         /// <summary>
-        /// Client didn't receive data about a unit, when it did need it for processing.
-        /// [Header] [Int32 requestingPlayerID] [Int32 serverID]
-        /// </summary>
-        public const byte GAME_REQUEST_UNIT_DATA = 0x32;
-
-        /// <summary>
-        /// Client that manages the data about this unit, will reply with the data
-        /// and a movement update right after
-        /// [Header] [Int32 requestingPlayerID] [Int32 owningPlayerID] [Int32 serverID] [Int32 type]
-        /// </summary>
-        public const byte GAME_SEND_UNIT_DATA = 0x33;
-
-        /// <summary>
         /// Client has damaged a remote unit.
         /// fromSource as defined in UnitHeaders.
         /// [Header] [Int32 fromSource] [Int32 damagingServerID] [Int32 targetServerID]
         /// </summary>
-        public const byte GAME_UNIT_MELEE_DAMAGE = 0x34;
+        public const byte GAME_UNIT_MELEE_DAMAGE = 0x32;
 
         /// <summary>
         /// Client has shot off a projectile.
         /// [Header] [Int32 arrowServerID] [Int32 sourceServerID] [Int32 targetServerID]
         /// </summary>
-        public const byte GAME_UNIT_RANGED_SHOT = 0x35;
+        public const byte GAME_UNIT_RANGED_SHOT = 0x33;
 
         /// <summary>
         /// Client has done damage with a projectile.
         /// [Header] [Int32 projectileServerID] [Int32 sourceServerID] [Int32 targetServerID]
         /// </summary>
-        public const byte GAME_UNIT_RANGED_DAMAGE = 0x36;
+        public const byte GAME_UNIT_RANGED_DAMAGE = 0x34;
 
     }
 }

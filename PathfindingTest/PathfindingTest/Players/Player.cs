@@ -53,6 +53,10 @@ namespace PathfindingTest.Players
         /// And ID used to identify this player in multiplayer games.
         /// </summary>
         public int multiplayerID { get; set; }
+        /// <summary>
+        /// Used for keeping track if this user is done loading yet.
+        /// </summary>
+        public Boolean doneLoading { get; set; }
 
         /// <summary>
         /// Player constructor.

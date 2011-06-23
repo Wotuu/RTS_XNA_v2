@@ -134,6 +134,25 @@ namespace SocketLibrary.Protocol
         /// </summary>
         public const byte GAME_OBJECT_ID = 0x21;
 
+        /// <summary>
+        /// Client notifies the server that he's done with loading.
+        /// [Header] [Int32 playerID]
+        /// </summary>
+        public const byte DONE_LOADING = 0x22;
+
+        /// <summary>
+        /// Client didn't receive data about a unit, when it did need it for processing.
+        /// [Header] [Int32 requestingPlayerID] [Int32 serverID]
+        /// </summary>
+        public const byte GAME_REQUEST_OBJECT_DATA = 0x23;
+
+        /// <summary>
+        /// Client that manages the data about this unit, will reply with the data
+        /// and a movement update right after
+        /// [Header] [Int32 requestingPlayerID] [Int32 owningPlayerID] [Int32 serverID] [Int32 type] [Int32 misc] (..)
+        /// </summary>
+        public const byte GAME_SEND_OBJECT_DATA = 0x24;
+
 
 
 

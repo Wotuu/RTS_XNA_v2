@@ -148,7 +148,7 @@ namespace GameServer.GameServer
                         }
                         break;
                     }
-                case UnitHeaders.GAME_REQUEST_UNIT_DATA:
+                case Headers.GAME_REQUEST_OBJECT_DATA:
                     {
                         // Our user wants to know data about a unit
                         Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
@@ -163,7 +163,7 @@ namespace GameServer.GameServer
                         }
                         break;
                     }
-                case UnitHeaders.GAME_SEND_UNIT_DATA:
+                case Headers.GAME_SEND_OBJECT_DATA:
                     {
                         // I own data that someone else wants
                         // Find the user to send data to

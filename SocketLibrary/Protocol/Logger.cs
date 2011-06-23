@@ -249,6 +249,14 @@ namespace SocketLibrary.Protocol
                             PacketUtil.DecodePacketInt(p, 0), isReceived));
                         break;
                     }
+                case Headers.DONE_LOADING:
+                    {
+                        if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "DONE_LOADING Received client finished loading message: " +
+                            PacketUtil.DecodePacketInt(p, 0), isReceived));
+                        else this.messageLog.AddLast(new LogMessage(currTime + "DONE_LOADING Sent finished loading message: " +
+                            PacketUtil.DecodePacketInt(p, 0), isReceived));
+                        break;
+                    }
                 case Headers.GAME_REQUEST_OBJECT_ID:
                     {
                         if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "GAME_REQUEST_OBJECT_ID Received client wants object ID message: local = " +
@@ -295,7 +303,7 @@ namespace SocketLibrary.Protocol
                             PacketUtil.DecodePacketInt(p, 8), isReceived));
                         break;
                     }
-                case UnitHeaders.GAME_REQUEST_UNIT_DATA:
+                case Headers.GAME_REQUEST_OBJECT_DATA:
                     {
                         if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "GAME_REQUEST_UNIT_DATA Received client wants info about a unit: player = " +
                             PacketUtil.DecodePacketInt(p, 0) + ", serverID = " + +
@@ -305,7 +313,7 @@ namespace SocketLibrary.Protocol
                             PacketUtil.DecodePacketInt(p, 4), isReceived));
                         break;
                     }
-                case UnitHeaders.GAME_SEND_UNIT_DATA:
+                case Headers.GAME_SEND_OBJECT_DATA:
                     {
                         if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "GAME_SEND_UNIT_DATA Received info about a unit: targetPlayer = " +
                             PacketUtil.DecodePacketInt(p, 0) + ", ownerID = " +

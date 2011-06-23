@@ -149,11 +149,13 @@ namespace AStarCollisionMap.QuadTree
                         this.collisionTexture = new CollisionTexture(this, tree.collisionMap.game.Content.Load<Texture2D>
                         (tree.collisionMap.collisionMapPath + "/" + tree.collisionMap.collisionMapName + "_" + imageX + "_" + imageY));
                     }
-                    else
-                    {
-                        this.collisionTexture = new CollisionTexture(this, new Texture2D(tree.collisionMap.game.GraphicsDevice,
+                    else this.collisionTexture = new CollisionTexture(this, new Texture2D(tree.collisionMap.graphicsDevice,
                             this.rectangle.Width, this.rectangle.Height));
-                    }
+                }
+                else
+                {
+                    this.collisionTexture = new CollisionTexture(this, new Texture2D(tree.collisionMap.graphicsDevice,
+                        this.rectangle.Width, this.rectangle.Height));
                 }
             }
         }

@@ -279,6 +279,12 @@ namespace GameServer.ChatServer
                         this.gameStartSeconds = 5;
                         break;
                     }
+                case Headers.DONE_LOADING:
+                    {
+                        Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
+                        c.SendChatPacketToAll(p);
+                        break;
+                    }
                 default:
                     {
                         String currTime = System.DateTime.Now.ToLongTimeString() + "," + System.DateTime.Now.Millisecond + " ";

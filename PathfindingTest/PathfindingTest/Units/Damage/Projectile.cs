@@ -27,6 +27,8 @@ namespace PathfindingTest.Units.Projectiles
 
         protected Point waypoint { get; set; }
 
+        public Boolean disposed { get; set; }
+
         public Bowman parent { get; set; }
         public ProjectileMultiplayerData multiplayerData { get; set; }
 
@@ -189,7 +191,7 @@ namespace PathfindingTest.Units.Projectiles
                         unit.OnDamage(e);
                         if( Game1.GetInstance().IsMultiplayerGame() ) Synchronizer.GetInstance().QueueDamageEvent(e);
                         // Console.Out.WriteLine("Projectile had an impact!");
-                        else this.Dispose();
+                        this.Dispose();
                         return;
                     }
                     //}
@@ -210,6 +212,7 @@ namespace PathfindingTest.Units.Projectiles
         public void Dispose()
         {
             this.parent.projectiles.Remove(this);
+            this.disposed = true;
             this.x = -20;
             this.y = -20;
             this.maxRange = 1;

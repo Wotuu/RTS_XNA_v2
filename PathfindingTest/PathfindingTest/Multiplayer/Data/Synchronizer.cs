@@ -116,10 +116,14 @@ namespace PathfindingTest.Multiplayer.Data
                 if (e.by is Arrow)
                 {
                     Arrow arrow = (Arrow)e.by;
-                    damagePacket.SetHeader(UnitHeaders.GAME_UNIT_RANGED_DAMAGE);
-                    damagePacket.AddInt(arrow.multiplayerData.serverID);
-                    damagePacket.AddInt(e.source.multiplayerData.serverID);
-                    damagePacket.AddInt(e.target.multiplayerData.serverID);
+                    if (!arrow.disposed)
+                    {
+                        damagePacket.SetHeader(UnitHeaders.GAME_UNIT_RANGED_DAMAGE);
+                        damagePacket.AddInt(arrow.multiplayerData.serverID);
+                        damagePacket.AddInt(e.source.multiplayerData.serverID);
+                        damagePacket.AddInt(e.target.multiplayerData.serverID);
+                        GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
+                    }
                 }
                 else if (e.by is MeleeSwing)
                 {
@@ -128,9 +132,9 @@ namespace PathfindingTest.Multiplayer.Data
                     damagePacket.AddInt(EncodeMeleeSwing(swing.type));
                     damagePacket.AddInt(e.source.multiplayerData.serverID);
                     damagePacket.AddInt(e.target.multiplayerData.serverID);
+                    GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
                 }
 
-                GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
 
                 eventList.RemoveFirst();
                 objectsSynced++;

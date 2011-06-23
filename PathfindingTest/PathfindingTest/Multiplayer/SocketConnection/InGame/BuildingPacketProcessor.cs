@@ -38,7 +38,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int buildingType = PacketUtil.DecodePacketInt(p, 8);
                         int by = PacketUtil.DecodePacketInt(p, 12);
 
-                        CreateBuilding(playerID, serverID, buildingType, by);
+                        ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, buildingType, by);
 
                         break;
                     }
@@ -49,22 +49,20 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int locationY = PacketUtil.DecodePacketInt(p, 8);
 
 
+
                         MultiplayerData data;
                         int count = 0;
                         do
                         {
                             data = MultiplayerDataManager.GetInstance().GetDataByServerID(serverID);
                             count++;
-                            if (count > 15)
+                            if (count > 5)
                             {
-                                Console.Out.WriteLine("Unable to fetch data, requesting.. NYI :c");
-                                
-                                /*
-                                Packet packet = new Packet(UnitHeaders.GAME_REQUEST_UNIT_DATA);
+                                Console.Out.WriteLine("Unable to fetch data, requesting..");
+                                Packet packet = new Packet(Headers.GAME_REQUEST_OBJECT_DATA);
                                 packet.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
                                 packet.AddInt(serverID);
                                 GameServerConnectionManager.GetInstance().SendPacket(packet);
-                                */
 
                                 return;
                             }
@@ -85,44 +83,6 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         break;
                     }
             }
-        }
-
-        /// <summary>
-        /// Creates a unit.
-        /// </summary>
-        /// <param name="playerID">The player ID.</param>
-        /// <param name="serverID">Server ID.</param>
-        /// <param name="type">The type of the unit.</param>
-        public void CreateBuilding(int playerID, int serverID, int type, int byID)
-        {
-            Building building = null;
-            Player p = Game1.GetInstance().GetPlayerByMultiplayerID(playerID);
-            Engineer engineer = (Engineer)((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(byID)).unit;
-                switch (type)
-                {
-                    case BuildingHeaders.TYPE_BARRACKS:
-                        {
-                            building = new Barracks(p, p.color);
-                            break;
-                        }
-                    case BuildingHeaders.TYPE_FACTORY:
-                        {
-                            building = new Factory(p, p.color);
-                            break;
-                        }
-                    case BuildingHeaders.TYPE_FORTRESS:
-                        {
-                            building = new Fortress(p, p.color);
-                            break;
-                        }
-                    case BuildingHeaders.TYPE_RESOURCES_GATHER:
-                        {
-                            building = new ResourceGather(p, p.color);
-                            break;
-                        }
-                }
-            building.constructedBy = engineer;
-            building.multiplayerData.serverID = serverID;
         }
     }
 }
