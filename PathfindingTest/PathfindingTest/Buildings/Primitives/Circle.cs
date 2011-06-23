@@ -16,7 +16,7 @@ namespace PathfindingTest.Primitives
         public int radius { get; set; }
         public int outerRadius { get; set; }
         public Texture2D outline { get; set; }
-        public Texture2D surface { get; set; }
+        public LinkedList<Circle> surface { get; set; }
         public Building drawOn { get; set; }
         public Color color { get; set; }
         public float px { get; set; }
@@ -29,12 +29,15 @@ namespace PathfindingTest.Primitives
             this.outline = new Texture2D(Game1.GetInstance().GraphicsDevice, outerRadius, outerRadius);
             this.drawOn = drawOn;
             this.color = color;
+            this.surface = new LinkedList<Circle>();
 
             Color[] data = new Color[outerRadius * outerRadius];
 
             // Color the entire texture transparent first.
             for (int i = 0; i < data.Length; i++)
+            {
                 data[i] = Color.Transparent;
+            }
 
             // Work out the minimum step necessary using trigonometry + sine approximation.
             double angleStep = 1f / radius;
@@ -57,9 +60,9 @@ namespace PathfindingTest.Primitives
             this.py = drawOn.y - radius + (drawOn.texture.Height / 2);
             sb.Draw(outline, new Rectangle((int)px, (int)py, outerRadius, outerRadius), color);
 
-            if (surface != null)
+            foreach (Circle circle in surface)
             {
-                sb.Draw(surface, new Rectangle((int)px, (int)py, outerRadius, outerRadius), Color.Blue);
+                circle.Draw(sb);
             }
         }
 
@@ -68,48 +71,63 @@ namespace PathfindingTest.Primitives
         /// </summary>
         public void SetSurface()
         {
-            this.surface = new Texture2D(Game1.GetInstance().GraphicsDevice, outerRadius, outerRadius);
-
-            Color[] data = new Color[outerRadius * outerRadius];
-
-            double angleStep = 1f / radius;
-
-            for (double angle = 0; angle < Math.PI * 2; angle += angleStep * (8 * Math.PI))
+            for (int i = radius; i >= 25; i -= 16)
             {
-                int x = (int)Math.Round(radius + radius * Math.Cos(angle)) + (int)px + 1;
-                int y = (int)Math.Round(radius + radius * Math.Sin(angle)) + (int)py;
-                int cx = (int)px + radius;
-                int cy = (int)py + radius;
+                surface.AddLast(new Circle(i, this.drawOn, Color.Blue));
 
-                Rectangle r = new Rectangle();
+                //Color[] data = new Color[newOR * newOR];
 
-                if (x <= cx && y <= cy)
-                {
-                    r = new Rectangle(x, y, cx - x, cy - y);
-                }
-                else if (x <= cx && y > cy)
-                {
-                    r = new Rectangle(x, cy, cx - x, y - cy);
-                }
-                else if (x > cx && y <= cy)
-                {
-                    r = new Rectangle(cx, y, x - cx, cy - y);
-                }
-                else if (x > cx && y > cy)
-                {
-                    r = new Rectangle(cx, cy, x - cx, y - cy);
-                }
+                //for (int j = 0; j < data.Length; j++)
+                //{
+                //    data[j] = Color.Transparent;
+                //}
+                //double angleStep = 1f / i;
 
-                for (int i = 0; i < r.Width; i += 8)
-                {
-                    for (int j = 0; j < r.Height; j += 8)
-                    {
-                        data[i * outerRadius + j + 1] = Color.White;
-                    }
-                }
+                //for (double angle = 0; angle < Math.PI * 2; angle += angleStep)
+                //{
+                //    int x = (int)Math.Round(radius + radius * Math.Cos(angle));
+                //    int y = (int)Math.Round(radius + radius * Math.Sin(angle));
+
+                //    data[y * newOR + x + 1] = Color.White;
+                //}
+
+                //this.surface[i].SetData(data);
+
+                //for (double angle = 0; angle < Math.PI * 2; angle += angleStep * (Math.PI))
+                //{
+                //    int x = (int)Math.Round(radius + radius * Math.Cos(angle)) + (int)px + 1;
+                //    int y = (int)Math.Round(radius + radius * Math.Sin(angle)) + (int)py;
+                //    int cx = (int)px + radius;
+                //    int cy = (int)py + radius;
+
+                //    Rectangle r = new Rectangle();
+
+                //    if (x <= cx && y <= cy)
+                //    {
+                //        r = new Rectangle(x, y, cx - x, cy - y);
+                //    }
+                //    else if (x <= cx && y > cy)
+                //    {
+                //        r = new Rectangle(x, cy, cx - x, y - cy);
+                //    }
+                //    else if (x > cx && y <= cy)
+                //    {
+                //        r = new Rectangle(cx, y, x - cx, cy - y);
+                //    }
+                //    else if (x > cx && y > cy)
+                //    {
+                //        r = new Rectangle(cx, cy, x - cx, y - cy);
+                //    }
+
+                //    for (int i = 0; i < r.Width; i += 1)
+                //    {
+                //        for (int j = 0; j < r.Height; j += 1)
+                //        {
+                //            data[] = Color.White;
+                //        }
+                //    }
+                //}
             }
-
-            this.surface.SetData(data);
         }
     }
 }

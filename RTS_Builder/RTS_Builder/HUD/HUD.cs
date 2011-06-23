@@ -8,8 +8,7 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework;
 using PathfindingTest;
 using System.Diagnostics;
-using RTS_Builder.Buildings;
-using RTS_Builder.HUD;
+using RTS_Builder.Buildings;z
 
 namespace RTS_Builder
 {
