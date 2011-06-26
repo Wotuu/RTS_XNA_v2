@@ -11,6 +11,7 @@ using PathfindingTest.Players;
 using PathfindingTest.Primitives;
 using PathfindingTest.Units;
 using PathfindingTest.Multiplayer.Data;
+using PathfindingTest.Pathfinding;
 
 namespace PathfindingTest.Buildings
 {
@@ -18,7 +19,7 @@ namespace PathfindingTest.Buildings
     {
 
         public Circle resourceRange { get; set; }
-        public LinkedList<Rectangle> surface { get; set; }
+        public LinkedList<Circle> surface { get; set; }
         public int resources { get; set; }
         public Boolean resourcesAdded { get; set; }
         public int generationBarrier { get; set; }
@@ -44,7 +45,7 @@ namespace PathfindingTest.Buildings
             this.animationFont = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/ResourceFont");
 
             this.resourceRange = new Circle(100, this, c);
-            this.generationBarrier = 25;
+            this.generationBarrier = 1;
             this.resourcesAdded = false;
             this.secondAdded = false;
             this.secondsPast = 0;
@@ -111,19 +112,29 @@ namespace PathfindingTest.Buildings
         public int CalculateRPS()
         {
             resourceRange.SetSurface();
-            double rs = 50;
-            //double total = surface.Count;
-            //double part = 0;
+            resourceRange.UpdatePosition();
+            this.surface = resourceRange.surface;
 
-            //foreach (Rectangle r in surface)
+            double rs = 50;
+
+            double total = 0;
+            double part = 0;
+
+            //Boolean[] boolMap = Game1.GetInstance().collision.tree.root.collisionTexture.TextureToBoolean();
+
+            //foreach (Circle circle in surface)
             //{
-            //    foreach (ResourceGather rg in p.buildings)
+            //    Color[,] circleColors = DrawUtil.TextureTo2DArray(circle.outline);
+
+            //    for (int x = 0; x < circle.outline.Width - 1; x++)
             //    {
-            //        if (rg != this)
+            //        for (int y = 0; y < circle.outline.Height - 1; y++)
             //        {
-            //            foreach (Rectangle ro in rg.resourceRange.GetSurface())
+            //            if (circleColors[x, y].A > 0)
             //            {
-            //                if (r.Contains(ro))
+            //                total++;
+
+            //                if (boolMap[x * y])
             //                {
             //                    part++;
             //                }
@@ -132,7 +143,10 @@ namespace PathfindingTest.Buildings
             //    }
             //}
 
-            //rs -= rs * (part / total);
+            if (total != 0)
+            {
+                rs -= rs * (part / total);
+            }
 
             return (int)rs;
         }
