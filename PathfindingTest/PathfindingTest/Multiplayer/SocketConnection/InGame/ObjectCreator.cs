@@ -32,6 +32,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         /// <param name="type">The type of the unit.</param>
         public void CreateUnit(int playerID, int serverID, int type)
         {
+            if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) != null) return;
             Unit unit = null;
             switch (type)
             {
@@ -54,7 +55,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         break;
                     }
             }
-            unit.multiplayerData.serverID = serverID;
+            if( unit != null ) unit.multiplayerData.serverID = serverID;
         }
 
         /// <summary>
@@ -65,6 +66,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         /// <param name="type">The type of the unit.</param>
         public void CreateBuilding(int playerID, int serverID, int type, int byID)
         {
+            if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) != null) return;
             Building building = null;
             Player p = Game1.GetInstance().GetPlayerByMultiplayerID(playerID);
             Engineer engineer = (Engineer)((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(byID)).unit;
@@ -109,6 +111,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                 ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(targetServerID)).unit);
             arrow.multiplayerData.serverID = arrowServerID;
             ((Bowman)sourceUnit).projectiles.AddLast(arrow);
+            Console.Out.WriteLine("Created arrow arrow by request; " + arrowServerID);
         }
     }
 }

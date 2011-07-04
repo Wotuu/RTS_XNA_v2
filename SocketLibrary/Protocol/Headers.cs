@@ -153,6 +153,11 @@ namespace SocketLibrary.Protocol
         /// </summary>
         public const byte GAME_SEND_OBJECT_DATA = 0x24;
 
+        /// <summary>
+        /// Notification that the packet has been received
+        /// [Header] [Int32 packetID]
+        /// </summary>
+        public const byte PACKET_RECEIVED = 0x25;
 
 
 

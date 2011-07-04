@@ -32,6 +32,11 @@ namespace SocketLibrary.Protocol
             String currTime = System.DateTime.Now.ToLongTimeString() + "," + System.DateTime.Now.Millisecond + " ";
             switch (p.GetHeader())
             {
+                case Headers.PACKET_RECEIVED:
+                    {
+                        // Ignore these packets, there will be a lot of them ..
+                        break;
+                    }
                 case Headers.HANDSHAKE_1:
                     {
                         if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "HANDSHAKE_1 Received handshake request (1)", isReceived));

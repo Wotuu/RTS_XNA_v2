@@ -84,17 +84,11 @@ namespace PathfindingTest.Pathfinding
             // Draw some connections twice, but o well!
 
             // if( Monitor.TryEnter(this.connections, 0) ){
-            /*foreach (PathfindingNodeConnection conn in this.connections)
+            foreach (PathfindingNodeConnection conn in this.connections)
             {
                 new DrawableNodeConnection(conn).Draw(sb);
             }
-            // }
-            for (int i = 0; i < this.connections.Count; i++)
-            {
-                PathfindingNodeConnection conn = this.connections.ElementAt(i);
-                conn.Draw(sb, game);
-            }
-            */
+            
             // sb.DrawString(game.font, "" + score, new Vector2(drawX, drawY - 14), Color.Black);
             // sb.DrawString(game.font, "" + costToStart, new Vector2(drawX, drawY + texture.Height - 2), Color.Black);
             // sb.DrawString(game.font, "" + costToEnd, new Vector2(drawX, drawY + texture.Height + 8), Color.Black);

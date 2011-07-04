@@ -130,7 +130,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         while (data == null);
                         Projectile projectile = 
                             ((ProjectileMultiplayerData) MultiplayerDataManager.GetInstance().GetDataByServerID(projectileID)).projectile;
-
+                        Console.Out.WriteLine("Received a projectile damage event!");
                         DamageEvent e = new DamageEvent(projectile, targetUnit, sourceUnit);
                         targetUnit.OnDamage(e);
 
