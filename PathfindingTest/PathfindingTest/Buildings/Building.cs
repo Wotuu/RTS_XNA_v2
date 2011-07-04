@@ -435,6 +435,32 @@ namespace PathfindingTest.Buildings
         {
             return new Point((int)x, (int)y);
         }
+        
+        /// <summary>
+        /// Gets the cost of a building
+        /// </summary>
+        /// <param name="t">The building type of which the cost is wanted</param>
+        /// <returns>The cost of the building</returns>
+        public static int GetCost(Type t)
+        {
+            switch (t)
+            {
+                case Type.Barracks:
+                    return 3000;
+
+                case Type.Factory:
+                    return 6000;
+
+                case Type.Fortress:
+                    return 10000;
+
+                case Type.Resources:
+                    return 1000;
+
+                default:
+                    return 0;
+            }
+        }
 
         public Building(Player player)
         {

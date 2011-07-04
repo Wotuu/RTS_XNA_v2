@@ -81,7 +81,7 @@ namespace PathfindingTest.UI
             startCommandY = 688;
             
             //No more than 8 seperate Commands!!!
-            HUDCommandObject repairCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDRepair"), HUDCommandObject.Type.Repair, startCommandX, startCommandY, new Color(255, 187, 0, 255));
+            HUDCommandObject repairCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDRepair"), HUDCommandObject.Type.Repair, startCommandX, startCommandY, new Color(255, 187, 0, 255), color);
             commandObjects.AddLast(repairCommand);
             IncrementStartCommandXY(startCommandX);
         }

@@ -123,6 +123,38 @@ namespace PathfindingTest.Units
         {
             return new Point((int)x, (int)y);
         }
+        
+        /// <summary>
+        /// Gets the cost of a unit
+        /// </summary>
+        /// <param name="t">The unit type of which the cost is wanted</param>
+        /// <returns>The cost of the unit</returns>
+        public static int GetCost(Type t)
+        {
+            switch (t)
+            {
+                case Type.Engineer:
+                    return 400;
+
+                case Type.Melee:
+                    return 500;
+
+                case Type.HeavyMelee:
+                    return 500;
+
+                case Type.Fast:
+                    return 500;
+
+                case Type.Ranged:
+                    return 500;
+
+                case Type.HeavyRanged:
+                    return 750;
+
+                default:
+                    return 0;
+            }
+        }
 
         /// <summary>
         /// Updates the movement of this unit.

@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
+using PathfindingTest.Buildings;
+using PathfindingTest.Units;
 
 namespace PathfindingTest.UI
 {
@@ -16,6 +18,8 @@ namespace PathfindingTest.UI
         public SpriteFont sf { get; set; }
         public Type type { get; set; }
         public Color color { get; set; }
+        public String detailString { get; set; }
+        public String costString { get; set; }
 
         public float x;
         public float y;
@@ -40,8 +44,11 @@ namespace PathfindingTest.UI
             this.x = x;
             this.y = y;
             this.color = color;
-            this.sf = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/HUDDetails");
             this.details = Game1.GetInstance().Content.Load<Texture2D>("HUD/HUDItemDetails");
+            this.sf = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/HUDDetails");
+
+            this.detailString = this.DefineDetailString();
+            this.costString = this.DefineCostString();
         }
 
         public void Update(KeyboardState ks, MouseState ms)
@@ -55,48 +62,8 @@ namespace PathfindingTest.UI
             if (DrawDetails())
             {
                 sb.Draw(details, this.DefineDetailsRectangle(), color);
-
-                switch (this.type)
-                {
-                    case Type.Resources:
-                        sb.DrawString(sf, "Resource Structure:\r\nProvides resources...", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Barracks:
-                        sb.DrawString(sf, "Barracks:\r\nConstructs Units;\r\n - Swordsmen\r\n - Bowmen\r\n - Horsemen", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Factory:
-                        sb.DrawString(sf, "Factory:\r\nConstructs Units;\r\n - Sentry", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Fortress:
-                        sb.DrawString(sf, "Fortress:\r\nMain Structure.\r\nConstructs Engineers", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Engineer:
-                        sb.DrawString(sf, "Engineer:\r\nAble to Construct and\r\nRepair Structures", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Melee:
-                        sb.DrawString(sf, "Swordsman:\r\nStrong vs. Sentry", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Heavy:
-                        sb.DrawString(sf, "Sentry:\r\nStrong vs. Horsemen", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Fast:
-                        sb.DrawString(sf, "Horseman:\r\nStrong vs. Bowmen", new Vector2(5, 657), Color.White);
-                        break;
-
-                    case Type.Ranged:
-                        sb.DrawString(sf, "Bowman:\r\nStrong vs. Swordsmen", new Vector2(5, 657), Color.White);
-                        break;
-
-                    default:
-                        break;
-                }
+                sb.DrawString(sf, detailString, new Vector2(5, 657), Color.White);
+                sb.DrawString(sf, "Cost: " + costString, new Vector2(5, 751), Color.White);
             }
         }
 
@@ -110,6 +77,78 @@ namespace PathfindingTest.UI
             }
 
             return false;
+        }
+
+        private String DefineDetailString()
+        {
+            switch (this.type)
+            {
+                case Type.Resources:
+                    return "Resource Structure:\r\nProvides resources...";
+
+                case Type.Barracks:
+                    return "Barracks:\r\nConstructs Units;\r\n - Swordsmen\r\n - Bowmen\r\n - Horsemen";
+
+                case Type.Factory:
+                    return "Factory:\r\nConstructs Units;\r\n - Sentry";
+
+                case Type.Fortress:
+                    return "Fortress:\r\nMain Structure.\r\nConstructs Engineers";
+
+                case Type.Engineer:
+                    return "Engineer:\r\nAble to Construct and\r\nRepair Structures";
+
+                case Type.Melee:
+                    return "Swordsman:\r\nStrong vs. Sentry";
+
+                case Type.Heavy:
+                    return "Sentry:\r\nStrong vs. Horsemen";
+
+                case Type.Fast:
+                    return "Horseman:\r\nStrong vs. Bowmen";
+
+                case Type.Ranged:
+                    return "Bowman:\r\nStrong vs. Swordsmen";
+
+                default:
+                    return "Details not Set";
+            }
+        }
+
+        private String DefineCostString()
+        {
+            switch (this.type)
+            {
+                case Type.Resources:
+                    return Building.GetCost(Building.Type.Resources).ToString();
+
+                case Type.Barracks:
+                    return Building.GetCost(Building.Type.Barracks).ToString();
+
+                case Type.Factory:
+                    return Building.GetCost(Building.Type.Factory).ToString();
+
+                case Type.Fortress:
+                    return Building.GetCost(Building.Type.Fortress).ToString();
+
+                case Type.Engineer:
+                    return Unit.GetCost(Unit.Type.Engineer).ToString();
+
+                case Type.Melee:
+                    return Unit.GetCost(Unit.Type.Melee).ToString();
+
+                case Type.Heavy:
+                    return Unit.GetCost(Unit.Type.HeavyMelee).ToString();
+
+                case Type.Fast:
+                    return Unit.GetCost(Unit.Type.Fast).ToString();
+
+                case Type.Ranged:
+                    return Unit.GetCost(Unit.Type.Ranged).ToString();
+
+                default:
+                    return "0";
+            }
         }
 
         public Rectangle DefineRectangle()
