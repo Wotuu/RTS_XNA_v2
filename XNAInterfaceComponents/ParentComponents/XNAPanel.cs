@@ -30,7 +30,14 @@ namespace XNAInterfaceComponents.Components
             //else 
             drawColor = this.backgroundColor;
 
-            sb.Draw(clearTexture, this.GetScreenBounds(), drawColor);
+            sb.Draw(clearTexture, this.GetScreenBounds(), null, drawColor, 0f, new Vector2(0, 0), SpriteEffects.None, 1f - this.GetDrawDepthOffset());
+
+
+
+
+
+
+            // sb.Draw(clearTexture, this.GetScreenBounds(), drawColor);
             if (this.border != null) this.border.Draw(sb);
 
             for (int i = 0; i < this.children.Count; i++)

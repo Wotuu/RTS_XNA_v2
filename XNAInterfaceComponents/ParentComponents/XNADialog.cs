@@ -42,6 +42,16 @@ namespace XNAInterfaceComponents.ParentComponents
         }
 
         /// <summary>
+        /// Override the normal GetDepth() function.
+        /// </summary>
+        /// <returns>A high depth</returns>
+        public override int GetDepth()
+        {
+            // Console.Out.WriteLine("Blaat");
+            return 50;
+        }
+
+        /// <summary>
         /// Disposes the message dialog. Does the same as calling Unload();.
         /// </summary>
         public void Dispose()

@@ -145,7 +145,7 @@ namespace XNAInterfaceComponents.ChildComponents
             // Get the location on the screen on which to draw this button.
             Rectangle drawRect = this.GetScreenBounds();
             // Draw the button
-            sb.Draw(clearTexture, drawRect, drawColor);
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0f, new Vector2(0, 0), SpriteEffects.None, 1f - this.GetDrawDepthOffset());
             // Draw the border
             if (this.border != null) border.Draw(sb);
 

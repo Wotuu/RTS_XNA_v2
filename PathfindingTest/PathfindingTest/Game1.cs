@@ -246,7 +246,8 @@ namespace PathfindingTest
                 GraphicsDevice.Clear(Color.CornflowerBlue);
 
                 // TODO: Add your drawing code here
-                spriteBatch.Begin(SpriteSortMode.Immediate, null);
+                spriteBatch.Begin(SpriteSortMode.BackToFront, null);
+                // spriteBatch.Begin(SpriteSortMode.Immediate, null);
 
                 StateManager sm = StateManager.GetInstance();
 

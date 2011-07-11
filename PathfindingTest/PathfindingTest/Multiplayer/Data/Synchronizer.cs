@@ -113,18 +113,7 @@ namespace PathfindingTest.Multiplayer.Data
                 DamageEvent e = eventList.First.Value;
 
                 Packet damagePacket = new Packet();
-                if (e.by is Arrow)
-                {
-                    Arrow arrow = (Arrow)e.by;
-
-                    damagePacket.SetHeader(UnitHeaders.GAME_UNIT_RANGED_DAMAGE);
-                    damagePacket.AddInt(arrow.multiplayerData.serverID);
-                    damagePacket.AddInt(e.source.multiplayerData.serverID);
-                    //damagePacket.AddInt(e.target.multiplayerData.serverID);
-                    GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
-                    Console.Out.WriteLine("Sent a projectile damage event!");
-                }
-                else if (e.by is MeleeSwing)
+                if (e.by is MeleeSwing)
                 {
                     MeleeSwing swing = (MeleeSwing)e.by;
                     damagePacket.SetHeader(UnitHeaders.GAME_UNIT_MELEE_DAMAGE);

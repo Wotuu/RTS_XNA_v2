@@ -38,7 +38,9 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int buildingType = PacketUtil.DecodePacketInt(p, 8);
                         int by = PacketUtil.DecodePacketInt(p, 12);
 
-                        ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, buildingType, by);
+                        if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) == null) {
+                            ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, buildingType, by);
+                        }
 
                         break;
                     }
@@ -47,8 +49,6 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int serverID = PacketUtil.DecodePacketInt(p, 0);
                         int locationX = PacketUtil.DecodePacketInt(p, 4);
                         int locationY = PacketUtil.DecodePacketInt(p, 8);
-
-
 
                         MultiplayerData data;
                         int count = 0;

@@ -31,7 +31,8 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
 
                         MultiplayerData data;
                         int count = 0;
-                        do {
+                        do
+                        {
                             data = MultiplayerDataManager.GetInstance().GetDataByServerID(serverID);
                             count++;
                             if (count > 5)
@@ -74,8 +75,9 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int playerID = PacketUtil.DecodePacketInt(p, 0);
                         int serverID = PacketUtil.DecodePacketInt(p, 4);
                         int type = PacketUtil.DecodePacketInt(p, 8);
-
-                        ObjectCreator.GetInstance().CreateUnit(playerID, serverID, type);
+                        if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) == null) {
+                            ObjectCreator.GetInstance().CreateUnit(playerID, serverID, type);
+                        }
 
                         break;
                     }
@@ -100,41 +102,6 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int targetServerID = PacketUtil.DecodePacketInt(p, 8);
 
                         ObjectCreator.GetInstance().CreateProjectile(sourceServerID, targetServerID, arrowServerID);
-                        break;
-                    }
-                case UnitHeaders.GAME_UNIT_RANGED_DAMAGE:
-                    {
-                        int projectileID = PacketUtil.DecodePacketInt(p, 0);
-                        int sourceID = PacketUtil.DecodePacketInt(p, 4);
-                        int targetID = PacketUtil.DecodePacketInt(p, 8);
-                        Unit sourceUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(sourceID)).unit;
-                        Unit targetUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(targetID)).unit;
-
-                        MultiplayerData data;
-                        int count = 0;
-                        do
-                        {
-                            data = MultiplayerDataManager.GetInstance().GetDataByServerID(projectileID);
-                            count++;
-                            if (count > 5)
-                            {
-                                Console.Out.WriteLine("Unable to fetch data (projectile), requesting..");
-                                Packet packet = new Packet(Headers.GAME_REQUEST_OBJECT_DATA);
-                                packet.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
-                                packet.AddInt(projectileID);
-                                GameServerConnectionManager.GetInstance().SendPacket(packet);
-
-                                return;
-                            }
-                        }
-                        while (data == null);
-                        Projectile projectile = 
-                            ((ProjectileMultiplayerData) MultiplayerDataManager.GetInstance().GetDataByServerID(projectileID)).projectile;
-                        Console.Out.WriteLine("Received a projectile damage event!");
-                        DamageEvent e = new DamageEvent(projectile, targetUnit, sourceUnit);
-                        targetUnit.OnDamage(e);
-
-                        projectile.Dispose();
                         break;
                     }
             }

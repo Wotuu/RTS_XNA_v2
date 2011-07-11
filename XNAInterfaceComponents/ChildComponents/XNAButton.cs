@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using XNAInterfaceComponents.Interfaces;
 using XNAInputHandler.MouseInput;
 using XNAInterfaceComponents.AbstractComponents;
+using XNAInterfaceComponents.ParentComponents;
 
 public delegate void OnButtonClick(XNAButton source);
 
@@ -44,8 +45,9 @@ namespace XNAInterfaceComponents.AbstractComponents
 
             // Get the location on the screen on which to draw this button.
             Rectangle drawRect = this.GetScreenBounds();
+            if (this.parent is XNADialog) Console.Out.WriteLine(z - this.GetDrawDepthOffset());
             // Draw the button
-            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0,0), SpriteEffects.None, z);
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0,0), SpriteEffects.None, z - this.GetDrawDepthOffset());
             // Draw the border
             if (this.border != null) border.Draw(sb);
             // Draw the text on the button
@@ -55,13 +57,13 @@ namespace XNAInterfaceComponents.AbstractComponents
                 sb.DrawString(font, this.text,
                     new Vector2(drawRect.X + (this.bounds.Width / 2) - (fontDimensions.X / 2),
                        drawRect.Y + (this.bounds.Height / 2) - (fontDimensions.Y / 2)), this.fontColor, 0,
-                       new Vector2(0, 0), 1, SpriteEffects.None, z);
+                       new Vector2(0, 0), 1, SpriteEffects.None, z - this.GetDrawDepthOffset() - 0.01f);
             }
         }
 
         public override void Draw(SpriteBatch sb)
         {
-            this.Draw(sb, 1);
+            this.Draw(sb, 1f);
         }
 
         public override void Update()

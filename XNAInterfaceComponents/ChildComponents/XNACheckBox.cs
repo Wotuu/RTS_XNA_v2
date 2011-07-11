@@ -51,22 +51,22 @@ namespace XNAInterfaceComponents.ChildComponents
             if (this.isMouseOver) drawColor = this.mouseOverColor;
             else drawColor = this.backgroundColor;
 
-            Rectangle drawLocation = this.GetScreenBounds();
+            Rectangle drawRect = this.GetScreenBounds();
 
             // Draw the background
-            sb.Draw(this.clearTexture, drawLocation, drawColor);
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0, 0), SpriteEffects.None, 1f - this.GetDrawDepthOffset());
             
             // Determine where the checkbox should go
             Rectangle checkBoxBounds = new Rectangle();
             if (this.textAlign == TextAlign.RIGHT)
             {
-                checkBoxBounds = new Rectangle((int)drawLocation.X, (int)drawLocation.Y,
+                checkBoxBounds = new Rectangle((int)drawRect.X, (int)drawRect.Y,
                 (int)this.checkBoxSize.X, (int)this.checkBoxSize.Y);
             }
             else if (this.textAlign == TextAlign.LEFT)
             {
-                checkBoxBounds = new Rectangle((int)(drawLocation.X + this.bounds.Width - this.checkBoxSize.X),
-                    (int)(drawLocation.Y + this.bounds.Height - this.checkBoxSize.Y),
+                checkBoxBounds = new Rectangle((int)(drawRect.X + this.bounds.Width - this.checkBoxSize.X),
+                    (int)(drawRect.Y + this.bounds.Height - this.checkBoxSize.Y),
                 (int)this.checkBoxSize.X, (int)this.checkBoxSize.Y);
             }
             // Draw the outer line of the checkbox
@@ -80,16 +80,16 @@ namespace XNAInterfaceComponents.ChildComponents
             if (this.textAlign == TextAlign.LEFT)
             {
                 sb.DrawString(this.font, this.text,
-                    new Vector2(drawLocation.X + this.padding.left,
-                        drawLocation.Y + (drawLocation.Height / 2) - (this.font.MeasureString(this.text).Y / 2)), 
-                        this.fontColor);
+                    new Vector2(drawRect.X + this.padding.left,
+                        drawRect.Y + (drawRect.Height / 2) - (this.font.MeasureString(this.text).Y / 2)), 
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
             }
             else if (this.textAlign == TextAlign.RIGHT)
             {
                 sb.DrawString(this.font, this.text,
-                    new Vector2(drawLocation.X + this.padding.left + this.checkBoxSize.X,
-                        drawLocation.Y + (drawLocation.Height / 2) - (this.font.MeasureString(this.text).Y / 2)),
-                        this.fontColor);
+                    new Vector2(drawRect.X + this.padding.left + this.checkBoxSize.X,
+                        drawRect.Y + (drawRect.Height / 2) - (this.font.MeasureString(this.text).Y / 2)),
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
             }
         }
 

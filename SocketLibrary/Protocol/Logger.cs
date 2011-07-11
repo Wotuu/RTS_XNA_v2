@@ -370,18 +370,6 @@ namespace SocketLibrary.Protocol
                             PacketUtil.DecodePacketInt(p, 8), isReceived));
                         break;
                     }
-                case UnitHeaders.GAME_UNIT_RANGED_DAMAGE:
-                    {
-                        if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "GAME_UNIT_RANGED_DAMAGE Received unit ranged damage done request: projectileID = " +
-                            PacketUtil.DecodePacketInt(p, 0) + ", targetID = " +
-                            PacketUtil.DecodePacketInt(p, 4) + ", fromID =  " +
-                            PacketUtil.DecodePacketInt(p, 8), isReceived));
-                        else this.messageLog.AddLast(new LogMessage(currTime + "GAME_UNIT_RANGED_DAMAGE Sent unit ranged damage done request: projectileID = " +
-                            PacketUtil.DecodePacketInt(p, 0) + ", targetID = " +
-                            PacketUtil.DecodePacketInt(p, 4) + ", fromID =  " +
-                            PacketUtil.DecodePacketInt(p, 8), isReceived));
-                        break;
-                    }
                 case UnitHeaders.GAME_UNIT_RANGED_SHOT:
                     {
                         if (isReceived) this.messageLog.AddLast(new LogMessage(currTime + "GAME_UNIT_RANGED_SHOT Received unit ranged damage done request: arrowID = " +

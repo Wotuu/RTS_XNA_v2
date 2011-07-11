@@ -41,12 +41,5 @@ namespace SocketLibrary.Protocol
         /// [Header] [Int32 arrowServerID] [Int32 sourceServerID] [Int32 targetServerID]
         /// </summary>
         public const byte GAME_UNIT_RANGED_SHOT = 0x33;
-
-        /// <summary>
-        /// Client has done damage with a projectile.
-        /// [Header] [Int32 projectileServerID] [Int32 sourceServerID] [Int32 targetServerID]
-        /// </summary>
-        public const byte GAME_UNIT_RANGED_DAMAGE = 0x34;
-
     }
 }

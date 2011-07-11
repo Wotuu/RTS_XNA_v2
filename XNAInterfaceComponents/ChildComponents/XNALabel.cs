@@ -46,7 +46,7 @@ namespace XNAInterfaceComponents.ChildComponents
             // Get the location on the screen on which to draw this button.
             Rectangle drawRect = this.GetScreenBounds();
             // Draw the label
-            sb.Draw(clearTexture, drawRect, drawColor);
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0f, new Vector2(0, 0), SpriteEffects.None, 1f - this.GetDrawDepthOffset());
             // Draw the border
             if (this.border != null) border.Draw(sb);
             // Draw the text on the button
@@ -59,19 +59,22 @@ namespace XNAInterfaceComponents.ChildComponents
                 {
                     sb.DrawString(font, this.text,
                         new Vector2( drawRect.X + this.padding.left, 
-                            drawY), this.fontColor);
+                            drawY),
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
                 }
                 else if (this.textAlign == TextAlign.CENTER)
                 {
                     sb.DrawString(font, this.text,
                         new Vector2(drawRect.X + (this.bounds.Width / 2) - (fontDimensions.X / 2),
-                           drawY), this.fontColor);
+                           drawY),
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
                 }
                 else if (this.textAlign == TextAlign.RIGHT)
                 {
                     sb.DrawString(font, this.text,
                         new Vector2(drawRect.X + this.bounds.Width - fontDimensions.X - this.padding.right,
-                            drawY), this.fontColor);
+                            drawY),
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
                 }
             }
         }

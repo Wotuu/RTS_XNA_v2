@@ -151,8 +151,9 @@ namespace AStarCollisionMap.Pathfinding
         public void CreateConnections()
         {
             PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-            foreach (PathfindingNode node in manager.nodeList)
+            for( int i = 0; i < manager.nodeList.Count; i++ )
             {
+                PathfindingNode node = manager.nodeList.ElementAt(i);
                 // No connection with itsself
                 if (node == this) continue;
                 if (PathfindingUtil.GetHypoteneuseLength(node.GetLocation(), this.GetLocation()) > MAX_CONNECT_RANGE) continue;

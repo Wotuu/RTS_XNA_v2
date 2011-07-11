@@ -7,6 +7,7 @@ using XNAInterfaceComponents.Interfaces;
 using Microsoft.Xna.Framework.Graphics;
 using XNAInterfaceComponents.AbstractComponents;
 using XNAInputHandler.MouseInput;
+using XNAInterfaceComponents.ParentComponents;
 
 namespace XNAInterfaceComponents.Components
 {
@@ -54,6 +55,26 @@ namespace XNAInterfaceComponents.Components
         public Point GetLocation()
         {
             return new Point(this.bounds.X, this.bounds.Y);
+        }
+
+        /// <summary>
+        /// Takes the depth of this component, and multiplies it by 0.01f to get a value which you can use
+        /// to draw the component at the correct depth on the screen.
+        /// </summary>
+        /// <returns>The value, effectively this.GetDepth() * 0.01f;</returns>
+        protected float GetDrawDepthOffset()
+        {
+            return this.GetDepth() * 0.01f;
+        }
+
+        /// <summary>
+        /// Gets the depth of this component.
+        /// </summary>
+        /// <returns>The depth.</returns>
+        public virtual int GetDepth()
+        {
+            if (this.parent == null) return 1;
+            else return this.parent.GetDepth() + 1;
         }
 
         public abstract void Draw(SpriteBatch sb);
