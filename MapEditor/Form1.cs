@@ -408,7 +408,7 @@ namespace MapEditor
             //get values from newmapform
 
             tileMap = new TileMap.TileMap(mapform.MapWidth, mapform.MapHeight);
-            CollisionMap = new CollisionMap(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight,true);
+            CollisionMap = new CollisionMap(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight,true,4);
             CollisionData  = new int[(mapform.MapWidth * Engine.TileWidth) * (mapform.MapHeight * Engine.TileHeight)];
             currentLayer = tileMap.layers[0];
         }
