@@ -16,6 +16,8 @@ using MapEditor.Display;
 using Microsoft.Xna.Framework.Input;
 using MapEditor.Helpers;
 using System.Reflection;
+using AStarCollisionMap.Collision;
+using AStarCollisionMap.QuadTree;
 namespace MapEditor
 {
     public partial class Form1 : Form
@@ -32,7 +34,7 @@ namespace MapEditor
         Texture2D linetexture;
 
 
-        Texture2D CollisionMap;
+        CollisionMap CollisionMap;
         int[] CollisionData;
 
         Camera camera = new Camera();
@@ -100,7 +102,6 @@ namespace MapEditor
 
             tileMapDisplay1.MouseLeave +=
                  new EventHandler(tileDisplay1_MouseLeave);
-
 
             tileMapDisplay1.MouseMove +=
             new MouseEventHandler(tileDisplay1_MouseMove);
@@ -249,8 +250,10 @@ namespace MapEditor
                 //DrawLayer(0);
                 DrawDisplay();
                 //CollisionmapDrawn
+
                 
-                    spriteBatch.Draw(CollisionMap, new Rectangle(0, 0, tileMapDisplay1.Width, tileMapDisplay1.Height), Color.White);
+                CollisionMap.tree.Draw(spriteBatch);
+                //spriteBatch.Draw(CollisionMap, new Rectangle(0, 0, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight), Color.White);
              
                 
             }
@@ -405,7 +408,7 @@ namespace MapEditor
             //get values from newmapform
 
             tileMap = new TileMap.TileMap(mapform.MapWidth, mapform.MapHeight);
-            CollisionMap = new Texture2D(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight);
+            CollisionMap = new CollisionMap(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight,true,4);
             CollisionData  = new int[(mapform.MapWidth * Engine.TileWidth) * (mapform.MapHeight * Engine.TileHeight)];
             currentLayer = tileMap.layers[0];
         }
