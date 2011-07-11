@@ -12,7 +12,7 @@ namespace PathfindingTest.Combat
         public DamageType type { get; set; }
 
         public DamageSource by { get; set; }
-        public Unit target { get; set; }
+        public Damageable target { get; set; }
         public Unit source { get; set; }
         public float damageDone { get; set; }
         public float usedModifier { get; set; }
@@ -31,9 +31,25 @@ namespace PathfindingTest.Combat
             else if (by.type == DamageType.Ranged) x = 2;
             else if (by.type == DamageType.Fast) x = 3;
 
-            if (target.type == Unit.Type.Ranged) return modifiers[x, 2];
-            else if (target.type == Unit.Type.Engineer) return modifiers[x, 0];
-            else return 1f;
+            if (target is Unit)
+            {
+                if (((Unit)target).type == Unit.Type.Ranged)
+                {
+                    return modifiers[x, 2];
+                }
+                else if (((Unit)target).type == Unit.Type.Engineer)
+                {
+                    return modifiers[x, 0];
+                }
+                else
+                {
+                    return 1f;
+                }
+            }
+            else
+            {
+                return 1f;
+            }
         }
 
         public enum DamageType
@@ -44,7 +60,7 @@ namespace PathfindingTest.Combat
             Ranged
         }
 
-        public DamageEvent(DamageSource by, Unit target, Unit source)
+        public DamageEvent(DamageSource by, Damageable target, Unit source)
         {
             this.source = source;
             this.by = by;

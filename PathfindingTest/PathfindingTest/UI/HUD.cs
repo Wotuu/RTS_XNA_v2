@@ -58,7 +58,6 @@ namespace PathfindingTest.UI
             this.color = c;
 
             hudTex = Game1.GetInstance().Content.Load<Texture2D>("HUD/HUD");
-            hudItemDetails = Game1.GetInstance().Content.Load<Texture2D>("HUD/HUDItemDetails");
             sf = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/SpriteFont1");
 
             loadForEngineer = false;
@@ -75,19 +74,20 @@ namespace PathfindingTest.UI
             MouseManager.GetInstance().mouseReleasedListeners += ((MouseClickListener)this).OnMouseRelease;
         }
 
-        public void LoadCommands()
+        private void LoadCommands()
         {
             commandObjects = new LinkedList<HUDCommandObject>();
             startCommandX = 673;
             startCommandY = 688;
-
-            HUDCommandObject repairCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDRepair"), HUDCommandObject.Type.Repair, startCommandX, startCommandY, new Color(255, 187, 0, 255));
+            
+            //No more than 8 seperate Commands!!!
+            HUDCommandObject repairCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDRepair"), HUDCommandObject.Type.Repair, startCommandX, startCommandY, new Color(255, 187, 0, 255), color);
             commandObjects.AddLast(repairCommand);
             IncrementStartCommandXY(startCommandX);
         }
 
         /// <summary>
-        /// Checks whether the HUD should be hidden or not.
+        /// Checks whether the HUD should be hidden or not. (if the player this HUD belongs to is not the player that is watching)
         /// Loads the objects to display according to selected units/buildings.
         /// </summary>
         /// <param name="ks">Default KeyboardState</param>
@@ -222,9 +222,6 @@ namespace PathfindingTest.UI
         void MouseClickListener.OnMouseClick(MouseEvent me)
         {
             if (me.button == MouseEvent.MOUSE_BUTTON_1)
-            //player.currentSelection != null
-            //player.currentSelection.units.Count == 1 &&
-            //player.currentSelection.units.ElementAt(0).type == Unit.UnitType.Engineer &&)
             {
                 foreach (HUDObject o in objects)
                 {
@@ -499,15 +496,6 @@ namespace PathfindingTest.UI
         public Rectangle DefineRectangle()
         {
             return new Rectangle(195, 652, 634, 116);
-        }
-
-        /// <summary>
-        /// Defines the space the Details section of the HUD is using.
-        /// </summary>
-        /// <returns>Returns a Rectangle with the right size</returns>
-        public Rectangle DefineDetailsRectangle()
-        {
-            return new Rectangle(0, 652, 195, 116);
         }
     }
 }

@@ -9,15 +9,34 @@ namespace SocketLibrary.Packets
     {
         private byte header { get; set; }
         private Boolean isHeaderSet { get; set; }
+        private byte[] packetID { get; set; }
         private LinkedList<byte> data = new LinkedList<byte>();
+
+        /// <summary>
+        /// The time in MS that this packet was sent to the receivers
+        /// </summary>
+        public double timeSent { get; set; }
+
+        public int timesSent { get; set; }
+
+        public static int CURRENT_PACKET_ID { get; set; }
+
+        static Packet()
+        {
+            // CURRENT_PACKET_ID += new Random(DateTime.UtcNow.Millisecond).Next();
+        }
 
         public Packet()
         {
+            Packet.CURRENT_PACKET_ID++;
+            this.packetID = BitConverter.GetBytes(CURRENT_PACKET_ID);
         }
 
         public Packet(byte header)
         {
             this.SetHeader(header);
+            Packet.CURRENT_PACKET_ID++;
+            this.packetID = BitConverter.GetBytes(CURRENT_PACKET_ID);
         }
 
         public Packet(byte header, byte[] data)
@@ -27,6 +46,8 @@ namespace SocketLibrary.Packets
             {
                 this.data.AddLast(data[i]);
             }
+            Packet.CURRENT_PACKET_ID++;
+            this.packetID = BitConverter.GetBytes(CURRENT_PACKET_ID);
         }
 
         public Packet(byte[] data)
@@ -35,6 +56,35 @@ namespace SocketLibrary.Packets
             {
                 this.data.AddLast(data[i]);
             }
+            Packet.CURRENT_PACKET_ID++;
+            this.packetID = BitConverter.GetBytes(CURRENT_PACKET_ID);
+        }
+
+        /// <summary>
+        /// Sets the packet ID.
+        /// </summary>
+        /// <param name="packetID">The packet id.</param>
+        public void SetPacketID(int packetID)
+        {
+            this.packetID = BitConverter.GetBytes(packetID);
+        }
+
+        /// <summary>
+        /// Sets the packet ID. Must be a length of 4!.
+        /// </summary>
+        /// <param name="bytes">The bytes.</param>
+        public void SetPacketID(byte[] bytes)
+        {
+            this.packetID = bytes;
+        }
+
+        /// <summary>
+        /// Gets the packetID of this packet.
+        /// </summary>
+        /// <returns>The int containing the ID of the packet.</returns>
+        public int GetPacketID()
+        {
+            return PacketUtil.DecodeInt(this.packetID);
         }
 
         /// <summary>
@@ -59,7 +109,7 @@ namespace SocketLibrary.Packets
         /// <summary>
         /// Adds a string to this packet
         /// </summary>
-        /// <param name="s">The packet</param>
+        /// <param name="s">The string</param>
         public void AddString(String s)
         {
             foreach (Char c in s.ToCharArray())
@@ -95,10 +145,22 @@ namespace SocketLibrary.Packets
         /// <returns>The byte array with the header.</returns>
         public byte[] GetFullData()
         {
-            this.data.AddFirst(header);
-            byte[] result = this.data.ToArray();
-            this.data.RemoveFirst();
-            return result;
+            LinkedList<byte> fullData = new LinkedList<byte>();
+            // Header first
+            fullData.AddLast(this.header);
+            foreach (byte b in this.packetID)
+            {
+                // Packet ID next
+                fullData.AddLast(b);
+            }
+
+            foreach (byte b in this.data)
+            {
+                // Now the data we wanted to send
+                fullData.AddLast(b);
+            }
+
+            return fullData.ToArray();
         }
 
         /// <summary>

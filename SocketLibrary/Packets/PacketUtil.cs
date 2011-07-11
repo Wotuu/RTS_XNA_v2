@@ -7,6 +7,7 @@ namespace SocketLibrary.Packets
 {
     public class PacketUtil
     {
+
         /// <summary>
         /// Decodes a packet to a string.
         /// </summary>
@@ -31,6 +32,17 @@ namespace SocketLibrary.Packets
         public static int DecodePacketInt(Packet p, int index)
         {
             return BitConverter.ToInt32(p.GetData(), index);
+        }
+
+        /// <summary>
+        /// Converts a byte array with length 4 to an int.
+        /// </summary>
+        /// <param name="bytes">The bytes to convert.</param>
+        /// <returns>The result of the computation.</returns>
+        public static int DecodeInt(byte[] bytes)
+        {
+            if (bytes.Length != 4) throw new ArgumentException("Ints are 4 bytes, not " + bytes.Length + " bytes.");
+            else return BitConverter.ToInt32(bytes, 0);
         }
     }
 }

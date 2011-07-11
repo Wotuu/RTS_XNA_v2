@@ -69,7 +69,7 @@ namespace PathfindingTest.Multiplayer.Data
                 unit.multiplayerData.lastPulse = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
                 GameServerConnectionManager.GetInstance().SendPacket(p);
 
-                Console.Out.WriteLine("Synchronised " + unit);
+                // Console.Out.WriteLine("Synchronised " + unit);
 
                 unitList.RemoveFirst();
                 objectsSynced++;
@@ -116,14 +116,13 @@ namespace PathfindingTest.Multiplayer.Data
                 if (e.by is Arrow)
                 {
                     Arrow arrow = (Arrow)e.by;
-                    if (!arrow.disposed)
-                    {
-                        damagePacket.SetHeader(UnitHeaders.GAME_UNIT_RANGED_DAMAGE);
-                        damagePacket.AddInt(arrow.multiplayerData.serverID);
-                        damagePacket.AddInt(e.source.multiplayerData.serverID);
-                        damagePacket.AddInt(e.target.multiplayerData.serverID);
-                        GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
-                    }
+
+                    damagePacket.SetHeader(UnitHeaders.GAME_UNIT_RANGED_DAMAGE);
+                    damagePacket.AddInt(arrow.multiplayerData.serverID);
+                    damagePacket.AddInt(e.source.multiplayerData.serverID);
+                    //damagePacket.AddInt(e.target.multiplayerData.serverID);
+                    GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
+                    Console.Out.WriteLine("Sent a projectile damage event!");
                 }
                 else if (e.by is MeleeSwing)
                 {
@@ -131,7 +130,7 @@ namespace PathfindingTest.Multiplayer.Data
                     damagePacket.SetHeader(UnitHeaders.GAME_UNIT_MELEE_DAMAGE);
                     damagePacket.AddInt(EncodeMeleeSwing(swing.type));
                     damagePacket.AddInt(e.source.multiplayerData.serverID);
-                    damagePacket.AddInt(e.target.multiplayerData.serverID);
+                    //damagePacket.AddInt(e.target.multiplayerData.serverID);
                     GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
                 }
 
@@ -149,8 +148,9 @@ namespace PathfindingTest.Multiplayer.Data
                     Packet newArrowPacket = new Packet(UnitHeaders.GAME_UNIT_RANGED_SHOT);
                     newArrowPacket.AddInt(toSync.multiplayerData.serverID);
                     newArrowPacket.AddInt(toSync.parent.multiplayerData.serverID);
-                    newArrowPacket.AddInt(toSync.target.multiplayerData.serverID);
+                    //newArrowPacket.AddInt(toSync.target.multiplayerData.serverID);
 
+                    Console.Out.WriteLine("Sending existance of arrow " + toSync.multiplayerData.serverID);
                     GameServerConnectionManager.GetInstance().SendPacket(newArrowPacket);
                     toSync.multiplayerData.isCreated = true;
                 }
@@ -171,14 +171,16 @@ namespace PathfindingTest.Multiplayer.Data
             return -1;
         }
 
-       
+
         /// <summary>
         /// Identify the source of the DamageSource.
         /// </summary>
         /// <param name="type">The source to identify.</param>
         /// <returns>The identified source.</returns>
-        private int EncodeMeleeSwing(DamageEvent.DamageType type){
-            if( type == DamageEvent.DamageType.Fast ){
+        private int EncodeMeleeSwing(DamageEvent.DamageType type)
+        {
+            if (type == DamageEvent.DamageType.Fast)
+            {
                 return UnitHeaders.DAMAGE_TYPE_FAST;
             }
             else if (type == DamageEvent.DamageType.HeavyMelee)
@@ -192,7 +194,7 @@ namespace PathfindingTest.Multiplayer.Data
             else if (type == DamageEvent.DamageType.Ranged)
             {
                 return UnitHeaders.DAMAGE_TYPE_RANGED;
-            } 
+            }
             return -1;
         }
 

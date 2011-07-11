@@ -82,7 +82,7 @@ namespace PathfindingTest.Units
             // Console.Out.WriteLine("Aggroing something, *grins*");
         }
 
-        public override void Swing()
+        public override void Swing(Damageable target)
         {
         }
 

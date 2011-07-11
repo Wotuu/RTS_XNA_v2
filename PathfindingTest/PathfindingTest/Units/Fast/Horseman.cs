@@ -24,28 +24,28 @@ namespace PathfindingTest.Units.Fast
             this.collisionRadius = texture.Width / 2;
         }
 
-        public override void Update(Microsoft.Xna.Framework.Input.KeyboardState ks, 
+        public override void Update(Microsoft.Xna.Framework.Input.KeyboardState ks,
             Microsoft.Xna.Framework.Input.MouseState ms)
         {
-                UpdateMovement();
-                if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
-                {
-                    UpdateAttack();
-                }
-                else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
-                {
-                    UpdateDefense();
-                }
+            UpdateMovement();
+            if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+            {
+                UpdateAttack();
+            }
+            else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
+            {
+                UpdateDefense();
+            }
 
-                if (Game1.GetInstance().frames % 4 == 0 && unitToStalk != null)
-                {
-                    TryToSwing();
-                }
+            if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
+            {
+                TryToSwing();
+            }
         }
 
         internal override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch sb)
         {
-                sb.Draw(this.texture, new Vector2(x - (texture.Width / 2), y - (texture.Height / 2)), this.color);
+            sb.Draw(this.texture, new Vector2(x - (texture.Width / 2), y - (texture.Height / 2)), this.color);
         }
 
         public override void OnAggroRecieved(AggroEvent e)
@@ -69,13 +69,16 @@ namespace PathfindingTest.Units.Fast
             // Console.Out.WriteLine("Aggroing something, *grins*");
         }
 
-        public override void Swing()
+        public override void Swing(Damageable target)
         {
-            AggroEvent e = new AggroEvent(this, unitToStalk, true);
-            unitToStalk.OnAggroRecieved(e);
-            this.OnAggro(e);
-            DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), unitToStalk, this);
-            unitToStalk.OnDamage(dmgEvent);
+            if (target is Unit)
+            {
+                AggroEvent e = new AggroEvent(this, target, true);
+                ((Unit)target).OnAggroRecieved(e);
+                this.OnAggro(e);
+            }
+            DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), target, this);
+            target.OnDamage(dmgEvent);
             this.fireCooldown = this.rateOfFire;
 
             // We already know that this unit is local

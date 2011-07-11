@@ -71,16 +71,7 @@ namespace SocketLibrary
                         {
                             byte[] data = new byte[size];
                             Array.Copy(buff, data, size);
-                            //TODO: Should go to a SocketProcessor here.
-
-
-                            byte[] headerlessData = new byte[data.Length - 1];
-                            for (int i = 1; i < data.Length; i++)
-                            {
-                                headerlessData[i - 1] = data[i];
-                            }
-                            Packet p = new Packet(data[0], headerlessData);
-                            this.packetProcessor.QueuePacket(p);
+                            this.packetProcessor.QueuePacket(data, this);
                         }
                         else
                         {
@@ -128,8 +119,13 @@ namespace SocketLibrary
                     {
                         byte[] data = packet.GetFullData();
                         Sock.Send(data, data.Length, SocketFlags.None);
+                        packet.timeSent = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
                         log.Log(packet, false);
                         if (onPacketSendListeners != null) onPacketSendListeners(packet);
+
+                        if( packet.GetHeader() != Headers.PACKET_RECEIVED )
+                            this.packetProcessor.SentPacket(packet, this);
+                        // Console.Out.WriteLine("Sent a packet with header " + packet.GetHeader() + " and ID " + packet.GetPacketID());
                     }
                     catch (Exception ex)
                     {

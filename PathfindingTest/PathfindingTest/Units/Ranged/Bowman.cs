@@ -11,12 +11,13 @@ using PathfindingTest.Combat;
 using PathfindingTest.Multiplayer.Data;
 using SocketLibrary.Protocol;
 using PathfindingTest.Pathfinding;
+using PathfindingTest.Units.Damage;
 
 namespace PathfindingTest.Units
 {
     public class Bowman : Unit
     {
-        public LinkedList<Projectile> projectiles { get; set; }
+        private ArrowManager arrowManager;
 
         public Bowman(Player p, int x, int y)
             : base(p, x, y, 1f, 100f, 100f, 60)
@@ -24,7 +25,6 @@ namespace PathfindingTest.Units
             this.baseDamage = baseDamage;
 
             this.type = Type.Ranged;
-            this.projectiles = new LinkedList<Projectile>();
 
             this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/bowman");
             // Console.Out.WriteLine("Constructed a bowman @ " + this.GetLocation() + " (" + x + ", " + y + ")");
@@ -43,14 +43,9 @@ namespace PathfindingTest.Units
                     UpdateDefense();
                 }
 
-                if (Game1.GetInstance().frames % 4 == 0 && unitToStalk != null)
+                if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
                 {
                     TryToSwing();
-                }
-
-                for (int i = 0; i < projectiles.Count; i++)
-                {
-                    projectiles.ElementAt(i).Update(ks, ms);
                 }
         }
 
@@ -62,11 +57,6 @@ namespace PathfindingTest.Units
                 {
                     this.DrawHealthBar(sb);
                 }*/
-
-                for (int i = 0; i < projectiles.Count; i++)
-                {
-                    projectiles.ElementAt(i).Draw(sb);
-                }
         }
 
         public override void OnAggroRecieved(AggroEvent e)
@@ -102,14 +92,18 @@ namespace PathfindingTest.Units
         /// <summary>
         /// Attempt to fire the weapon!
         /// </summary>
-        public override void Swing()
+        public override void Swing(Damageable target)
         {
             if (this.fireCooldown < 0)
             {
-                AggroEvent e = new AggroEvent(this, unitToStalk, true);
-                unitToStalk.OnAggroRecieved(e);
-                this.OnAggro(e);
-                this.projectiles.AddLast(new Arrow(this, unitToStalk));
+                if (target is Unit)
+                {
+                    AggroEvent e = new AggroEvent(this, target, true);
+                    ((Unit)target).OnAggroRecieved(e);
+                    this.OnAggro(e);
+                }
+                Arrow newArrow = new Arrow(this, target);
+                this.player.arrowManager.AddProjectile(newArrow);
                 this.fireCooldown = this.rateOfFire;
             }
         }

@@ -10,6 +10,6 @@ namespace PathfindingTest.Combat
     {
         public DamageEvent.DamageType type { get; set; }
         public float baseDamage { get; set; }
-        public Unit target { get; set; }
+        public Damageable target { get; set; }
     }
 }

@@ -9,11 +9,11 @@ namespace PathfindingTest.Combat
     public class AggroEvent
     {
         public Unit from { get; set; }
-        public Unit to { get; set; }
+        public Damageable to { get; set; }
         public Boolean received { get; set; }
 
 
-        public AggroEvent(Unit from, Unit to, Boolean received)
+        public AggroEvent(Unit from, Damageable to, Boolean received)
         {
             this.from = from;
             this.to = to;

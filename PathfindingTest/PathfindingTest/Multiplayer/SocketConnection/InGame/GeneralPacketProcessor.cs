@@ -95,7 +95,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                             {
                                 Projectile projectile = ((ProjectileMultiplayerData)data).projectile;
                                 response.AddInt(projectile.parent.multiplayerData.serverID);
-                                response.AddInt(projectile.target.multiplayerData.serverID);
+                                //response.AddInt(projectile.target.multiplayerData.serverID);
                             }
                             GameServerConnectionManager.GetInstance().SendPacket(response);
 

@@ -66,12 +66,13 @@ namespace AStarCollisionMap.QuadTree
         internal void Draw(SpriteBatch sb)
         {
             // If it ain't on the screen
-            //Rectangle viewPort = new Rectangle(0, 0, this.tree.collisionMap.graphicsDevice.Adapter.CurrentDisplayMode.Width,
-            //    this.tree.collisionMap.graphicsDevice.Adapter.CurrentDisplayMode.Height);
-            //if (!(viewPort.Contains(new Point(this.rectangle.Left, this.rectangle.Top))
-            //    || viewPort.Contains(new Point(this.rectangle.Right, this.rectangle.Top))
-            //    || viewPort.Contains(new Point(this.rectangle.Left, this.rectangle.Bottom))
-            //    || viewPort.Contains(new Point(this.rectangle.Right, this.rectangle.Bottom)))) return;
+            /*
+            Rectangle viewPort = new Rectangle(0, 0, this.tree.collisionMap.graphicsDevice.Adapter.CurrentDisplayMode.Width,
+                this.tree.collisionMap.graphicsDevice.Adapter.CurrentDisplayMode.Height);
+            if (!(viewPort.Contains(new Point(this.rectangle.Left, this.rectangle.Top))
+                || viewPort.Contains(new Point(this.rectangle.Right, this.rectangle.Top))
+                || viewPort.Contains(new Point(this.rectangle.Left, this.rectangle.Bottom))
+                || viewPort.Contains(new Point(this.rectangle.Right, this.rectangle.Bottom)))) return;*/
 
 
             if (this.children == null)

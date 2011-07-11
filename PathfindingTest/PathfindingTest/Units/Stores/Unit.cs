@@ -16,6 +16,7 @@ using XNAInputHandler.MouseInput;
 using PathfindingTest.State;
 using PathfindingTest.Multiplayer.Data;
 using System.Diagnostics;
+using PathfindingTest.Buildings;
 
 namespace PathfindingTest.Units
 {
@@ -40,6 +41,7 @@ namespace PathfindingTest.Units
         private HealthBar healthBar { get; set; }
         public LinkedList<Unit> enemiesInRange { get; set; }
         public LinkedList<Unit> friendliesProtectingMe { get; set; }
+        public LinkedList<Building> buildingsInRange { get; set; }
         public int baseDamage { get; set; }
 
         public Boolean isDead = false;
@@ -47,6 +49,7 @@ namespace PathfindingTest.Units
 
         public Unit unitToStalk { get; set; }
         public Unit unitToDefend { get; set; }
+        public Building buildingToDestroy { get; set; }
         public float attackRange { get; set; }
         public float aggroRange { get; set; }
         public float fireCooldown { get; set; }
@@ -122,6 +125,38 @@ namespace PathfindingTest.Units
         public Point GetLocation()
         {
             return new Point((int)x, (int)y);
+        }
+        
+        /// <summary>
+        /// Gets the cost of a unit
+        /// </summary>
+        /// <param name="t">The unit type of which the cost is wanted</param>
+        /// <returns>The cost of the unit</returns>
+        public static int GetCost(Type t)
+        {
+            switch (t)
+            {
+                case Type.Engineer:
+                    return 400;
+
+                case Type.Melee:
+                    return 500;
+
+                case Type.HeavyMelee:
+                    return 500;
+
+                case Type.Fast:
+                    return 500;
+
+                case Type.Ranged:
+                    return 500;
+
+                case Type.HeavyRanged:
+                    return 750;
+
+                default:
+                    return 0;
+            }
         }
 
         /// <summary>
@@ -283,6 +318,37 @@ namespace PathfindingTest.Units
                         if (Util.GetHypoteneuseLength(unit.GetLocation(), this.GetLocation()) < rangeToCheck)
                         {
                             enemiesInRange.AddLast(unit);
+                        }
+                    }
+                }
+            }
+        }
+
+        /// <summary>
+        /// Updates the buildingsInRange variable, to contain all the buildings within the attack range of this unit.
+        /// </summary>
+        public void CheckForBuildingsInRange(float rangeToCheck)
+        {
+            if (buildingsInRange != null)
+            {
+                buildingsInRange.Clear();
+            }
+            else
+            {
+                buildingsInRange = new LinkedList<Building>();
+                CheckForBuildingsInRange(rangeToCheck);
+            }
+            foreach (Player player in Game1.GetInstance().players)
+            {
+                // Don't check for units on our alliance
+                if (player.alliance.members.Contains(this.player)) continue;
+                else
+                {
+                    foreach (Building building in player.buildings)
+                    {
+                        if (Util.GetHypoteneuseLength(building.GetLocation(), this.GetLocation()) < rangeToCheck)
+                        {
+                            buildingsInRange.AddLast(building);
                         }
                     }
                 }
@@ -470,7 +536,7 @@ namespace PathfindingTest.Units
                 unitToStalk = e.source;
             }
             this.currentHealth -= e.damageDone;
-            if (this.currentHealth <= 0)
+            if (this.currentHealth <= 0 && !this.isDead)
             {
                 this.Dispose();
             }
@@ -480,50 +546,82 @@ namespace PathfindingTest.Units
         /// Sets the target to attack
         /// </summary>
         /// <param name="unitToAttack"></param>
-        public void Attack(Unit unitToAttack)
+        public void AttackUnit(Unit unitToAttack)
         {
+            this.buildingToDestroy = null;
             this.unitToDefend = null;
             this.unitToStalk = unitToAttack;
         }
 
         /// <summary>
-        /// Sets the target to defenc
+        /// Sets the target to defend
         /// </summary>
         /// <param name="unitToDefend"></param>
         public void Defend(Unit unitToDefend)
         {
+            this.buildingToDestroy = null;
             this.unitToStalk = null;
             this.unitToDefend = unitToDefend;
         }
 
+        public void AttackBuilding(Building enemyBuilding)
+        {
+            this.unitToDefend = null;
+            this.unitToStalk = null;
+            this.buildingToDestroy = enemyBuilding;
+        }
+
         public void TryToSwing()
         {
-            if (Util.GetHypoteneuseLength(unitToStalk.GetLocation(), this.GetLocation()) < this.attackRange)
+            if (unitToStalk != null)
             {
-                this.waypoints.Clear();
-                if (!Game1.GetInstance().IsMultiplayerGame() ||
-                    this.multiplayerData.isLocal)
+                if (Util.GetHypoteneuseLength(unitToStalk.GetLocation(), this.GetLocation()) < this.attackRange)
                 {
-                    Swing();
+                    this.waypoints.Clear();
+                    if (!Game1.GetInstance().IsMultiplayerGame() ||
+                        this.multiplayerData.isLocal)
+                    {
+                        Swing(unitToStalk);
+                    }
+                }
+                else
+                {
+                    if (waypoints.Count < 1)
+                    {
+                        Point p = new Point((int)unitToStalk.x, (int)unitToStalk.y);
+                        this.MoveToQueue(p);
+                    }
                 }
             }
-            else
+            else if (buildingToDestroy != null)
             {
-                if (waypoints.Count < 1)
+                if (Util.GetHypoteneuseLength(buildingToDestroy.GetLocation(), this.GetLocation()) < this.attackRange)
                 {
-                    Point p = new Point((int)unitToStalk.x, (int)unitToStalk.y);
-                    this.MoveToQueue(p);
+                    this.waypoints.Clear();
+                    if (!Game1.GetInstance().IsMultiplayerGame() ||
+                        this.multiplayerData.isLocal)
+                    {
+                        Swing(buildingToDestroy);
+                    }
+                }
+                else
+                {
+                    if (waypoints.Count < 1)
+                    {
+                        Point p = new Point((int)buildingToDestroy.x, (int)buildingToDestroy.y);
+                        this.MoveToQueue(p);
+                    }
                 }
             }
         }
         /// <summary>
         /// This unit will attempt to fire/swing/kill/cast!
         /// </summary>
-        public abstract void Swing();
+        public abstract void Swing(Damageable target);
 
         public void UpdateAttack()
         {
-            if (unitToStalk == null || isTargetDead())
+            if (((unitToStalk == null) && (buildingToDestroy == null) || isTargetDead()))
             {
                 //get new target
                 CheckForEnemiesInRange(this.aggroRange);
@@ -532,6 +630,14 @@ namespace PathfindingTest.Units
                     unitToStalk = enemiesInRange.ElementAt(0);
                 }
             }
+            else
+            {
+                CheckForBuildingsInRange(this.aggroRange);
+                if (this.buildingsInRange.Count > 0)
+                {
+                    buildingToDestroy = buildingsInRange.ElementAt(0);
+                }
+    }
         }
 
         public void UpdateDefense()
@@ -573,6 +679,11 @@ namespace PathfindingTest.Units
                 unitToStalk = null;
                 return true;
             }
+            else if (buildingToDestroy != null && buildingToDestroy.isDestroyed)
+            {
+                buildingToDestroy = null;
+                return true;
+            }
             return false;
         }
 
@@ -583,7 +694,10 @@ namespace PathfindingTest.Units
         {
             this.isDead = true;
             this.player.units.Remove(this);
-            if (this.player.currentSelection != null) this.player.currentSelection.units.Remove(this);
+            if (this.player.currentSelection != null)
+            {
+                this.player.currentSelection.units.Remove(this);
+            }
         }
     }
 }

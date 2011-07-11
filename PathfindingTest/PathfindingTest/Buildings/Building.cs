@@ -15,10 +15,11 @@ using System.Diagnostics;
 using PathfindingTest.Units.Stores;
 using PathfindingTest.Multiplayer.Data;
 using SocketLibrary.Protocol;
+using PathfindingTest.Combat;
 
 namespace PathfindingTest.Buildings
 {
-    public abstract class Building
+    public abstract class Building : Damageable
     {
 
         public Player p { get; set; }
@@ -39,6 +40,7 @@ namespace PathfindingTest.Buildings
         public Boolean mouseOver { get; set; }
         public Boolean canPlace { get; set; }
         public Boolean constructionStarted { get; set; }
+        public Boolean isDestroyed = false;
         public State state { get; set; }
 
         public LinkedList<ProductionUnit> productionQueue { get; set; }
@@ -422,6 +424,7 @@ namespace PathfindingTest.Buildings
         /// </summary>
         public void Dispose()
         {
+            this.isDestroyed = true;
             productionQueue = null;
             p.buildings.Remove(this);
             if (this.mesh != null) mesh.Reverse();
@@ -434,6 +437,32 @@ namespace PathfindingTest.Buildings
         public Point GetLocation()
         {
             return new Point((int)x, (int)y);
+        }
+        
+        /// <summary>
+        /// Gets the cost of a building
+        /// </summary>
+        /// <param name="t">The building type of which the cost is wanted</param>
+        /// <returns>The cost of the building</returns>
+        public static int GetCost(Type t)
+        {
+            switch (t)
+            {
+                case Type.Barracks:
+                    return 3000;
+
+                case Type.Factory:
+                    return 6000;
+
+                case Type.Fortress:
+                    return 10000;
+
+                case Type.Resources:
+                    return 1000;
+
+                default:
+                    return 0;
+            }
         }
 
         public Building(Player player)
@@ -464,6 +493,15 @@ namespace PathfindingTest.Buildings
             else
             {
                 this.state = State.Preview;
+            }
+        }
+
+        public void OnDamage(DamageEvent e)
+        {
+            this.currentHealth -= e.damageDone;
+            if (this.currentHealth <= 0 && !this.isDestroyed)
+            {
+                this.Dispose();
             }
         }
     }
