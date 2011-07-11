@@ -16,6 +16,7 @@ using XNAInputHandler.MouseInput;
 using PathfindingTest.Units.Stores;
 using System.Diagnostics;
 using PathfindingTest.UI.Commands;
+using PathfindingTest.Units.Damage;
 
 namespace PathfindingTest.Players
 {
@@ -33,6 +34,7 @@ namespace PathfindingTest.Players
         public UnitSelection currentSelection { get; set; }
         public LinkedList<Building> buildings { get; set; }
         public BuildingSelection buildingSelection { get; set; }
+        public ArrowManager arrowManager;
 
         public Command command { get; set; }
 
@@ -80,6 +82,8 @@ namespace PathfindingTest.Players
             rangedStore = new RangedStore(this);
             fastStore = new FastStore(this);
 
+            arrowManager = new ArrowManager();
+
             MouseManager.GetInstance().mouseClickedListeners += ((MouseClickListener)this).OnMouseClick;
             MouseManager.GetInstance().mouseReleasedListeners += ((MouseClickListener)this).OnMouseRelease;
             MouseManager.GetInstance().mouseMotionListeners += ((MouseMotionListener)this).OnMouseMotion;
@@ -97,7 +101,7 @@ namespace PathfindingTest.Players
 
             if (!Game1.GetInstance().IsMultiplayerGame())
             {
-                int unitCount = 75;
+                int unitCount = 25;
 
 
                 LinkedList<Unit> temp_units = new LinkedList<Unit>();
@@ -119,11 +123,11 @@ namespace PathfindingTest.Players
                     Point p = points.ElementAt(i);
                     if (i % 2 == 0)
                     {
-                        temp_units.AddLast(fastStore.getUnit(Unit.Type.Fast, p.X, p.Y));
+                        //temp_units.AddLast(fastStore.getUnit(Unit.Type.Fast, p.X, p.Y));
                     }
                     else
                     {
-                        //temp_units.AddLast(rangedStore.getUnit(Unit.Type.Ranged, p.X, p.Y));
+                        temp_units.AddLast(rangedStore.getUnit(Unit.Type.Ranged, p.X, p.Y));
                     }
                     
                    // Point p = points.ElementAt(i);
@@ -204,6 +208,13 @@ namespace PathfindingTest.Players
             }
             catch (Exception e) { }
 
+            try
+            {
+                arrowManager.UpdateProjectiles(ks, ms);
+            }
+            catch (InvalidOperationException e) { }
+            
+
             if (command != null)
             {
                 command.Update(ks, ms);
@@ -268,6 +279,8 @@ namespace PathfindingTest.Players
             }
             catch (Exception e) { }
 
+            arrowManager.DrawProjectiles(sb);
+
             // Healthbars
             if (currentSelection != null)
             {
@@ -327,6 +340,20 @@ namespace PathfindingTest.Players
             foreach (Unit u in units)
             {
                 if (u.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return u;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Whether the mouse is over a unit or not
+        /// if it is, it'll return it. =D
+        /// </summary>
+        /// <returns>The unit, or null if there was no unit!</returns>
+        public Building GetMouseOverBuilding(LinkedList<Building> buildings)
+        {
+            foreach (Building b in buildings)
+            {
+                if (b.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return b;
             }
             return null;
         }
@@ -534,11 +561,21 @@ namespace PathfindingTest.Players
                         {
                             foreach (Unit unit in currentSelection.units)
                             {
-                                unit.Attack(selectedEnemy);
+                                unit.AttackUnit(selectedEnemy);
                             }
+                            return;
                         }
-                        else 
+                        else
                         {
+                            Building enemyBuilding = GetMouseOverBuilding(player.buildings);
+                            if (enemyBuilding != null)
+                            {
+                                foreach (Unit unit in currentSelection.units)
+                                {
+                                    unit.AttackBuilding(enemyBuilding);
+                                }
+                                return;
+                            }
                             if (previewPattern != null)
                             {
                                 stopUnitSelection();

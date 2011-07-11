@@ -110,7 +110,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
             Arrow arrow = new Arrow(sourceUnit,
                 ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(targetServerID)).unit);
             arrow.multiplayerData.serverID = arrowServerID;
-            ((Bowman)sourceUnit).projectiles.AddLast(arrow);
+            //((Bowman)sourceUnit).projectiles.AddLast(arrow); @@WMP moet naar de arrowmanager 
             Console.Out.WriteLine("Created arrow arrow by request; " + arrowServerID);
         }
     }

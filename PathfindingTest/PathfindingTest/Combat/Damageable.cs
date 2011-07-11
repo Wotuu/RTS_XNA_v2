@@ -5,7 +5,7 @@ using System.Text;
 
 namespace PathfindingTest.Combat
 {
-    interface Damageable
+    public interface Damageable
     {
         void OnDamage(DamageEvent e);
     }

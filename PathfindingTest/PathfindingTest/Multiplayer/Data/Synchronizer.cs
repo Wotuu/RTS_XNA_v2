@@ -120,7 +120,7 @@ namespace PathfindingTest.Multiplayer.Data
                     damagePacket.SetHeader(UnitHeaders.GAME_UNIT_RANGED_DAMAGE);
                     damagePacket.AddInt(arrow.multiplayerData.serverID);
                     damagePacket.AddInt(e.source.multiplayerData.serverID);
-                    damagePacket.AddInt(e.target.multiplayerData.serverID);
+                    //damagePacket.AddInt(e.target.multiplayerData.serverID);
                     GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
                     Console.Out.WriteLine("Sent a projectile damage event!");
                 }
@@ -130,7 +130,7 @@ namespace PathfindingTest.Multiplayer.Data
                     damagePacket.SetHeader(UnitHeaders.GAME_UNIT_MELEE_DAMAGE);
                     damagePacket.AddInt(EncodeMeleeSwing(swing.type));
                     damagePacket.AddInt(e.source.multiplayerData.serverID);
-                    damagePacket.AddInt(e.target.multiplayerData.serverID);
+                    //damagePacket.AddInt(e.target.multiplayerData.serverID);
                     GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
                 }
 
@@ -148,7 +148,7 @@ namespace PathfindingTest.Multiplayer.Data
                     Packet newArrowPacket = new Packet(UnitHeaders.GAME_UNIT_RANGED_SHOT);
                     newArrowPacket.AddInt(toSync.multiplayerData.serverID);
                     newArrowPacket.AddInt(toSync.parent.multiplayerData.serverID);
-                    newArrowPacket.AddInt(toSync.target.multiplayerData.serverID);
+                    //newArrowPacket.AddInt(toSync.target.multiplayerData.serverID);
 
                     Console.Out.WriteLine("Sending existance of arrow " + toSync.multiplayerData.serverID);
                     GameServerConnectionManager.GetInstance().SendPacket(newArrowPacket);

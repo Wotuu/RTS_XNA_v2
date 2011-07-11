@@ -15,10 +15,11 @@ using System.Diagnostics;
 using PathfindingTest.Units.Stores;
 using PathfindingTest.Multiplayer.Data;
 using SocketLibrary.Protocol;
+using PathfindingTest.Combat;
 
 namespace PathfindingTest.Buildings
 {
-    public abstract class Building
+    public abstract class Building : Damageable
     {
 
         public Player p { get; set; }
@@ -39,6 +40,7 @@ namespace PathfindingTest.Buildings
         public Boolean mouseOver { get; set; }
         public Boolean canPlace { get; set; }
         public Boolean constructionStarted { get; set; }
+        public Boolean isDestroyed = false;
         public State state { get; set; }
 
         public LinkedList<ProductionUnit> productionQueue { get; set; }
@@ -422,6 +424,7 @@ namespace PathfindingTest.Buildings
         /// </summary>
         public void Dispose()
         {
+            this.isDestroyed = true;
             productionQueue = null;
             p.buildings.Remove(this);
             if (this.mesh != null) mesh.Reverse();
@@ -490,6 +493,15 @@ namespace PathfindingTest.Buildings
             else
             {
                 this.state = State.Preview;
+            }
+        }
+
+        public void OnDamage(DamageEvent e)
+        {
+            this.currentHealth -= e.damageDone;
+            if (this.currentHealth <= 0 && !this.isDestroyed)
+            {
+                this.Dispose();
             }
         }
     }

@@ -40,7 +40,7 @@ namespace PathfindingTest.Units.Melee
                     UpdateDefense();
                 }
 
-                if (Game1.GetInstance().frames % 4 == 0 && unitToStalk != null)
+                if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
                 {
                     TryToSwing();
                 }
@@ -54,13 +54,16 @@ namespace PathfindingTest.Units.Melee
         /// <summary>
         /// Attempt to swing the weapon!
         /// </summary>
-        public override void Swing()
+        public override void Swing(Damageable target)
         {
-            AggroEvent e = new AggroEvent(this, unitToStalk, true);
-            unitToStalk.OnAggroRecieved(e);
-            this.OnAggro(e);
-            DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), unitToStalk, this);
-            unitToStalk.OnDamage(dmgEvent);
+            if (target is Unit)
+            {
+                AggroEvent e = new AggroEvent(this, target, true);
+                ((Unit)target).OnAggroRecieved(e);
+                this.OnAggro(e);
+            }
+            DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), target, this);
+            target.OnDamage(dmgEvent);
             this.fireCooldown = this.rateOfFire;
 
             // We already know that this unit is local

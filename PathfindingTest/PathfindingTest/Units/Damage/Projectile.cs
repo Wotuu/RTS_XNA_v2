@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using PathfindingTest.Combat;
 using PathfindingTest.Multiplayer.Data;
+using PathfindingTest.Buildings;
 
 namespace PathfindingTest.Units.Projectiles
 {
@@ -33,7 +34,7 @@ namespace PathfindingTest.Units.Projectiles
         public ProjectileMultiplayerData multiplayerData { get; set; }
 
 
-        public Projectile(Unit parent, Unit target, DamageEvent.DamageType type, float movementSpeed, int maxRange, int baseDamage)
+        public Projectile(Unit parent, Damageable target, DamageEvent.DamageType type, float movementSpeed, int maxRange, int baseDamage)
         {
             this.parent = (Bowman)parent;
             this.x = parent.x;
@@ -47,13 +48,20 @@ namespace PathfindingTest.Units.Projectiles
             this.maxRange = maxRange;
             this.baseDamage = baseDamage;
 
-            this.waypoint = Util.GetPointOnCircle(parent.GetLocation(), maxRange,
-                Util.GetHypoteneuseAngleDegrees(parent.GetLocation(), target.GetLocation()));
-
-            int targetX = (int)target.x;
-            int targetY = (int)target.y;
-
-            SetMoveToTarget(targetX, targetY);
+            if (target is Unit)
+            {
+                int targetX = (int)((Unit)target).x;
+                int targetY = (int)((Unit)target).y;
+                this.waypoint = new Point(targetX, targetY);
+                SetMoveToTarget(targetX, targetY);
+            }
+            else
+            {
+                int targetX = (int)((Building)target).x;
+                int targetY = (int)((Building)target).y;
+                this.waypoint = new Point(targetX, targetY);
+                SetMoveToTarget(targetX, targetY);
+            }
 
             if (Game1.GetInstance().IsMultiplayerGame())
             {
@@ -157,8 +165,22 @@ namespace PathfindingTest.Units.Projectiles
                         (float)(Util.GetHypoteneuseAngleDegrees(this.GetLocation(), this.waypoint)))) ||*/
                 Math.Abs(x - waypoint.X) < movementSpeed && Math.Abs(y - waypoint.Y) < movementSpeed)
             {
-                // Console.Out.WriteLine("Projectile went out of range.");
-                this.Dispose();
+                //Console.Out.WriteLine("Projectile gotten to waypoint.");
+                if (target is Unit && !((Unit)target).isDead)
+                {
+                    this.waypoint = new Point((int)((Unit)target).x, (int)((Unit)target).y);
+                    SetMoveToTarget((int)((Unit)target).x, (int)((Unit)target).y);
+                }
+                else if (target is Building && !((Building)target).isDestroyed)
+                {
+                    this.waypoint = new Point((int)((Building)target).x, (int)((Building)target).y);
+                    SetMoveToTarget((int)((Building)target).x, (int)((Building)target).y);
+                }
+                else
+                {
+                    Console.WriteLine("target of unknown type, or dead");
+                    this.Dispose();
+                }
             }
             else
             {
@@ -170,33 +192,59 @@ namespace PathfindingTest.Units.Projectiles
         {
             // Collision events are handled by the owning player, including arrow remove events
             if (Game1.GetInstance().IsMultiplayerGame() &&
-                ( this.parent.player != Game1.CURRENT_PLAYER )) return;
+                (this.parent.player != Game1.CURRENT_PLAYER)) return;
 
             Point collisionLocation = Util.GetPointOnCircle(this.GetLocation(), this.texture.Height / 2,
                         (float)(Util.GetHypoteneuseAngleDegrees(this.GetLocation(), this.waypoint)));
             foreach (Player player in Game1.GetInstance().players)
             {
-                foreach (Unit unit in player.units)
+                if (player.alliance.members.Contains(parent.player)) continue;
+                else
                 {
-                    // Projectiles don't hit friendly targets
-                    if (unit.player.alliance.members.Contains(this.parent.player)) continue;
-                    //if (this.waypoints.Count != 0)
-                    //{
-                    // Check if the units are close enough
-                    if (unit.DefineRectangle().Contains(
-                        // Front of projectile!
-                        collisionLocation))
+                    if (target is Unit)
                     {
-                        DamageEvent e = new DamageEvent(this, unit, parent);
-                        unit.OnDamage(e);
-                        if( Game1.GetInstance().IsMultiplayerGame() ) Synchronizer.GetInstance().QueueDamageEvent(e);
-                        // Console.Out.WriteLine("Projectile had an impact!");
-                        this.Dispose();
-                        return;
+                        foreach (Unit unit in player.units)
+                        {
+                            // Check if the units are close enough
+                            if (unit.DefineRectangle().Contains(
+                                // Front of projectile!
+                                collisionLocation))
+                            {
+                                Hit();
+                            }
+                        }
+                    }
+                    else if (target is Building)
+                    {
+                        foreach (Building building in player.buildings)
+                        {
+                            if (building.DefineRectangle().Contains(
+                                // Front of projectile!
+                                collisionLocation))
+                            {
+                                Hit();
+                            }
+                        }
                     }
                     //}
                 }
             }
+        }
+
+        public void Hit()
+        {
+            Console.WriteLine("Target has been hit!");
+            DamageEvent e = new DamageEvent(this, target, parent);
+            target.OnDamage(e);
+            if (Game1.GetInstance().IsMultiplayerGame())
+            {
+                Synchronizer.GetInstance().QueueDamageEvent(e);
+            }
+            else
+            {
+                this.Dispose();
+            }
+            return;
         }
 
         internal abstract void Draw(SpriteBatch sb);
@@ -211,7 +259,7 @@ namespace PathfindingTest.Units.Projectiles
         /// </summary>
         public void Dispose()
         {
-            this.parent.projectiles.Remove(this);
+            this.parent.player.arrowManager.RemoveProjectile(this);
             this.disposed = true;
             this.x = -20;
             this.y = -20;
@@ -219,7 +267,7 @@ namespace PathfindingTest.Units.Projectiles
 
             if (Game1.GetInstance().IsMultiplayerGame())
             {
-                Console.Out.WriteLine("Disposing projectile " + this.multiplayerData.serverID);
+                Console.Out.WriteLine("Disposing projectile");
             }
         }
     }
