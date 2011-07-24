@@ -34,6 +34,8 @@
             this.fIleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.newMapToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openTilesetToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.loadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.PnlPaletteContainer = new System.Windows.Forms.Panel();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.BtnShowGrid = new System.Windows.Forms.ToolStripButton();
@@ -48,9 +50,12 @@
             this.BtnFill = new System.Windows.Forms.ToolStripButton();
             this.BtnErase = new System.Windows.Forms.ToolStripButton();
             this.BtnMarqueeerase = new System.Windows.Forms.ToolStripButton();
-            this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
             this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.BtnDrawCollision = new System.Windows.Forms.ToolStripButton();
+            this.BtnEraseCollision = new System.Windows.Forms.ToolStripButton();
+            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.TBCollisionSize = new System.Windows.Forms.ToolStripTextBox();
+            this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -69,7 +74,9 @@
             // 
             this.fIleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newMapToolStripMenuItem,
-            this.openTilesetToolStripMenuItem});
+            this.openTilesetToolStripMenuItem,
+            this.saveToolStripMenuItem,
+            this.loadToolStripMenuItem});
             this.fIleToolStripMenuItem.Name = "fIleToolStripMenuItem";
             this.fIleToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
             this.fIleToolStripMenuItem.Text = "File";
@@ -77,16 +84,30 @@
             // newMapToolStripMenuItem
             // 
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.newMapToolStripMenuItem_Click);
             // 
             // openTilesetToolStripMenuItem
             // 
             this.openTilesetToolStripMenuItem.Name = "openTilesetToolStripMenuItem";
-            this.openTilesetToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
+            this.openTilesetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.openTilesetToolStripMenuItem.Text = "Open Tileset";
             this.openTilesetToolStripMenuItem.Click += new System.EventHandler(this.openTilesetToolStripMenuItem_Click);
+            // 
+            // saveToolStripMenuItem
+            // 
+            this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Text = "Save";
+            this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
+            // 
+            // loadToolStripMenuItem
+            // 
+            this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadToolStripMenuItem.Text = "Load";
+            this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
             // PnlPaletteContainer
             // 
@@ -111,7 +132,10 @@
             this.BtnErase,
             this.BtnMarqueeerase,
             this.toolStripSeparator3,
-            this.BtnDrawCollision});
+            this.BtnDrawCollision,
+            this.BtnEraseCollision,
+            this.toolStripLabel1,
+            this.TBCollisionSize});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1264, 25);
@@ -225,14 +249,6 @@
             this.BtnMarqueeerase.Text = "Marquee Eraser";
             this.BtnMarqueeerase.Click += new System.EventHandler(this.BtnMarqueeerase_Click);
             // 
-            // tileMapDisplay1
-            // 
-            this.tileMapDisplay1.Location = new System.Drawing.Point(12, 55);
-            this.tileMapDisplay1.Name = "tileMapDisplay1";
-            this.tileMapDisplay1.Size = new System.Drawing.Size(800, 640);
-            this.tileMapDisplay1.TabIndex = 0;
-            this.tileMapDisplay1.Text = "tileMapDisplay1";
-            // 
             // toolStripSeparator3
             // 
             this.toolStripSeparator3.Name = "toolStripSeparator3";
@@ -248,6 +264,37 @@
             this.BtnDrawCollision.Text = "toolStripButton1";
             this.BtnDrawCollision.ToolTipText = "Draw Collision";
             this.BtnDrawCollision.Click += new System.EventHandler(this.BtnDrawCollision_Click);
+            // 
+            // BtnEraseCollision
+            // 
+            this.BtnEraseCollision.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.BtnEraseCollision.Image = ((System.Drawing.Image)(resources.GetObject("BtnEraseCollision.Image")));
+            this.BtnEraseCollision.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.BtnEraseCollision.Name = "BtnEraseCollision";
+            this.BtnEraseCollision.Size = new System.Drawing.Size(23, 22);
+            this.BtnEraseCollision.Text = "Erase Collision";
+            this.BtnEraseCollision.Click += new System.EventHandler(this.BtnEraseCollision_Click);
+            // 
+            // toolStripLabel1
+            // 
+            this.toolStripLabel1.Name = "toolStripLabel1";
+            this.toolStripLabel1.Size = new System.Drawing.Size(79, 22);
+            this.toolStripLabel1.Text = "Collision Size:";
+            // 
+            // TBCollisionSize
+            // 
+            this.TBCollisionSize.Name = "TBCollisionSize";
+            this.TBCollisionSize.Size = new System.Drawing.Size(25, 25);
+            this.TBCollisionSize.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.TBCollisionSize_KeyPress);
+            this.TBCollisionSize.TextChanged += new System.EventHandler(this.TBCollisionSize_TextChanged);
+            // 
+            // tileMapDisplay1
+            // 
+            this.tileMapDisplay1.Location = new System.Drawing.Point(12, 55);
+            this.tileMapDisplay1.Name = "tileMapDisplay1";
+            this.tileMapDisplay1.Size = new System.Drawing.Size(800, 640);
+            this.tileMapDisplay1.TabIndex = 0;
+            this.tileMapDisplay1.Text = "tileMapDisplay1";
             // 
             // Form1
             // 
@@ -293,6 +340,11 @@
         private System.Windows.Forms.ToolStripButton BtnFill;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripButton BtnDrawCollision;
+        private System.Windows.Forms.ToolStripButton BtnEraseCollision;
+        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private System.Windows.Forms.ToolStripTextBox TBCollisionSize;
+        private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
     }
 }
 

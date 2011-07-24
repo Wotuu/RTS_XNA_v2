@@ -59,6 +59,8 @@ namespace MapEditor
         int mouseX;
         int mouseY;
 
+        int collisionsize = 5;
+
 
         enum Brush
         {
@@ -67,7 +69,8 @@ namespace MapEditor
             painterase = 3,
             Marqueeerase = 4,
             Fill = 5,
-            CollisionPaint = 6
+            CollisionPaint = 6,
+            EraseCollision = 7
         }
         public struct MarqueeData
         {
@@ -113,7 +116,8 @@ namespace MapEditor
 
             tileMapDisplay1.MouseUp +=
                  new MouseEventHandler(tileDisplay1_MouseUp);
-            
+
+            TBCollisionSize.Text = collisionsize.ToString();
             
         }
         #endregion
@@ -136,31 +140,23 @@ namespace MapEditor
             stream2.Dispose();
 
             EraseTexture = Util.GetCustomTexture2D(spriteBatch, Color.Black);
+            loadtileset();
         }
         void tileDisplay1_OnDraw(object sender, EventArgs e)
         {
 
             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             long ticks = DateTime.UtcNow.Ticks;
-
             Render();
             Logic();
             spriteBatch.End();
-
-
-
             long runtime = (DateTime.UtcNow.Ticks - ticks) / 10000;
 
             if (runtime < (1000 / 60))
             {
-
                 int sleeptime = (1000 / 60) - (int)runtime;
                 Thread.Sleep(sleeptime);
             }
-
-
-
-
         }
 
         private void Logic()
@@ -204,26 +200,7 @@ namespace MapEditor
                     camera.Position.Y = MathHelper.Clamp(camera.Position.Y + 5, 0, (tileMap.MapHeight - (tileMapDisplay1.Height / Engine.TileHeight)) * Engine.TileHeight);
                 }
 
-                // DRAW TEXTURE
-
-                //if (isLeftMouseDown)
-                //{
-                //    //Marquee 
-
-
-                //    //Texture ID opvragen
-                //    for (int y = 0; y < selectedrectangle.Height / Engine.TileHeight; y++)
-                //    {
-                //        for (int x = 0; x < selectedrectangle.Width / Engine.TileWidth; x++)
-                //        {
-                //            currentLayer.SetTile(
-                //            tileX + x,
-                //            tileY + y,
-                //            tileset.GetTileID(new Rectangle(selectedrectangle.X + (x * Engine.TileWidth), selectedrectangle.Y + (y * Engine.TileHeight), Engine.TileWidth, Engine.TileHeight), tilemaptexture));
-
-                //        }
-                //    }
-                //}
+       
 
             }
         }
@@ -252,7 +229,7 @@ namespace MapEditor
                 //CollisionmapDrawn
 
                 
-                CollisionMap.tree.Draw(spriteBatch);
+               
                 //spriteBatch.Draw(CollisionMap, new Rectangle(0, 0, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight), Color.White);
              
                 
@@ -349,6 +326,9 @@ namespace MapEditor
                     spriteBatch.Draw(tilemaptexture, dest, selectedrectangle, new Color(255, 255, 255, 200));
                 }
             }
+            //Collisionmap
+
+            CollisionMap.tree.Draw(spriteBatch);
 
             //SELECTION CURSOR RED
             spriteBatch.Draw(cursor,
@@ -392,15 +372,22 @@ namespace MapEditor
                 tilepalette = new TilePalette(this);
                 PnlPaletteContainer.Controls.Add(tilepalette);
                 tilepalette.SetImage(TileSetImagepath);
-
-
-
-
             }
+        }
 
+        private void loadtileset()
+        {
+            TileSetImagepath = "./Tilesets/StandardTileSet.png";
+                FileStream stream = new FileStream(TileSetImagepath, FileMode.Open);
+            tilemaptexture = Texture2D.FromStream(GraphicsDevice, stream);
+            stream.Close();
+            stream.Dispose();
+            tileset = new Tileset(tilemaptexture);
 
-
-
+            //Image inladen in panel / palette
+            tilepalette = new TilePalette(this);
+            PnlPaletteContainer.Controls.Add(tilepalette);
+            tilepalette.SetImage(TileSetImagepath);
         }
 
         private void createNewMap()
@@ -418,6 +405,38 @@ namespace MapEditor
             mapform.ShowDialog();
             createNewMap();
         }
+
+        private void saveToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SaveFileDialog savefile = new SaveFileDialog();
+            savefile.InitialDirectory = "../Tilesets";
+            savefile.Filter = "XML Document (*.xml)|*.xml";
+            savefile.Title = "Save map";
+            if (savefile.ShowDialog() == DialogResult.OK)
+            {
+                tileMap.savemap(savefile.FileName);
+            }
+            
+        }
+
+        private void loadToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog openfile = new OpenFileDialog();
+            //savefile.InitialDirectory = "../Tilesets";
+            openfile.Filter = "XML Document (*.xml)|*.xml";
+            openfile.Title = "Save map";
+            
+            if (openfile.ShowDialog() == DialogResult.OK)
+            {
+                tileMap = new TileMap.TileMap(1, 1);
+
+               tileMap = tileMap.opentilemap(openfile.FileName);
+               CollisionMap = new CollisionMap(GraphicsDevice, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight, true, 4);
+               CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
+               currentLayer = tileMap.layers[0];
+            }
+        }
+
         #endregion
 
         #region Mouse Handlers
@@ -444,7 +463,7 @@ namespace MapEditor
             {
                 //final location opslaan
                 MarqueeSelection.FinalLocation = new System.Drawing.Point((int)e.X, (int)e.Y);
-                if (currentbrush == Brush.Paint || currentbrush == Brush.CollisionPaint)
+                if (currentbrush == Brush.Paint || currentbrush == Brush.CollisionPaint || currentbrush == Brush.EraseCollision )
                 {
                     tileDisplay1_MouseDown(sender, e);
                 }
@@ -620,6 +639,17 @@ namespace MapEditor
             return new System.Drawing.Rectangle(point, new System.Drawing.Size(Engine.TileHeight, Engine.TileWidth));
         }
         #endregion
+
+       
+
+      
+       
+
+       
+
+ 
+
+
 
         
 

@@ -121,7 +121,7 @@ namespace AStarCollisionMap.Collision
             for (int i = 0; i < quadList.Count; i++)
             {
                 Quad quad = quadList.ElementAt(i);
-                if (quad != null && !affectedQuads.Contains(quad)) affectedQuads.AddLast(quad);
+                if (!affectedQuads.Contains(quad)) affectedQuads.AddLast(quad);
             }
 
             // Update each of the quads.
@@ -378,9 +378,14 @@ namespace AStarCollisionMap.Collision
             Init(width, height, collisionMapPath, collisionMapName, drawMode, quadDepth);
         }
 
+<<<<<<< Updated upstream
         public CollisionMap(GraphicsDevice graphicsDevice, int width, int height,
             Boolean drawMode, int quadDepth)
+=======
+        public CollisionMap(GraphicsDevice graphicsDevice, int width, int height,bool drawMode)
+>>>>>>> Stashed changes
         {
+            this.drawMode = drawMode;
             this.graphicsDevice = graphicsDevice;
             Init(width, height, "", "", drawMode, quadDepth);
         }
@@ -398,7 +403,11 @@ namespace AStarCollisionMap.Collision
             this.dataLength = width * height;
 
             this.tree = new QuadRoot(new Rectangle(0, 0, width, height), this);
+<<<<<<< Updated upstream
             this.tree.CreateTree(quadDepth);
+=======
+            this.tree.CreateTree(4);
+>>>>>>> Stashed changes
         }
     }
 }

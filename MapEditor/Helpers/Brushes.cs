@@ -23,6 +23,7 @@ namespace MapEditor
             BtnMarqueePaint.Checked = false;
             BtnFill.Checked = false;
             BtnDrawCollision.Checked = false;
+            BtnEraseCollision.Checked = false;
         }
 
         private void BtnMarqueePaint_Click(object sender, EventArgs e)
@@ -34,6 +35,7 @@ namespace MapEditor
             BtnMarqueePaint.Checked = true;
             BtnFill.Checked = false;
             BtnDrawCollision.Checked = false;
+            BtnEraseCollision.Checked = false;
         }
 
         private void BtnErase_Click(object sender, EventArgs e)
@@ -45,6 +47,7 @@ namespace MapEditor
             BtnMarqueePaint.Checked = false;
             BtnFill.Checked = false;
             BtnDrawCollision.Checked = false;
+            BtnEraseCollision.Checked = false;
         }
 
         private void BtnMarqueeerase_Click(object sender, EventArgs e)
@@ -56,6 +59,7 @@ namespace MapEditor
             BtnMarqueePaint.Checked = false;
             BtnFill.Checked = false;
             BtnDrawCollision.Checked = false;
+            BtnEraseCollision.Checked = false;
         }
 
         private void BtnFill_Click(object sender, EventArgs e)
@@ -67,6 +71,7 @@ namespace MapEditor
             BtnMarqueePaint.Checked = false;
             BtnFill.Checked = true;
             BtnDrawCollision.Checked = false;
+            BtnEraseCollision.Checked = false;
         }
 
         private void BtnDrawCollision_Click(object sender, EventArgs e)
@@ -77,9 +82,42 @@ namespace MapEditor
             BtnMarqueeerase.Checked = false;
             BtnMarqueePaint.Checked = false;
             BtnFill.Checked = false;
-            BtnDrawCollision.Checked = false;
+            BtnDrawCollision.Checked = true;
+            BtnEraseCollision.Checked = false;
         }
 
+
+        private void BtnEraseCollision_Click(object sender, EventArgs e)
+        {
+            currentbrush = Brush.EraseCollision;
+            BtnPaint.Checked = false;
+            BtnErase.Checked = false;
+            BtnMarqueeerase.Checked = false;
+            BtnMarqueePaint.Checked = false;
+            BtnFill.Checked = false;
+            BtnDrawCollision.Checked = false;
+            BtnEraseCollision.Checked = true;
+        }
+
+        private void TBCollisionSize_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (!System.Text.RegularExpressions.Regex.IsMatch(e.KeyChar.ToString(), "\\d+") && e.KeyChar != (char)System.Windows.Forms.Keys.Back)
+                e.Handled = true;
+        }
+
+        private void TBCollisionSize_TextChanged(object sender, EventArgs e)
+        {
+            if (TBCollisionSize.Text.Equals(""))
+            {
+                TBCollisionSize.Text = 1 + "";
+            }
+            if (int.Parse(TBCollisionSize.Text) < 5)
+            {
+                TBCollisionSize.Text = 1 + "";
+            }
+
+            collisionsize = int.Parse(TBCollisionSize.Text);
+        }
         private void DoBrushLogic(object sender, MouseEventArgs e)
         {
             switch (currentbrush)
@@ -101,6 +139,9 @@ namespace MapEditor
                     break;
                 case Brush.CollisionPaint:
                     CollisionPaint(sender, e);
+                    break;
+                case Brush.EraseCollision:
+                    EraseCollision(sender, e);
                     break;
                    
 
@@ -244,6 +285,7 @@ namespace MapEditor
 
         private void CollisionPaint(object sender, MouseEventArgs e)
         {
+
             //Rectangle colrect = new Rectangle(e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, 10, 10);
             //CollisionMap.GetData<int>(CollisionData);
             //GraphicsDevice.Textures[0] = null; 
@@ -256,12 +298,15 @@ namespace MapEditor
             //}
             ////Texture2D copyfromtexture = new  Texture2D(GraphicsDevice, CollisionMap.Width, CollisionMap.Height);
             //CollisionMap.SetData(CollisionData);
+            Rectangle colrect = new Rectangle(e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, collisionsize, collisionsize);
+            CollisionMap.UpdateCollisionMap(colrect, true);
 
+        }
 
-
-
-           // CollisionMap = copyfromtexture;
-           
+        private void EraseCollision(object sender, MouseEventArgs e)
+        {
+            Rectangle colrect = new Rectangle(e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, collisionsize, collisionsize);
+            CollisionMap.UpdateCollisionMap(colrect, false);
         }
 
         /// <summary>
