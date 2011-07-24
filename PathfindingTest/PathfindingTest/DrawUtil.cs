@@ -111,6 +111,14 @@ namespace PathfindingTest
                 width, z);
         }
 
+        public static Color[] TextureToArray(Texture2D texture)
+        {
+            Color[] colors1D = new Color[texture.Width * texture.Height];
+            texture.GetData(colors1D);
+
+            return colors1D;
+        }
+
         public static Color[,] TextureTo2DArray(Texture2D texture)
         {
             Color[] colors1D = new Color[texture.Width * texture.Height];

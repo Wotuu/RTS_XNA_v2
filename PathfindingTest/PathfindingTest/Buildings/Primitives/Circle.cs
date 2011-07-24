@@ -59,11 +59,6 @@ namespace PathfindingTest.Primitives
             this.px = drawOn.x - radius + (drawOn.texture.Width / 2);
             this.py = drawOn.y - radius + (drawOn.texture.Height / 2);
             sb.Draw(outline, new Rectangle((int)px, (int)py, outerRadius, outerRadius), color);
-
-            foreach (Circle circle in surface)
-            {
-                circle.Draw(sb);
-            }
         }
 
         /// <summary>
@@ -91,6 +86,24 @@ namespace PathfindingTest.Primitives
             {
                 circle.UpdatePosition();
             }
+        }
+
+        public Boolean Intersects(Circle oc)
+        {
+            Point p1 = this.GetCenter();
+            Point p2 = oc.GetCenter();
+            double deltaX = Math.Abs(p1.X - p2.X);
+            double deltaY = Math.Abs(p1.Y - p2.Y);
+
+            double distance = Math.Sqrt(Math.Pow(deltaX, 2) + Math.Pow(deltaY, 2));
+            double distanceSB = this.radius + oc.radius;
+
+            if (distance < distanceSB)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }

@@ -350,6 +350,21 @@ namespace PathfindingTest.UI
                     {
                         Engineer temp = null;
 
+                        if (b.type == Building.Type.Resources)
+                        {
+                            ResourceGather brg = (ResourceGather)b;
+                            foreach (ResourceGather rg in player.buildings)
+                            {
+                                if (brg != rg)
+                                {
+                                    if (brg.resourceRange.Intersects(rg.resourceRange))
+                                    {
+                                        return;
+                                    }
+                                }
+                            }
+                        }
+
                         foreach (Unit u in player.currentSelection.units)
                         {
                             if (u.type == Unit.Type.Engineer)
