@@ -30,7 +30,7 @@ namespace XNAInterfaceComponents.AbstractComponents
         /// </summary>
         /// <param name="sb">The spritebatch to draw on.</param>
         /// <param name="z">The Z, where 0 is front, and 1 is back</param>
-        public void Draw(SpriteBatch sb, float z)
+        public override void Draw(SpriteBatch sb)
         {
             // Return if this component has no parent, or if it isn't visible
             if (this.parent == null || this.visible == false) return;
@@ -45,9 +45,9 @@ namespace XNAInterfaceComponents.AbstractComponents
 
             // Get the location on the screen on which to draw this button.
             Rectangle drawRect = this.GetScreenBounds();
-            if (this.parent is XNADialog) Console.Out.WriteLine(z - this.GetDrawDepthOffset());
+            // if (this.parent is XNADialog) Console.Out.WriteLine(z);
             // Draw the button
-            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0,0), SpriteEffects.None, z - this.GetDrawDepthOffset());
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0, 0), SpriteEffects.None, this.z - 0.001f);
             // Draw the border
             if (this.border != null) border.Draw(sb);
             // Draw the text on the button
@@ -57,14 +57,10 @@ namespace XNAInterfaceComponents.AbstractComponents
                 sb.DrawString(font, this.text,
                     new Vector2(drawRect.X + (this.bounds.Width / 2) - (fontDimensions.X / 2),
                        drawRect.Y + (this.bounds.Height / 2) - (fontDimensions.Y / 2)), this.fontColor, 0,
-                       new Vector2(0, 0), 1, SpriteEffects.None, z - this.GetDrawDepthOffset() - 0.01f);
+                       new Vector2(0, 0), 1, SpriteEffects.None, this.z - 0.002f);
             }
         }
 
-        public override void Draw(SpriteBatch sb)
-        {
-            this.Draw(sb, 1f);
-        }
 
         public override void Update()
         {

@@ -19,7 +19,13 @@ namespace XNAInterfaceComponents.AbstractComponents
             this.parent = parent;
             this.children = new LinkedList<Component>();
             if (parent == null) ComponentManager.GetInstance().QueueLoad(this);
-            else this.parent.children.AddLast(this);
+            else
+            {
+                this.parent.children.AddLast(this);
+                this.z = parent.z - this.GetDrawDepthOffset();
+            }
+
+
         }
 
         #region Child functions

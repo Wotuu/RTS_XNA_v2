@@ -21,8 +21,7 @@ namespace XNAInterfaceComponents.ParentComponents
         public SpriteFont font { get; set; }
 
         public XNADialog()
-            : base(null,
-                new Rectangle())
+            : base(null, new Rectangle())
         {
             this.font = ChildComponent.DEFAULT_FONT;
             this.padding = new Padding(5, 5, 5, 5);
@@ -48,7 +47,7 @@ namespace XNAInterfaceComponents.ParentComponents
         public override int GetDepth()
         {
             // Console.Out.WriteLine("Blaat");
-            return 50;
+            return 20;
         }
 
         /// <summary>

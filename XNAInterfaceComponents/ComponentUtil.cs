@@ -67,7 +67,7 @@ namespace XNAInterfaceComponents
         /// <param name="start">Startpoint</param>
         /// <param name="end">Endpoint</param>
         /// <param name="c">The color of the line</param>
-        public static void DrawLine(SpriteBatch batch, Point start, Point end, Color c, int width)
+        public static void DrawLine(SpriteBatch batch, Point start, Point end, Color c, int width, float z)
         {
             if (c.A == 0) return;
             if (end.X < start.X)
@@ -80,7 +80,7 @@ namespace XNAInterfaceComponents
             double hypoteneuse = ComponentUtil.GetHypoteneuseLength(start, end);
             float angle = ComponentUtil.GetHypoteneuseAngleRad(start, end);
             batch.Draw(lineTexture, new Rectangle(start.X, start.Y, (int)Math.Round(hypoteneuse), width), null, c, angle,
-                new Vector2(0, 0), SpriteEffects.None, 0);
+                new Vector2(0, 0), SpriteEffects.None, z);
         }
 
         /// <summary>
@@ -90,59 +90,59 @@ namespace XNAInterfaceComponents
         /// <param name="rect">The rectangle to draw on.</param>
         /// <param name="width">The width of the border.</param>
         /// <param name="c">The Color</param>
-        public static void DrawCross(SpriteBatch batch, Rectangle rect, int width, Color c)
+        public static void DrawCross(SpriteBatch batch, Rectangle rect, int width, Color c, float z)
         {
             // Top left to bottom left
             DrawLine(batch,
                 new Point(rect.Left, rect.Top),
                 new Point(rect.Left, rect.Bottom),
                 c,
-                width);
+                width, z);
             // Top left to top right
             DrawLine(batch,
                 new Point(rect.Left, rect.Top),
                 new Point(rect.Right, rect.Top),
                 c,
-                width);
+                width, z);
             // Top right to bottom right
             DrawLine(batch,
                 new Point(rect.Right, rect.Top),
                 new Point(rect.Right, rect.Bottom),
                 c,
-                width);
+                width, z);
             // Bottom right to bottom left
             DrawLine(batch,
                 new Point(rect.Right, rect.Bottom),
                 new Point(rect.Left, rect.Bottom),
                 c,
-                width);
+                width, z);
         }
 
-        public static void DrawClearRectangle(SpriteBatch batch, Rectangle rect, int width, Color c)
+        public static void DrawClearRectangle(SpriteBatch batch, Rectangle rect, int width, Color c, float z)
         {
             ComponentUtil.DrawLine(batch,
                 new Point(rect.Left, rect.Top),
                 new Point(rect.Left, rect.Bottom),
                 c,
-                width);
+                width, z);
             // Top left to top right
             ComponentUtil.DrawLine(batch,
                 new Point(rect.Left, rect.Top),
                 new Point(rect.Right, rect.Top),
                 c,
-                width);
+                width, z);
             // Top right to bottom right
             ComponentUtil.DrawLine(batch,
                 new Point(rect.Right, rect.Top),
                 new Point(rect.Right, rect.Bottom - 1),
                 c,
-                width);
+                width, z);
             // Bottom right to bottom left
             ComponentUtil.DrawLine(batch,
                 new Point(rect.Right, rect.Bottom - 1),
                 new Point(rect.Left, rect.Bottom - 1),
                 c,
-                width);
+                width, z);
         }
     }
 }

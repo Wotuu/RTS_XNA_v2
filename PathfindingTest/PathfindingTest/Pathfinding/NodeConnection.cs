@@ -26,7 +26,7 @@ namespace PathfindingTest.Pathfinding
 
         internal void Draw(SpriteBatch sb)
         {
-            DrawUtil.DrawLine(sb, this.conn.node1.GetLocation(), this.conn.node2.GetLocation(), this.drawColor, 1);
+            DrawUtil.DrawLine(sb, this.conn.node1.GetLocation(), this.conn.node2.GetLocation(), this.drawColor, 1, 1f);
             //sb.DrawString( game.font, 
             //    (int) Util.GetHypoteneuseLength( node1.GetLocation(), node2.GetLocation() ) + "", 
             //    new Vector2( lengthDrawOffset.X, lengthDrawOffset.Y ), this.drawColor );

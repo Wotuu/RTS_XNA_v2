@@ -62,7 +62,7 @@ namespace PathfindingTest.QuadTree
         {
             if (this.children == null)
             {
-                DrawUtil.DrawCross(sb, this.rectangle, this.tree.drawWidth, this.tree.drawColor);
+                DrawUtil.DrawCross(sb, this.rectangle, this.tree.drawWidth, this.tree.drawColor, 1f);
                 // Top left to bottom left
                 /*Game1.GetInstance().DrawLine(sb,
                     new Point(this.rectangle.Left, this.rectangle.Top),
@@ -94,12 +94,12 @@ namespace PathfindingTest.QuadTree
                         new Point(this.rectangle.Left, this.rectangle.Top),
                         new Point(this.rectangle.Right, this.rectangle.Bottom),
                         this.tree.highlightedColor,
-                        this.tree.drawWidth);
+                        this.tree.drawWidth, 1f);
                     DrawUtil.DrawLine(sb,
                         new Point(this.rectangle.Right, this.rectangle.Top),
                         new Point(this.rectangle.Left, this.rectangle.Bottom),
                         this.tree.highlightedColor,
-                        this.tree.drawWidth);
+                        this.tree.drawWidth, 1f);
                 }
                 return;
             }

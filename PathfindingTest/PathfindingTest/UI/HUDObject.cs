@@ -57,13 +57,15 @@ namespace PathfindingTest.UI
 
         internal void Draw(SpriteBatch sb)
         {
-            sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), color);
+            sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, color, 0f, 
+                Vector2.Zero, SpriteEffects.None, 0.0999f);
 
             if (DrawDetails())
             {
-                sb.Draw(details, this.DefineDetailsRectangle(), color);
-                sb.DrawString(sf, detailString, new Vector2(5, 657), Color.White);
-                sb.DrawString(sf, "Cost: " + costString, new Vector2(5, 751), Color.White);
+                sb.Draw(details, this.DefineDetailsRectangle(), null, color, 0f, Vector2.Zero, SpriteEffects.None, 0.0998f);
+                sb.DrawString(sf, detailString, new Vector2(5, 657), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0997f);
+                sb.DrawString(sf, "Cost: " + costString, new Vector2(5, 751), Color.White, 0f, Vector2.Zero, 
+                    1f, SpriteEffects.None, 0.0996f);
             }
         }
 

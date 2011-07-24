@@ -40,6 +40,8 @@ namespace PathfindingTest.Units
             this.collisionRadiusTexture = Game1.GetInstance().Content.Load<Texture2D>("Misc/patternPreview");
 
             // Console.Out.WriteLine("Constructed an engineer @ " + this.GetLocation() + " (" + x + ", " + y + ")");
+            this.halfTextureWidth = this.texture.Width / 2;
+            this.halfTextureHeight = this.texture.Height / 2;
 
             this.collisionRadius = texture.Width / 2;
         }
@@ -62,8 +64,9 @@ namespace PathfindingTest.Units
         {
                 //sb.Draw(this.collisionRadiusTexture,
                 //    new Rectangle((int)(x - collisionRadius), (int)(y - collisionRadius), 
-                //        (int)(collisionRadius * 2), (int)(collisionRadius * 2)), this.color);
-                sb.Draw(this.texture, new Vector2(x - (texture.Width / 2), y - (texture.Height / 2)), this.color);
+            //        (int)(collisionRadius * 2), (int)(collisionRadius * 2)), this.color);
+            sb.Draw(this.texture, new Rectangle((int)this.x - this.halfTextureWidth, (int)this.y - this.halfTextureHeight,
+                texture.Width, texture.Height), null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
 
                 /*if (this.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {

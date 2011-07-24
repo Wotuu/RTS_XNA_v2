@@ -25,6 +25,10 @@ namespace PathfindingTest.Units
         public Player player { get; set; }
         public float x { get; set; }
         public float y { get; set; }
+        public float z { get; set; }
+
+        public int halfTextureWidth { get; set; }
+        public int halfTextureHeight { get; set; }
 
         public Type type { get; set; }
         public Color color { get; set; }
@@ -470,6 +474,7 @@ namespace PathfindingTest.Units
             this.player = p;
             this.x = x;
             this.y = y;
+            this.z = 1f - this.player.units.Count * 0.0001f;
             this.movementSpeed = movementSpeed;
             this.attackRange = attackRange;
             this.aggroRange = aggroRange;

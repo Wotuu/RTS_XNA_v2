@@ -16,7 +16,6 @@ namespace XNAInterfaceComponents.ParentComponents
         private XNALabel label { get; set; }
         private String message { get; set; }
 
-
         public XNAButton button1 { get; set; }
         public XNAButton button2 { get; set; }
         public XNAButton button3 { get; set; }
@@ -117,16 +116,6 @@ namespace XNAInterfaceComponents.ParentComponents
             }
         }
 
-        private XNAMessageDialog(String message, DialogType type)
-        {
-            this.message = message;
-            this.type = type;
-            this.buttonWidth = 100;
-            this.buttonSpacing = 30;
-
-            this.DoLayout();
-        }
-
         /// <summary>
         /// Creates a new message dialog. Note that you have to add your button listeners to this pane for it to do something.
         /// </summary>
@@ -136,6 +125,16 @@ namespace XNAInterfaceComponents.ParentComponents
         public static XNAMessageDialog CreateDialog(String message, DialogType type)
         {
             return new XNAMessageDialog(message, type);
+        }
+
+        private XNAMessageDialog(String message, DialogType type)
+        {
+            this.message = message;
+            this.type = type;
+            this.buttonWidth = 100;
+            this.buttonSpacing = 30;
+
+            this.DoLayout();
         }
     }
 }

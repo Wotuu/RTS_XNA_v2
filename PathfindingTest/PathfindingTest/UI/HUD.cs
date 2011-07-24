@@ -200,7 +200,7 @@ namespace PathfindingTest.UI
         {
             if (draw)
             {
-                sb.Draw(hudTex, new Rectangle(0, 652, 1024, 116), color);
+                sb.Draw(hudTex, new Rectangle(0, 652, 1024, 116), null, color, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
             }
             else return;
 

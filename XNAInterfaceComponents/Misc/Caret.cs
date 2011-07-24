@@ -108,7 +108,7 @@ namespace XNAInterfaceComponents.Misc
                         drawLocation.Y + parent.padding.top + (int)(dimensions.Y * (this.row))),
                     new Point(drawLocation.X + parent.padding.left + (int)(dimensions.X),
                         drawLocation.Y + parent.padding.top + (int)(dimensions.Y * (this.row + 1))),
-                    this.color, width);
+                    this.color, width, parent.z - 0.01f);
             }
         }
     }

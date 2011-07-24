@@ -25,6 +25,8 @@ namespace XNAInterfaceComponents.Components
         public Boolean isMouseOver { get; set; }
         public Boolean isFocussed { get; set; }
 
+        public float z { get; set; }
+
         public Component(Rectangle bounds)
         {
             this.bounds = bounds;
@@ -32,6 +34,7 @@ namespace XNAInterfaceComponents.Components
             this.mouseOverColor = Color.Orange;
             this.visible = true;
             this.border = new Border(this, 1, Color.Black);
+            this.z = 1f - this.GetDrawDepthOffset();
         }
 
         /// <summary>
@@ -64,7 +67,7 @@ namespace XNAInterfaceComponents.Components
         /// <returns>The value, effectively this.GetDepth() * 0.01f;</returns>
         protected float GetDrawDepthOffset()
         {
-            return this.GetDepth() * 0.01f;
+            return (this.GetDepth() * 0.01f);
         }
 
         /// <summary>

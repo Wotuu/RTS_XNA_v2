@@ -27,6 +27,8 @@ namespace PathfindingTest.Units
             this.type = Type.Ranged;
 
             this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/bowman");
+            this.halfTextureWidth = this.texture.Width / 2;
+            this.halfTextureHeight = this.texture.Height / 2;
             // Console.Out.WriteLine("Constructed a bowman @ " + this.GetLocation() + " (" + x + ", " + y + ")");
         }
 
@@ -51,7 +53,9 @@ namespace PathfindingTest.Units
 
         internal override void Draw(SpriteBatch sb)
         {
-                sb.Draw(this.texture, new Vector2(x - (texture.Width / 2), y - (texture.Height / 2)), this.color);
+                sb.Draw(this.texture, new Rectangle((int)this.x - this.halfTextureWidth, (int)this.y - this.halfTextureHeight, 
+                    texture.Width, texture.Height), null, this.color, 0f, 
+                    Vector2.Zero, SpriteEffects.None, this.z);
 
                 /*if (this.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {

@@ -54,7 +54,7 @@ namespace XNAInterfaceComponents.ChildComponents
             Rectangle drawRect = this.GetScreenBounds();
 
             // Draw the background
-            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0, 0), SpriteEffects.None, 1f - this.GetDrawDepthOffset());
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0, new Vector2(0, 0), SpriteEffects.None, this.z);
             
             // Determine where the checkbox should go
             Rectangle checkBoxBounds = new Rectangle();
@@ -70,7 +70,7 @@ namespace XNAInterfaceComponents.ChildComponents
                 (int)this.checkBoxSize.X, (int)this.checkBoxSize.Y);
             }
             // Draw the outer line of the checkbox
-            ComponentUtil.DrawClearRectangle(sb, checkBoxBounds, 1, Color.Black);
+            ComponentUtil.DrawClearRectangle(sb, checkBoxBounds, 1, Color.Black, this.z);
             // Draw the cross, if selected
             if (this.selected)
             {
@@ -82,14 +82,14 @@ namespace XNAInterfaceComponents.ChildComponents
                 sb.DrawString(this.font, this.text,
                     new Vector2(drawRect.X + this.padding.left,
                         drawRect.Y + (drawRect.Height / 2) - (this.font.MeasureString(this.text).Y / 2)), 
-                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, this.z - 0.01f);
             }
             else if (this.textAlign == TextAlign.RIGHT)
             {
                 sb.DrawString(this.font, this.text,
                     new Vector2(drawRect.X + this.padding.left + this.checkBoxSize.X,
                         drawRect.Y + (drawRect.Height / 2) - (this.font.MeasureString(this.text).Y / 2)),
-                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, 1f - this.GetDrawDepthOffset() - 0.01f);
+                        this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, this.z - 0.01f);
             }
         }
 
@@ -99,11 +99,11 @@ namespace XNAInterfaceComponents.ChildComponents
                 new Point(checkBoxBounds.X + this.crossPadding, checkBoxBounds.Y + this.crossPadding),
                 new Point(checkBoxBounds.X + checkBoxBounds.Width - this.crossPadding,
                     checkBoxBounds.Y + checkBoxBounds.Height - this.crossPadding),
-                    Color.Blue, 1);
+                    Color.Blue, 1, this.z - 0.02f);
             ComponentUtil.DrawLine(sb,
                 new Point(checkBoxBounds.X + checkBoxBounds.Width - this.crossPadding, checkBoxBounds.Y + this.crossPadding),
                 new Point(checkBoxBounds.X + this.crossPadding, checkBoxBounds.Y + checkBoxBounds.Height - this.crossPadding),
-                Color.Blue, 1);
+                Color.Blue, 1, this.z - 0.02f);
         }
 
         public override void Update()

@@ -145,7 +145,7 @@ namespace XNAInterfaceComponents.ChildComponents
             // Get the location on the screen on which to draw this button.
             Rectangle drawRect = this.GetScreenBounds();
             // Draw the button
-            sb.Draw(clearTexture, drawRect, null, drawColor, 0f, new Vector2(0, 0), SpriteEffects.None, 1f - this.GetDrawDepthOffset());
+            sb.Draw(clearTexture, drawRect, null, drawColor, 0f, new Vector2(0, 0), SpriteEffects.None, this.z - 0.001f);
             // Draw the border
             if (this.border != null) border.Draw(sb);
 
@@ -164,7 +164,7 @@ namespace XNAInterfaceComponents.ChildComponents
             // Draw scrollbar
             if (drawScrollbar)
             {
-                ComponentUtil.DrawClearRectangle(sb, this.scrollbarBounds, 1, Color.Pink);
+                ComponentUtil.DrawClearRectangle(sb, this.scrollbarBounds, 1, Color.Pink, this.z - 0.002f);
                 sb.Draw(this.clearTexture, this.scrollbarButtonBounds, Color.Blue);
             }
         }

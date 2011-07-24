@@ -28,12 +28,14 @@ namespace XNAInterfaceComponents.AbstractComponents
             : base(bounds)
         {
             this.parent = parent;
-            parent.AddChild(this);
+            this.parent.AddChild(this);
             this.enabled = true;
             this.backgroundColor = Color.Red;
             this.font = DEFAULT_FONT;
             this.fontColor = DEFAULT_FONT_COLOR;
             this.padding = new Padding(5, 5, 5, 5);
+
+            this.z = this.parent.z - this.GetDrawDepthOffset();
 
             this.text = "";
         }

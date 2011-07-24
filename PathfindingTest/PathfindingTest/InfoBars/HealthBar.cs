@@ -10,6 +10,7 @@ namespace PathfindingTest.Units
 {
     public class HealthBar
     {
+        private float z { get; set; }
         public int percentage { get; set; }
         public Unit unit { get; set; }
         public Building building { get; set; }
@@ -32,6 +33,8 @@ namespace PathfindingTest.Units
             texture = Game1.GetInstance().Content.Load<Texture2D>("Misc/solid");
             this.unit = unit;
             this.type = Type.Unit;
+
+            this.z = this.unit.z - 0.1f;
         }
 
         public HealthBar(Building building)
@@ -72,9 +75,19 @@ namespace PathfindingTest.Units
                     return;
             }
 
+            sb.Draw(this.texture, new Rectangle(x, y,
+                w + 2, h), null, BORDER_COLOR, 0f, Vector2.Zero, SpriteEffects.None, z);
+
+            sb.Draw(this.texture, new Rectangle(x + 1, y + 1,
+                w, h - 2), null, BACKGROUND_COLOR, 0f, Vector2.Zero, SpriteEffects.None, z - 0.0001f);
+
+            sb.Draw(this.texture, new Rectangle(x + 1, y + 1,
+                innerWidth, h - 2), null, FOREGROUND_COLOR, 0f, Vector2.Zero, SpriteEffects.None, z - 0.0002f);
+
+            /*
             sb.Draw(texture, new Rectangle(x, y, w + 2, h), BORDER_COLOR);
             sb.Draw(texture, new Rectangle(x + 1, y + 1, w, h - 2), BACKGROUND_COLOR);
-            sb.Draw(texture, new Rectangle(x + 1, y + 1, innerWidth, h - 2), FOREGROUND_COLOR);
+            sb.Draw(texture, new Rectangle(x + 1, y + 1, innerWidth, h - 2), FOREGROUND_COLOR);*/
         }
     }
 }

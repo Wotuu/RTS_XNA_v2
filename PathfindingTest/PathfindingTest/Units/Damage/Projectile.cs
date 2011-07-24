@@ -188,8 +188,12 @@ namespace PathfindingTest.Units.Projectiles
             }
         }
 
-        private void CheckCollision(){
+        private void CheckCollision()
+        {
+            // Collision events are handled by the owning player, including arrow remove events
+            if (Game1.GetInstance().IsMultiplayerGame() &&
                 (this.parent.player != Game1.CURRENT_PLAYER)) return;
+
             Point collisionLocation = Util.GetPointOnCircle(this.GetLocation(), this.texture.Height / 2,
                         (float)(Util.GetHypoteneuseAngleDegrees(this.GetLocation(), this.waypoint)));
             foreach (Player player in Game1.GetInstance().players)

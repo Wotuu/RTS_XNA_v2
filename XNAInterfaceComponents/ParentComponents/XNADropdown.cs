@@ -49,6 +49,7 @@ namespace XNAInterfaceComponents.ParentComponents
                 0,
                 this.bounds.Width,
             optionHeight), "");
+            shownButton.z = this.parent.z - 0.01f;
             shownButton.onClickListeners += ShownButtonClicked;
             dropdownLineSpace = 30;
             arrowSize = 10;
@@ -109,6 +110,7 @@ namespace XNAInterfaceComponents.ParentComponents
             XNAButton option = new XNAButton(this, new Rectangle(), optionName);
             option.onClickListeners += this.OnOptionSelected;
             option.backgroundColor = this.backgroundColor;
+            option.z = this.z - 0.1f;
         }
 
         /// <summary>
@@ -228,7 +230,7 @@ namespace XNAInterfaceComponents.ParentComponents
                         drawLocation.Width,
                         optionHeight);
                     child.visible = true;
-                    child.Draw(sb, 0.9f);
+                    child.Draw(sb);
                 }
             }
             else
@@ -243,7 +245,7 @@ namespace XNAInterfaceComponents.ParentComponents
             ComponentUtil.DrawLine(sb,
                 new Point(drawLocation.Right - dropdownLineSpace, drawLocation.Y),
                 new Point(drawLocation.Right - dropdownLineSpace, drawLocation.Y + this.optionHeight),
-                Color.Black, 1);
+                Color.Black, 1, this.z);
 
             if (this.isExpanded)
             {
@@ -251,13 +253,15 @@ namespace XNAInterfaceComponents.ParentComponents
                     new Point(drawLocation.Right - (dropdownLineSpace / 2),
                         drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)),
                     new Point(drawLocation.Right - (dropdownLineSpace / 2) - (arrowSize / 2),
-                        drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)), this.border.color, 2);
+                        drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)), this.border.color, 2,
+                        this.z + 0.01f);
 
                 ComponentUtil.DrawLine(sb,
                     new Point(drawLocation.Right - (dropdownLineSpace / 2),
                         drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)),
                     new Point(drawLocation.Right - (dropdownLineSpace / 2) + (arrowSize / 2),
-                        drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)), this.border.color, 2);
+                        drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)), this.border.color, 2,
+                        this.z + 0.01f);
             }
             else
             {
@@ -266,13 +270,15 @@ namespace XNAInterfaceComponents.ParentComponents
                         drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)),
 
                     new Point(drawLocation.Right - (dropdownLineSpace / 2) - (arrowSize / 2),
-                        drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)), this.border.color, 2);
+                        drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)), this.border.color, 2,
+                        this.z + 0.01f);
 
                 ComponentUtil.DrawLine(sb,
                     new Point(drawLocation.Right - (dropdownLineSpace / 2),
                         drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)),
                     new Point(drawLocation.Right - (dropdownLineSpace / 2) + (arrowSize / 2),
-                        drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)), this.border.color, 2);
+                        drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)), this.border.color, 2,
+                        this.z + 0.01f);
             }
         }
 

@@ -26,6 +26,8 @@ namespace PathfindingTest.Units.Melee
             this.type = Type.Melee;
 
             this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/melee");
+            this.halfTextureWidth = this.texture.Width / 2;
+            this.halfTextureHeight = this.texture.Height / 2;
         }
 
         public override void Update(KeyboardState ks, MouseState ms)
@@ -48,7 +50,8 @@ namespace PathfindingTest.Units.Melee
 
         internal override void Draw(SpriteBatch sb)
         {
-                sb.Draw(this.texture, new Vector2(x - (texture.Width / 2), y - (texture.Height / 2)), this.color);
+            sb.Draw(this.texture, new Rectangle((int)this.x - this.halfTextureWidth, (int)this.y - this.halfTextureHeight,
+                texture.Width, texture.Height), null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
         }
 
         /// <summary>

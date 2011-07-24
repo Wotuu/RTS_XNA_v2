@@ -22,6 +22,8 @@ namespace PathfindingTest.Units.Fast
             this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/horseman");
 
             this.collisionRadius = texture.Width / 2;
+            this.halfTextureWidth = this.texture.Width / 2;
+            this.halfTextureHeight = this.texture.Height / 2;
         }
 
         public override void Update(Microsoft.Xna.Framework.Input.KeyboardState ks,
@@ -45,7 +47,8 @@ namespace PathfindingTest.Units.Fast
 
         internal override void Draw(Microsoft.Xna.Framework.Graphics.SpriteBatch sb)
         {
-            sb.Draw(this.texture, new Vector2(x - (texture.Width / 2), y - (texture.Height / 2)), this.color);
+            sb.Draw(this.texture, new Rectangle((int)this.x - this.halfTextureWidth, (int)this.y - this.halfTextureHeight,
+                texture.Width, texture.Height), null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
         }
 
         public override void OnAggroRecieved(AggroEvent e)
