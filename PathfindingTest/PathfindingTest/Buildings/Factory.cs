@@ -52,6 +52,8 @@ namespace PathfindingTest.Buildings
             {
                 Synchronizer.GetInstance().QueueBuilding(this);
             }
+
+            p.resources -= Building.GetCost(this.type);
         }
     }
 }

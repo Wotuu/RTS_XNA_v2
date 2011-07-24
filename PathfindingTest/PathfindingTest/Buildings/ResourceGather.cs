@@ -45,7 +45,7 @@ namespace PathfindingTest.Buildings
             this.animationFont = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/ResourceFont");
 
             this.resourceRange = new Circle(100, this, c);
-            this.generationBarrier = 1;
+            this.generationBarrier = 12;
             this.resourcesAdded = false;
             this.secondAdded = false;
             this.secondsPast = 0;
@@ -91,7 +91,7 @@ namespace PathfindingTest.Buildings
             }
         }
 
-        public override void PlaceBuilding(Units.Engineer e)
+        public override void PlaceBuilding(Engineer e)
         {
             this.state = State.Constructing;
             this.constructedBy = e;
@@ -106,6 +106,7 @@ namespace PathfindingTest.Buildings
                 Synchronizer.GetInstance().QueueBuilding(this);
             }
 
+            p.resources -= Building.GetCost(this.type);
             resources = CalculateRPS();
         }
 

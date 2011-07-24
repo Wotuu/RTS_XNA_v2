@@ -141,22 +141,22 @@ namespace PathfindingTest.Units
             switch (t)
             {
                 case Type.Engineer:
-                    return 400;
+                    return 100;
 
                 case Type.Melee:
-                    return 500;
+                    return 50;
 
                 case Type.HeavyMelee:
-                    return 500;
+                    return 75;
 
                 case Type.Fast:
-                    return 500;
+                    return 75;
 
                 case Type.Ranged:
-                    return 500;
+                    return 50;
 
                 case Type.HeavyRanged:
-                    return 750;
+                    return 100;
 
                 default:
                     return 0;

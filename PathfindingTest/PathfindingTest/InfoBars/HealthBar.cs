@@ -42,6 +42,8 @@ namespace PathfindingTest.Units
             texture = Game1.GetInstance().Content.Load<Texture2D>("Misc/solid");
             this.building = building;
             this.type = Type.Building;
+
+            this.z = this.building.z - 0.1f;
         }
 
 

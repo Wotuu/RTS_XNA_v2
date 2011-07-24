@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework;
 using PathfindingTest.Buildings;
 using PathfindingTest.Units;
+using System.Diagnostics;
 
 namespace PathfindingTest.UI
 {
@@ -21,8 +22,8 @@ namespace PathfindingTest.UI
         public String detailString { get; set; }
         public String costString { get; set; }
 
-        public float x;
-        public float y;
+        public float x { get; set; }
+        public float y { get; set; }
 
         public enum Type
         {

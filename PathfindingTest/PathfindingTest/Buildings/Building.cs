@@ -25,6 +25,7 @@ namespace PathfindingTest.Buildings
         public Player p { get; set; }
         public float x { get; set; }
         public float y { get; set; }
+        public float z { get; set; }
         public Color c { get; set; }
         public Color previewC = new Color(175, 175, 175, 80);
         public Color previewCantPlace = new Color(10, 10, 10, 80);
@@ -57,6 +58,12 @@ namespace PathfindingTest.Buildings
 
         public BuildingMultiplayerData multiplayerData { get; set; }
 
+        public int engineerInQueue { get; set; }
+        public int meleeInQueue { get; set; }
+        public int rangedInQueue { get; set; }
+        public int fastInQueue { get; set; }
+        public int heavyMeleeInQueue { get; set; }
+        public int heavyRangedInQueue { get; set; }
 
         public enum Type
         {
@@ -86,12 +93,20 @@ namespace PathfindingTest.Buildings
             switch (state)
             {
                 case State.Preview:
-                    canPlace = Game1.GetInstance().collision.CanPlace(this.DefineRectangle());
+                    if (p.resources < Building.GetCost(this.type))
+                    {
+                        canPlace = false;
+                    }
+                    else
+                    {
+                        canPlace = Game1.GetInstance().collision.CanPlace(this.DefineRectangle());
+                    }
                     this.x = (ms.X - (texture.Width / 2));
                     this.y = (ms.Y - (texture.Height / 2));
                     break;
 
                 case State.Constructing:
+                    CountUnitsInQueue();
                     if (EngineerInRange())
                     {
                         this.constructionStarted = true;
@@ -116,10 +131,12 @@ namespace PathfindingTest.Buildings
                     break;
 
                 case State.Interrupted:
+                    CountUnitsInQueue();
                     this.constructionStarted = false;
                     break;
 
                 case State.Finished:
+                    CountUnitsInQueue();
                     if (productionQueue != null)
                     {
                         if (productionQueue.Count > 0)
@@ -130,6 +147,7 @@ namespace PathfindingTest.Buildings
                     break;
 
                 case State.Repairing:
+                    CountUnitsInQueue();
                     if (EngineerInRange())
                     {
                         if (this.currentHealth < this.maxHealth)
@@ -147,6 +165,7 @@ namespace PathfindingTest.Buildings
                     break;
 
                 case State.Producing:
+                    CountUnitsInQueue();
                     if (productionQueue == null)
                     {
                         this.state = State.Finished;
@@ -188,32 +207,37 @@ namespace PathfindingTest.Buildings
                 case State.Preview:
                     if (canPlace)
                     {
-                        sb.Draw(texture, new Vector2(x, y), previewC);
+                        sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, previewC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     }
                     if (!canPlace)
                     {
-                        sb.Draw(texture, new Vector2(x, y), previewCantPlace);
+                        sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, previewCantPlace, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     }
                     break;
 
                 case State.Constructing:
-                    sb.Draw(texture, new Vector2(x, y), constructC);
+                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    DrawQueuedStats(sb);
                     break;
 
                 case State.Interrupted:
-                    sb.Draw(texture, new Vector2(x, y), constructC);
+                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    DrawQueuedStats(sb);
                     break;
 
                 case State.Finished:
-                    sb.Draw(texture, new Vector2(x, y), c);
+                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    DrawQueuedStats(sb);
                     break;
 
                 case State.Repairing:
-                    sb.Draw(texture, new Vector2(x, y), c);
+                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    DrawQueuedStats(sb);
                     break;
 
                 case State.Producing:
-                    sb.Draw(texture, new Vector2(x, y), c);
+                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    DrawQueuedStats(sb);
                     break;
 
                 default:
@@ -249,6 +273,104 @@ namespace PathfindingTest.Buildings
             }
         }
 
+        internal void DrawQueuedStats(SpriteBatch sb)
+        {
+            if (selected)
+            {
+                if (engineerInQueue > 0)
+                {
+                    Vector2 stringPos = p.hud.sf.MeasureString(engineerInQueue.ToString());
+                    sb.DrawString(p.hud.sf, engineerInQueue.ToString(), 
+                                  new Vector2(p.hud.engineerObject.x + (p.hud.engineerObject.texture.Width / 2) - (stringPos.X / 2), 
+                                              p.hud.engineerObject.y + (p.hud.engineerObject.texture.Height / 2) - (stringPos.Y / 2)), 
+                                  Color.White);
+                }
+                if (meleeInQueue > 0)
+                {
+                    Vector2 stringPos = p.hud.sf.MeasureString(meleeInQueue.ToString());
+                    sb.DrawString(p.hud.sf, meleeInQueue.ToString(),
+                                  new Vector2(p.hud.meleeObject.x + (p.hud.meleeObject.texture.Width / 2) - (stringPos.X / 2),
+                                              p.hud.meleeObject.y + (p.hud.meleeObject.texture.Height / 2) - (stringPos.Y / 2)),
+                                  Color.White);
+                }
+                if (rangedInQueue > 0)
+                {
+                    Vector2 stringPos = p.hud.sf.MeasureString(rangedInQueue.ToString());
+                    sb.DrawString(p.hud.sf, rangedInQueue.ToString(),
+                                  new Vector2(p.hud.rangedObject.x + (p.hud.rangedObject.texture.Width / 2) - (stringPos.X / 2),
+                                              p.hud.rangedObject.y + (p.hud.rangedObject.texture.Height / 2) - (stringPos.Y / 2)),
+                                  Color.White);
+                }
+                if (fastInQueue > 0)
+                {
+                    Vector2 stringPos = p.hud.sf.MeasureString(fastInQueue.ToString());
+                    sb.DrawString(p.hud.sf, fastInQueue.ToString(),
+                                  new Vector2(p.hud.fastObject.x + (p.hud.fastObject.texture.Width / 2) - (stringPos.X / 2),
+                                              p.hud.fastObject.y + (p.hud.fastObject.texture.Height / 2) - (stringPos.Y / 2)),
+                                  Color.White);
+                }
+                if (heavyMeleeInQueue > 0)
+                {
+                    Vector2 stringPos = p.hud.sf.MeasureString(heavyMeleeInQueue.ToString());
+                    sb.DrawString(p.hud.sf, heavyMeleeInQueue.ToString(),
+                                  new Vector2(p.hud.heavyMeleeObject.x + (p.hud.heavyMeleeObject.texture.Width / 2) - (stringPos.X / 2),
+                                              p.hud.heavyMeleeObject.y + (p.hud.heavyMeleeObject.texture.Height / 2) - (stringPos.Y / 2)),
+                                  Color.White);
+                }
+                if (heavyRangedInQueue > 0)
+                {
+                    Vector2 stringPos = p.hud.sf.MeasureString(heavyRangedInQueue.ToString());
+                    sb.DrawString(p.hud.sf, heavyRangedInQueue.ToString(),
+                                  new Vector2(p.hud.heavyRangedObject.x + (p.hud.heavyRangedObject.texture.Width / 2) - (stringPos.X / 2),
+                                              p.hud.heavyRangedObject.y + (p.hud.heavyRangedObject.texture.Height / 2) - (stringPos.Y / 2)),
+                                  Color.White);
+                }
+            }
+        }
+
+        public void CountUnitsInQueue()
+        {
+            engineerInQueue = 0;
+            fastInQueue = 0;
+            heavyMeleeInQueue = 0;
+            heavyRangedInQueue = 0;
+            meleeInQueue = 0;
+            rangedInQueue = 0;
+
+            foreach (ProductionUnit u in productionQueue)
+            {
+                switch (u.type)
+                {
+                    case Unit.Type.Engineer:
+                        engineerInQueue++;
+                        break;
+
+                    case Unit.Type.Fast:
+                        fastInQueue++;
+                        break;
+
+                    case Unit.Type.HeavyMelee:
+                        heavyMeleeInQueue++;
+                        break;
+
+                    case Unit.Type.HeavyRanged:
+                        heavyRangedInQueue++;
+                        break;
+
+                    case Unit.Type.Melee:
+                        meleeInQueue++;
+                        break;
+
+                    case Unit.Type.Ranged:
+                        rangedInQueue++;
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        }
+
         /// <summary>
         /// Places the building on the map
         /// </summary>
@@ -275,6 +397,7 @@ namespace PathfindingTest.Buildings
                     if (this.type == Type.Fortress)
                     {
                         newUnit = new ProductionUnit(100f, 1.0, type);
+                        p.resources -= Unit.GetCost(type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -283,6 +406,7 @@ namespace PathfindingTest.Buildings
                     if (this.type == Type.Barracks)
                     {
                         newUnit = new ProductionUnit(100f, 1.0, type);
+                        p.resources -= Unit.GetCost(type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -291,6 +415,7 @@ namespace PathfindingTest.Buildings
                     if (this.type == Type.Factory)
                     {
                         newUnit = new ProductionUnit(100f, 1.0, type);
+                        p.resources -= Unit.GetCost(type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -299,6 +424,7 @@ namespace PathfindingTest.Buildings
                     if (this.type == Type.Barracks)
                     {
                         newUnit = new ProductionUnit(100f, 1.0, type);
+                        p.resources -= Unit.GetCost(type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -307,6 +433,7 @@ namespace PathfindingTest.Buildings
                     if (this.type == Type.Barracks)
                     {
                         newUnit = new ProductionUnit(100f, 1.0, type);
+                        p.resources -= Unit.GetCost(type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -315,6 +442,7 @@ namespace PathfindingTest.Buildings
                     if (this.type == Type.Factory)
                     {
                         newUnit = new ProductionUnit(100f, 1.0, type);
+                        p.resources -= Unit.GetCost(type);
                         productionQueue.AddLast(newUnit);
                     }
                     break;
@@ -438,7 +566,7 @@ namespace PathfindingTest.Buildings
         {
             return new Point((int)x, (int)y);
         }
-        
+
         /// <summary>
         /// Gets the cost of a building
         /// </summary>
@@ -449,16 +577,16 @@ namespace PathfindingTest.Buildings
             switch (t)
             {
                 case Type.Barracks:
-                    return 3000;
+                    return 300;
 
                 case Type.Factory:
-                    return 6000;
+                    return 600;
 
                 case Type.Fortress:
-                    return 10000;
+                    return 1000;
 
                 case Type.Resources:
-                    return 1000;
+                    return 100;
 
                 default:
                     return 0;
@@ -470,6 +598,8 @@ namespace PathfindingTest.Buildings
             this.p = player;
             this.p.buildings.AddLast(this);
             this.constructProgress = 0;
+
+            this.z = 1f - player.buildings.Count * 0.0001f;
 
             this.progressBar = new ProgressBar(this);
             this.healthBar = new HealthBar(this);
