@@ -208,36 +208,36 @@ namespace PathfindingTest.Buildings
                 case State.Preview:
                     if (canPlace)
                     {
-                        sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, previewC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                        sb.Draw(texture, this.GetDrawRectangle(), null, previewC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     }
                     if (!canPlace)
                     {
-                        sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, previewCantPlace, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                        sb.Draw(texture, this.GetDrawRectangle(), null, previewCantPlace, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     }
                     break;
 
                 case State.Constructing:
-                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    sb.Draw(texture, this.GetDrawRectangle(), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     DrawQueuedStats(sb);
                     break;
 
                 case State.Interrupted:
-                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    sb.Draw(texture, this.GetDrawRectangle(), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     DrawQueuedStats(sb);
                     break;
 
                 case State.Finished:
-                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     DrawQueuedStats(sb);
                     break;
 
                 case State.Repairing:
-                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     DrawQueuedStats(sb);
                     break;
 
                 case State.Producing:
-                    sb.Draw(texture, new Rectangle((int)x, (int)y, texture.Width, texture.Height), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                    sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     DrawQueuedStats(sb);
                     break;
 
