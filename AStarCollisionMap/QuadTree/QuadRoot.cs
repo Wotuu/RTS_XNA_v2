@@ -24,6 +24,9 @@ namespace AStarCollisionMap.QuadTree
 
         public CollisionMap collisionMap { get; set; }
 
+        public float quadWidth { get; set; }
+        public float quadHeight { get; set; }
+
         public LinkedList<Quad> leafList = new LinkedList<Quad>();
 
         public QuadRoot(Rectangle rect, CollisionMap map)
@@ -43,6 +46,9 @@ namespace AStarCollisionMap.QuadTree
             this.depth = depth;
             this.root = new Quad(this, null, this.rectangle);
             SplitQuad(root);
+            // Get the quad width
+            this.quadWidth = leafList.ElementAt(0).GetDrawRectangle().Width;
+            this.quadHeight = leafList.ElementAt(0).GetDrawRectangle().Height;
         }
 
         private void SplitQuad(Quad quad)
@@ -61,6 +67,12 @@ namespace AStarCollisionMap.QuadTree
         public void Draw(SpriteBatch sb)
         {
             if( this.root != null ) root.Draw(sb);
+        }
+
+        public Quad GetQuadByIndex(Point index)
+        {
+            // +2 to make sure it's inside a quad due to rounding errors
+            return root.Search(new Point( (int)(index.X * this.quadWidth) + 2, (int)(index.Y * this.quadHeight) + 2));
         }
 
         public Quad GetQuadByPoint(Point p)

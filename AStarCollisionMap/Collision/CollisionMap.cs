@@ -403,6 +403,26 @@ namespace AStarCollisionMap.Collision
         }
 
         /// <summary>
+        /// Loads a collision map from a file.
+        /// </summary>
+        /// <param name="path">The path of the map, WITHOUT a trailing slash.</param>
+        /// <param name="mapname">The mapname.</param>
+        public void LoadMap(String path, String mapname, int depth)
+        {
+            this.tree.CreateTree(depth);
+
+            for (int i = 0; i < depth; i++)
+            {
+                for (int j = 0; j < depth; j++)
+                {
+                    FileStream stream = new FileStream(path + "/" + mapname + "/" +
+                        mapname + "_" + i + "_" + j +".png", FileMode.Open);
+                    this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
+                }
+            }
+        }
+
+        /// <summary>
         /// Saves this collisionmap to a file.
         /// </summary>
         public void SaveToPng()

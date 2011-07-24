@@ -167,7 +167,6 @@ namespace MapEditor
                     tileX + x,
                     tileY + y,
                     tileset.GetTileID(new Rectangle(selectedrectangle.X + (x * Engine.TileWidth), selectedrectangle.Y + (y * Engine.TileHeight), Engine.TileWidth, Engine.TileHeight), tilemaptexture));
-
                 }
             }
         }

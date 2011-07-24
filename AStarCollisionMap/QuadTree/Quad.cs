@@ -72,7 +72,7 @@ namespace AStarCollisionMap.QuadTree
         internal void Draw(SpriteBatch sb)
         {
             // If it ain't on the screen
-            if (!tree.collisionMap.windowSize.Intersects( this.rectangle ) ) return;
+            if (!tree.collisionMap.windowSize.Intersects( this.GetDrawRectangle() ) ) return;
 
 
             if (this.children == null)
