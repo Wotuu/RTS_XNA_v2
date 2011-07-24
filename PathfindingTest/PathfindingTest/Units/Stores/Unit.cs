@@ -20,7 +20,7 @@ using PathfindingTest.Buildings;
 
 namespace PathfindingTest.Units
 {
-    public abstract class Unit : OnCollisionChangedListener, Aggroable, Damageable
+    public abstract class Unit : OnCollisionChangedListener, Aggroable, Damageable, Offsetable
     {
         public Player player { get; set; }
         public float x { get; set; }
@@ -130,7 +130,7 @@ namespace PathfindingTest.Units
         {
             return new Point((int)x, (int)y);
         }
-        
+
         /// <summary>
         /// Gets the cost of a unit
         /// </summary>
@@ -642,7 +642,7 @@ namespace PathfindingTest.Units
                 {
                     buildingToDestroy = buildingsInRange.ElementAt(0);
                 }
-    }
+            }
         }
 
         public void UpdateDefense()
@@ -703,6 +703,15 @@ namespace PathfindingTest.Units
             {
                 this.player.currentSelection.units.Remove(this);
             }
+        }
+
+        public Rectangle GetDrawRectangle()
+        {
+            Game1 game = Game1.GetInstance(); 
+            return new Rectangle(
+                (int)(this.x - this.halfTextureWidth - game.drawOffset.X), 
+                (int)(this.y - this.halfTextureHeight - game.drawOffset.Y),
+                this.texture.Width, this.texture.Height);
         }
     }
 }

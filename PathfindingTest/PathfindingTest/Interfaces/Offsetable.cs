@@ -2,13 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
-namespace XNAInterfaceComponents.Interfaces
+namespace PathfindingTest.Interfaces
 {
-    interface Drawable
+    interface Offsetable
     {
-        void Draw(SpriteBatch sb);
+        Rectangle GetDrawRectangle();
     }
 }

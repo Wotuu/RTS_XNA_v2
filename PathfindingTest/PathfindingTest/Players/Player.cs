@@ -378,7 +378,7 @@ namespace PathfindingTest.Players
             UnitSelection selection = new UnitSelection(new LinkedList<Unit>());
             foreach (Unit unit in units)
             {
-                if (this.selectBox.GetRectangle().Contains((int)unit.x, (int)unit.y))
+                if (this.selectBox.GetRectangle().Intersects(unit.GetDrawRectangle()))
                 {
                     selection.units.AddLast(unit);
                 }
@@ -640,7 +640,9 @@ namespace PathfindingTest.Players
                         currentSelection,
                         Math.Max(currentSelection.units.Count * 5, (int)Util.GetHypoteneuseLength(e.location, previewPatternClick)),
                         angle);*/
-                    previewPattern = GetNewPreviewPattern(m.location, (int)Util.GetHypoteneuseAngleDegrees(m.location, previewPatternClick));
+                    Vector2 offset = Game1.GetInstance().drawOffset;
+                    Point location = new Point( (int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
+                    previewPattern = GetNewPreviewPattern(location, (int)Util.GetHypoteneuseAngleDegrees(location, previewPatternClick));
                     /*previewPattern = new RectanglePattern(previewPatternClick,
                         currentSelection, 5,
                         Math.Max((int)(Util.GetHypoteneuseLength(m.location, previewPatternClick) / 2.0), 30),

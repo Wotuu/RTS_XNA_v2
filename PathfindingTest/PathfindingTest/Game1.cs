@@ -63,6 +63,20 @@ namespace PathfindingTest
 
         public int exceptionsCount { get; set; }
 
+        private Vector2 _drawOffset { get; set; }
+        public Vector2 drawOffset
+        {
+            get
+            {
+                return _drawOffset;
+            }
+            set
+            {
+                if (collision != null) collision.drawOffset = value;
+                this._drawOffset = value;
+            }
+        }
+
 
         private static Game1 instance { get; set; }
 
@@ -91,6 +105,8 @@ namespace PathfindingTest
             //graphics.ToggleFullScreen();
             graphics.ApplyChanges();
             this.InactiveSleepTime = new System.TimeSpan(0);
+
+            drawOffset = Vector2.Zero;
         }
 
 
@@ -150,79 +166,79 @@ namespace PathfindingTest
         {
             // try
             // {
-                GameTimeManager.GetInstance().OnStartUpdate();
-                // Allows the game to exit
-                if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                    this.Exit();
-                StateManager sm = StateManager.GetInstance();
+            GameTimeManager.GetInstance().OnStartUpdate();
+            // Allows the game to exit
+            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+                this.Exit();
+            StateManager sm = StateManager.GetInstance();
 
-                // Update input
-                MouseManager.GetInstance().Update(this);
-                KeyboardManager.GetInstance().Update(Keyboard.GetState());
+            // Update input
+            MouseManager.GetInstance().Update(this);
+            KeyboardManager.GetInstance().Update(Keyboard.GetState());
 
-                // Updates all interface componentss
-                ComponentManager.GetInstance().Update();
-                switch (sm.gameState)
-                {
-                    case StateManager.State.MainMenu:
-                        break;
-                    case StateManager.State.GameInit:
-                        break;
-                    case StateManager.State.GameRunning:
-                        // TODO: Add your update logic here
+            // Updates all interface componentss
+            ComponentManager.GetInstance().Update();
+            switch (sm.gameState)
+            {
+                case StateManager.State.MainMenu:
+                    break;
+                case StateManager.State.GameInit:
+                    break;
+                case StateManager.State.GameRunning:
+                    // TODO: Add your update logic here
 
-                        // Update units
-                        foreach (Player p in players)
+                    // Update units
+                    foreach (Player p in players)
+                    {
+                        p.Update(Keyboard.GetState(), Mouse.GetState());
+                    }
+
+                    // Update other random stuff?
+                    KeyboardState keyboardState = Keyboard.GetState();
+                    MouseState mouseState = Mouse.GetState();
+                    if ((keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift))
+                        && mouseState.LeftButton == ButtonState.Pressed)
+                    {
+                        PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
+                        if (manager.selectedNode != null)
                         {
-                            p.Update(Keyboard.GetState(), Mouse.GetState());
+                            manager.selectedNode.x = mouseState.X;
+                            manager.selectedNode.y = mouseState.Y;
                         }
+                    }
 
-                        // Update other random stuff?
-                        KeyboardState keyboardState = Keyboard.GetState();
-                        MouseState mouseState = Mouse.GetState();
-                        if ((keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift))
-                            && mouseState.LeftButton == ButtonState.Pressed)
-                        {
-                            PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-                            if (manager.selectedNode != null)
-                            {
-                                manager.selectedNode.x = mouseState.X;
-                                manager.selectedNode.y = mouseState.Y;
-                            }
-                        }
+                    /*
+                     * The NodeProcessor has a stack of Nodes. When popping a node, it calculates the connections.
+                     * This is done to save a massive lagspike when updating the collision mesh!
+                     */
+                    //if (frames % 2 == 0) 
 
-                        /*
-                         * The NodeProcessor has a stack of Nodes. When popping a node, it calculates the connections.
-                         * This is done to save a massive lagspike when updating the collision mesh!
-                         */
-                        //if (frames % 2 == 0) 
+                    DateTime UtcNow = new DateTime(DateTime.UtcNow.Ticks);
+                    DateTime baseTime = new DateTime(1970, 1, 1, 0, 0, 0);
+                    long timeStamp = (UtcNow - baseTime).Ticks / 10000;
+                    if (timeStamp - previousFrameUpdateTime > 1000)
+                    {
+                        // Console.Out.WriteLine("Updates this second: " + (frames - previousFrameUpdateFrames) + ", slowly: " + gameTime.IsRunningSlowly);
+                        previousFrameUpdateTime = timeStamp;
+                        previousFrameUpdateFrames = frames;
+                    }
 
-                        DateTime UtcNow = new DateTime(DateTime.UtcNow.Ticks);
-                        DateTime baseTime = new DateTime(1970, 1, 1, 0, 0, 0);
-                        long timeStamp = (UtcNow - baseTime).Ticks / 10000;
-                        if (timeStamp - previousFrameUpdateTime > 1000)
-                        {
-                            // Console.Out.WriteLine("Updates this second: " + (frames - previousFrameUpdateFrames) + ", slowly: " + gameTime.IsRunningSlowly);
-                            previousFrameUpdateTime = timeStamp;
-                            previousFrameUpdateFrames = frames;
-                        }
+                    if (IsMultiplayerGame()) Synchronizer.GetInstance().Synchronize();
+                    // These two fill the rest of the frame, so they're supposed to go last.
+                    SmartPathfindingNodeProcessor.GetInstance().Process();
+                    PathfindingProcessor.GetInstance().Process();
 
-                        if (IsMultiplayerGame()) Synchronizer.GetInstance().Synchronize();
-                        // These two fill the rest of the frame, so they're supposed to go last.
-                        SmartPathfindingNodeProcessor.GetInstance().Process();
-                        PathfindingProcessor.GetInstance().Process();
+                    frames++;
+                    break;
 
-                        frames++;
-                        break;
+                case StateManager.State.GamePaused:
+                    break;
+                case StateManager.State.GameShutdown:
+                    break;
 
-                    case StateManager.State.GamePaused:
-                        break;
-                    case StateManager.State.GameShutdown:
-                        break;
-
-                    default: break;
-                }
-                base.Update(gameTime);
+                default: break;
+            }
+            base.Update(gameTime);
             /*}
             catch (Exception e)
             {
@@ -242,73 +258,73 @@ namespace PathfindingTest
         {
             /*try
             {*/
-                GameTimeManager.GetInstance().OnStartDraw();
-                GraphicsDevice.Clear(Color.CornflowerBlue);
+            GameTimeManager.GetInstance().OnStartDraw();
+            GraphicsDevice.Clear(Color.CornflowerBlue);
 
-                // TODO: Add your drawing code here
-                spriteBatch.Begin(SpriteSortMode.BackToFront, null);
-                // spriteBatch.Begin(SpriteSortMode.Immediate, null);
+            // TODO: Add your drawing code here
+            spriteBatch.Begin(SpriteSortMode.BackToFront, null);
+            // spriteBatch.Begin(SpriteSortMode.Immediate, null);
 
-                StateManager sm = StateManager.GetInstance();
+            StateManager sm = StateManager.GetInstance();
 
-                // Draws all interface components
-                ComponentManager.GetInstance().Draw(spriteBatch);
+            // Draws all interface components
+            ComponentManager.GetInstance().Draw(spriteBatch);
 
-                if (sm.gameState == StateManager.State.MainMenu)
+            if (sm.gameState == StateManager.State.MainMenu)
+            {
+
+            }
+            else if (sm.gameState == StateManager.State.GameInit)
+            {
+
+            }
+            else if (sm.gameState == StateManager.State.GameRunning)
+            {
+                //quadTree.Draw(spriteBatch);
+                collision.DrawMap(spriteBatch);
+
+                try
                 {
-
-                }
-                else if (sm.gameState == StateManager.State.GameInit)
-                {
-
-                }
-                else if (sm.gameState == StateManager.State.GameRunning)
-                {
-                    //quadTree.Draw(spriteBatch);
-                    collision.DrawMap(spriteBatch);
-
-                    try
+                    LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
+                    foreach (Node node in list)
                     {
-                        LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
-                        foreach (Node node in list)
-                        {
-                            node.Draw(spriteBatch);
-                        }
-
-                        foreach (Player p in players)
-                        {
-                            p.Draw(this.spriteBatch);
-                        }
+                        node.Draw(spriteBatch);
                     }
-                    catch (Exception e) { }
+
+                    foreach (Player p in players)
+                    {
+                        p.Draw(this.spriteBatch);
+                    }
                 }
-                else if (sm.gameState == StateManager.State.GamePaused)
-                {
+                catch (Exception e) { }
+            }
+            else if (sm.gameState == StateManager.State.GamePaused)
+            {
 
-                }
-                else if (sm.gameState == StateManager.State.GameShutdown)
-                {
+            }
+            else if (sm.gameState == StateManager.State.GameShutdown)
+            {
 
-                }
-
-
+            }
 
 
-                spriteBatch.End();
 
-                DateTime UtcNow = new DateTime(DateTime.UtcNow.Ticks);
-                DateTime baseTime = new DateTime(1970, 1, 1, 0, 0, 0);
-                long timeStamp = (UtcNow - baseTime).Ticks / 10000;
-                if (timeStamp - previousDrawUpdateTime > 1000)
-                {
-                    // Console.Out.WriteLine("Draws this second: " + (draws - previousDrawUpdateFrames));
-                    previousDrawUpdateTime = timeStamp;
-                    previousDrawUpdateFrames = draws;
-                }
 
-                draws++;
+            spriteBatch.End();
 
-                base.Draw(gameTime);
+            DateTime UtcNow = new DateTime(DateTime.UtcNow.Ticks);
+            DateTime baseTime = new DateTime(1970, 1, 1, 0, 0, 0);
+            long timeStamp = (UtcNow - baseTime).Ticks / 10000;
+            if (timeStamp - previousDrawUpdateTime > 1000)
+            {
+                // Console.Out.WriteLine("Draws this second: " + (draws - previousDrawUpdateFrames));
+                previousDrawUpdateTime = timeStamp;
+                previousDrawUpdateFrames = draws;
+            }
+
+            draws++;
+
+            base.Draw(gameTime);
             /*}
             catch (Exception e)
             {
@@ -410,13 +426,24 @@ namespace PathfindingTest
             }
         }
 
+        private MouseEvent previousEvent { get; set; }
         void MouseMotionListener.OnMouseDrag(MouseEvent e)
         {
+            if (e.button == MouseEvent.MOUSE_BUTTON_3)
+            {
+                if (previousEvent != null)
+                {
+                    this.drawOffset = new Vector2(this.drawOffset.X - (e.location.X - previousEvent.location.X),
+                        this.drawOffset.Y - (e.location.Y - previousEvent.location.Y));
+                }
 
+                previousEvent = e;
+            }
         }
 
         void MouseMotionListener.OnMouseMotion(MouseEvent e)
         {
+            previousEvent = null;
             // Console.Out.WriteLine("Mouse moved!");
 
             ///if( e.location.X >= 10 && e.location.X <= graphics.PreferredBackBufferWidth - 10 &&
@@ -446,6 +473,16 @@ namespace PathfindingTest
             }
             Console.Error.WriteLine("Cannot find player with id = " + id);
             return null;
+        }
+
+        /// <summary>
+        /// Checks whether the rectangle is on the screen or not.
+        /// </summary>
+        /// <param name="rect">The rectangle to check.</param>
+        /// <returns>Yes or no.</returns>
+        public Boolean IsOnScreen(Rectangle rect)
+        {
+            return rect.Intersects(new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
         }
     }
 }

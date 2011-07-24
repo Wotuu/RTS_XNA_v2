@@ -23,8 +23,11 @@ namespace PathfindingTest.Units.Projectiles
 
         internal override void Draw(SpriteBatch sb)
         {
-            sb.Draw(this.texture, new Rectangle((int)this.x, (int)this.y, 
-            this.texture.Width, this.texture.Height), null, Color.White,
+            Rectangle rect = new Rectangle((int)this.x, (int)this.y,
+            this.texture.Width, this.texture.Height);
+            if (!Game1.GetInstance().IsOnScreen(rect)) return;
+
+            sb.Draw(this.texture, rect, null, Color.White,
                 (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoint) + (90 * (Math.PI / 180))),
                 new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, 0);
 

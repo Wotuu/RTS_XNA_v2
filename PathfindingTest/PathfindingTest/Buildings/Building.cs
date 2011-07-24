@@ -16,10 +16,11 @@ using PathfindingTest.Units.Stores;
 using PathfindingTest.Multiplayer.Data;
 using SocketLibrary.Protocol;
 using PathfindingTest.Combat;
+using PathfindingTest.Interfaces;
 
 namespace PathfindingTest.Buildings
 {
-    public abstract class Building : Damageable
+    public abstract class Building : Damageable, Offsetable
     {
 
         public Player p { get; set; }
@@ -633,6 +634,13 @@ namespace PathfindingTest.Buildings
             {
                 this.Dispose();
             }
+        }
+
+        public Rectangle GetDrawRectangle()
+        {
+            Game1 game = Game1.GetInstance();
+            return new Rectangle((int)(this.x - game.drawOffset.X), (int)(this.y - game.drawOffset.Y),
+                this.texture.Width, this.texture.Height);
         }
     }
 }

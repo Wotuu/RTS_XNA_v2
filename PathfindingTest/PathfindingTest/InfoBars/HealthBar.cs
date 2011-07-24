@@ -55,21 +55,23 @@ namespace PathfindingTest.Units
             int y;
             int innerWidth;
 
+            Vector2 offset = Game1.GetInstance().drawOffset;
+
             switch (type)
             {
                 case Type.Building:
                     w = building.texture.Width;
                     h = 5;
-                    x = (int)building.x - 1;
-                    y = (int)building.y - h * 2;
+                    x = (int)(building.x - 1 - offset.X);
+                    y = (int)(building.y - h * 2 - offset.Y);
                     innerWidth = (int)((w / 100.0) * percentage);
                     break;
 
                 case Type.Unit:
                     w = unit.texture.Width;
                     h = 5;
-                    x = (int)unit.x - (w / 2);
-                    y = (int)unit.y - (unit.texture.Height / 2) - h;
+                    x = (int)(unit.x - (w / 2) - offset.X);
+                    y = (int)(unit.y - (unit.texture.Height / 2) - h - offset.Y);
                     innerWidth = (int)((w / 100.0) * percentage);
                     break;
 

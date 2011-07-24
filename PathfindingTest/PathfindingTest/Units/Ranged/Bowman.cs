@@ -34,33 +34,34 @@ namespace PathfindingTest.Units
 
         public override void Update(KeyboardState ks, MouseState ms)
         {
-                UpdateMovement();
-                AttemptReload();
-                if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
-                {
-                    UpdateAttack();
-                }
-                else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
-                {
-                    UpdateDefense();
-                }
+            UpdateMovement();
+            AttemptReload();
+            if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+            {
+                UpdateAttack();
+            }
+            else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
+            {
+                UpdateDefense();
+            }
 
-                if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
-                {
-                    TryToSwing();
-                }
+            if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
+            {
+                TryToSwing();
+            }
         }
 
         internal override void Draw(SpriteBatch sb)
         {
-                sb.Draw(this.texture, new Rectangle((int)this.x - this.halfTextureWidth, (int)this.y - this.halfTextureHeight, 
-                    texture.Width, texture.Height), null, this.color, 0f, 
-                    Vector2.Zero, SpriteEffects.None, this.z);
+            Rectangle rect = this.GetDrawRectangle();
+            if( !Game1.GetInstance().IsOnScreen( rect ) ) return;
 
-                /*if (this.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
-                {
-                    this.DrawHealthBar(sb);
-                }*/
+            sb.Draw(this.texture, rect, null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+
+            /*if (this.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+            {
+                this.DrawHealthBar(sb);
+            }*/
         }
 
         public override void OnAggroRecieved(AggroEvent e)

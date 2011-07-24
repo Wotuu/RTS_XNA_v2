@@ -63,6 +63,12 @@ namespace AStarCollisionMap.QuadTree
             return quads;
         }
 
+        public Rectangle GetDrawRectangle()
+        {
+            return new Rectangle((int)(this.rectangle.X - this.tree.drawOffset.X), (int)(this.rectangle.Y - this.tree.drawOffset.Y), 
+                this.rectangle.Width, this.rectangle.Height);
+        }
+
         internal void Draw(SpriteBatch sb)
         {
             // If it ain't on the screen
@@ -78,10 +84,10 @@ namespace AStarCollisionMap.QuadTree
             if (this.children == null)
             {
                 // Draw the texture
-                sb.Draw(this.collisionTexture.texture, this.rectangle, null, this.tree.drawColor, 0f, 
+                sb.Draw(this.collisionTexture.texture, this.GetDrawRectangle(), null, this.tree.drawColor, 0f, 
                     Vector2.Zero, SpriteEffects.None, 1f);
                 // Draw the rectangle bounds
-                DrawUtil.DrawClearRectangle(sb, this.rectangle, this.tree.borderWidth, this.tree.borderColor);
+                DrawUtil.DrawClearRectangle(sb, this.GetDrawRectangle(), this.tree.borderWidth, this.tree.borderColor);
 
                 // Draw the ????
                 if (this.highlighted)
@@ -134,6 +140,7 @@ namespace AStarCollisionMap.QuadTree
             this.tree = tree;
             this.parent = parent;
             this.rectangle = rectangle;
+
             this.imageX = this.rectangle.X / this.rectangle.Width;
             this.imageY = this.rectangle.Y / this.rectangle.Height;
 
