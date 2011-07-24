@@ -74,7 +74,8 @@ namespace PathfindingTest.Units
             {
                 foreach (Unit unit in friendliesProtectingMe)
                 {
-                    unit.OnAggroRecieved(e);
+                    if( unit != this ) 
+                        unit.OnAggroRecieved(e);
                 }
             }
             // Console.Out.WriteLine("Recieved aggro from something! D=");

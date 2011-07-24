@@ -10,10 +10,11 @@ using Microsoft.Xna.Framework.Input;
 using PathfindingTest.Combat;
 using PathfindingTest.Multiplayer.Data;
 using PathfindingTest.Buildings;
+using PathfindingTest.Interfaces;
 
 namespace PathfindingTest.Units.Projectiles
 {
-    public abstract class Projectile : DamageSource
+    public abstract class Projectile : DamageSource, Offsetable
     {
         private float startX { get; set; }
         private float startY { get; set; }
@@ -269,6 +270,15 @@ namespace PathfindingTest.Units.Projectiles
             {
                 Console.Out.WriteLine("Disposing projectile");
             }
+        }
+
+        public Rectangle GetDrawRectangle()
+        {
+            Game1 game = Game1.GetInstance();
+            return new Rectangle(
+                (int)(this.x - game.drawOffset.X),
+                (int)(this.y - game.drawOffset.Y),
+                this.texture.Width, this.texture.Height);
         }
     }
 }
