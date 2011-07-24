@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using AStarCollisionMap.Collision;
 using AStarCollisionMap.Pathfinding;
 using AStarCollisionMap.QuadTree;
+using System.IO;
 
 public delegate void OnCollisionChanged(CollisionChangedEvent c_event);
 
@@ -22,6 +23,19 @@ namespace AStarCollisionMap.Collision
         public int collisionMapTextureScale = 1;
         private int dataLength { get; set; }
 
+        private Vector2 _drawOffset { get; set; }
+        public Vector2 drawOffset
+        {
+            get
+            {
+                return _drawOffset;
+            }
+            set
+            {
+                this._drawOffset = value;
+                this.tree.drawOffset = value;
+            }
+        }
 
         public Boolean drawMode { get; set; }
 
@@ -385,6 +399,22 @@ namespace AStarCollisionMap.Collision
             Init(width, height, "", "", drawMode, quadDepth);
         }
 
+        /// <summary>
+        /// Saves this collisionmap to a file.
+        /// </summary>
+        public void SaveToPng()
+        {
+            System.IO.Directory.CreateDirectory(this.collisionMapPath + "/" +
+                    this.collisionMapName + "/");
+            foreach (Quad quad in this.tree.leafList)
+            {
+                Texture2D tex = quad.collisionTexture.texture;
+                tex.SaveAsPng(new FileStream(this.collisionMapPath + "/" +
+                    this.collisionMapName + "/" + this.collisionMapName + "_" + quad.imageX + "_" + quad.imageY + ".png", 
+                FileMode.OpenOrCreate), tex.Width, tex.Height);
+            }
+        }
+
         private void Init(int width, int height, String collisionMapPath, String collisionMapName, Boolean drawMode, int quadDepth)
         {
             this.mapWidth = width;
@@ -399,6 +429,7 @@ namespace AStarCollisionMap.Collision
 
             this.tree = new QuadRoot(new Rectangle(0, 0, width, height), this);
             this.tree.CreateTree(quadDepth);
+            SaveToPng();
         }
     }
 }

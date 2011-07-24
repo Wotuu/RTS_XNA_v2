@@ -50,8 +50,9 @@ namespace PathfindingTest.Units.Melee
 
         internal override void Draw(SpriteBatch sb)
         {
-            sb.Draw(this.texture, new Rectangle((int)this.x - this.halfTextureWidth, (int)this.y - this.halfTextureHeight,
-                texture.Width, texture.Height), null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+            Rectangle rect = this.GetDrawRectangle();
+            if (!Game1.GetInstance().IsOnScreen(rect)) return;
+            sb.Draw(this.texture, rect, null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
         }
 
         /// <summary>

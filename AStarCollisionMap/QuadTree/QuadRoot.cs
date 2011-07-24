@@ -20,6 +20,8 @@ namespace AStarCollisionMap.QuadTree
         public int borderWidth { get; set; }
         public Color borderColor { get; set; }
 
+        public Vector2 drawOffset { get; set; }
+
         public CollisionMap collisionMap { get; set; }
 
         public LinkedList<Quad> leafList = new LinkedList<Quad>();

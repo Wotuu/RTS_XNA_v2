@@ -12,7 +12,7 @@ using PathfindingTest.Collision;
 
 namespace PathfindingTest.Pathfinding
 {
-    public class Node : PathfindingNode, XMLAble
+    public class Node : PathfindingNode, XMLAble, Offsetable
     {
         public Color c { get; set; }
 
@@ -78,9 +78,7 @@ namespace PathfindingTest.Pathfinding
         /// <param name="sb"></param>
         internal void Draw(SpriteBatch sb)
         {
-            int drawX = this.x - (int)(texture.Width / 2), drawY = this.y - (int)(texture.Height / 2);
-            this.drawRect = new Rectangle(drawX, drawY, texture.Width, texture.Height);
-            sb.Draw(texture, this.drawRect, c);
+            sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, 0.01f);
             // Draw some connections twice, but o well!
 
             // if( Monitor.TryEnter(this.connections, 0) ){
@@ -106,6 +104,14 @@ namespace PathfindingTest.Pathfinding
         {
 
             return "Node(" + this.GetLocation().X + ", " + this.GetLocation().Y + ")";
+        }
+
+        public Rectangle GetDrawRectangle()
+        {
+            Game1 game = Game1.GetInstance();
+            float drawX = this.x - (texture.Width / 2), drawY = this.y - (texture.Height / 2);
+            return new Rectangle((int)(drawX - game.drawOffset.X), (int)(drawY - game.drawOffset.Y),
+                this.texture.Width, this.texture.Height);
         }
     }
 }

@@ -5,6 +5,7 @@ using System.Text;
 using AStarCollisionMap.Pathfinding;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using PathfindingTest.Interfaces;
 
 namespace PathfindingTest.Pathfinding
 {
@@ -26,7 +27,11 @@ namespace PathfindingTest.Pathfinding
 
         internal void Draw(SpriteBatch sb)
         {
-            DrawUtil.DrawLine(sb, this.conn.node1.GetLocation(), this.conn.node2.GetLocation(), this.drawColor, 1, 1f);
+            Game1 game = Game1.GetInstance();
+            Point node1Location = this.conn.node1.GetLocation(), node2Location = this.conn.node2.GetLocation();
+            DrawUtil.DrawLine(sb, new Point( node1Location.X - (int)game.drawOffset.X, node1Location.Y - (int)game.drawOffset.Y ),
+                new Point(node2Location.X - (int)game.drawOffset.X, node2Location.Y - (int)game.drawOffset.Y), 
+                this.drawColor, 1, 1f);
             //sb.DrawString( game.font, 
             //    (int) Util.GetHypoteneuseLength( node1.GetLocation(), node2.GetLocation() ) + "", 
             //    new Vector2( lengthDrawOffset.X, lengthDrawOffset.Y ), this.drawColor );
