@@ -327,7 +327,7 @@ namespace MapEditor
                 }
             }
             //Collisionmap
-
+            CollisionMap.drawOffset = camera.Position;
             CollisionMap.tree.Draw(spriteBatch);
 
             //SELECTION CURSOR RED
@@ -395,7 +395,7 @@ namespace MapEditor
             //get values from newmapform
 
             tileMap = new TileMap.TileMap(mapform.MapWidth, mapform.MapHeight);
-            CollisionMap = new CollisionMap(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight,true,4);
+            CollisionMap = new CollisionMap(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight,true,Util.GetQuadDepth(mapform.MapWidth));
             CollisionData  = new int[(mapform.MapWidth * Engine.TileWidth) * (mapform.MapHeight * Engine.TileHeight)];
             currentLayer = tileMap.layers[0];
         }
@@ -431,7 +431,7 @@ namespace MapEditor
                 tileMap = new TileMap.TileMap(1, 1);
 
                tileMap = tileMap.opentilemap(openfile.FileName);
-               CollisionMap = new CollisionMap(GraphicsDevice, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight, true, 4);
+               CollisionMap = new CollisionMap(GraphicsDevice, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight, true, Util.GetQuadDepth(tileMap.MapWidth));
                CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
                currentLayer = tileMap.layers[0];
             }
@@ -461,6 +461,10 @@ namespace MapEditor
 
             if (isLeftMouseDown)
             {
+                if (tilemaptexture == null || tileMap == null)
+                {
+                    return;
+                }
                 //final location opslaan
                 MarqueeSelection.FinalLocation = new System.Drawing.Point((int)e.X, (int)e.Y);
                 if (currentbrush == Brush.Paint || currentbrush == Brush.CollisionPaint || currentbrush == Brush.EraseCollision )
@@ -475,21 +479,23 @@ namespace MapEditor
         {
 
             if (e.Button == MouseButtons.Left)
+            {
 
-                if (tilemaptexture == null)
+                if (tilemaptexture == null || tileMap == null)
                 {
                     return;
                 }
-            isLeftMouseDown = true;
+                isLeftMouseDown = true;
 
 
-            MarqueeSelection.InitialLocation = new System.Drawing.Point((int)e.X, (int)e.Y);
-            MarqueeSelection.FinalLocation = MarqueeSelection.InitialLocation;
-            MarqueeSelection.Width = 1;
-            MarqueeSelection.Height = 1;
+                MarqueeSelection.InitialLocation = new System.Drawing.Point((int)e.X, (int)e.Y);
+                MarqueeSelection.FinalLocation = MarqueeSelection.InitialLocation;
+                MarqueeSelection.Width = 1;
+                MarqueeSelection.Height = 1;
 
-            MarqueeSelection.Show = true;
-            DoBrushLogic(sender, e);
+                MarqueeSelection.Show = true;
+                DoBrushLogic(sender, e);
+            }
             if (e.Button == MouseButtons.Right)
             {
                 isRightMouseDown = true;
@@ -498,7 +504,7 @@ namespace MapEditor
 
         void tileDisplay1_MouseUp(object sender, MouseEventArgs e)
         {
-            if (tilemaptexture == null)
+            if (tilemaptexture == null || tileMap == null)
             {
                 return;
             }

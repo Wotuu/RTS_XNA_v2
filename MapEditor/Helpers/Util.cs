@@ -69,5 +69,13 @@ namespace MapEditor.Helpers
             lineTexture.SetData(intColor);
             return lineTexture;
         }
+
+        public static int GetQuadDepth(int width)
+        {
+            double Depth = Math.Sqrt(width);
+            Depth = Depth / 3;
+
+            return (int)(Math.Min(Math.Ceiling(Depth),7));
+        }
     }
 }
