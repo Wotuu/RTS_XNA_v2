@@ -32,6 +32,7 @@ using XNAInterfaceComponents.ParentComponents;
 using SocketLibrary.Multiplayer;
 using PathfindingTest.Multiplayer.Data;
 using PathfindingTest.Misc;
+using PathfindingTest.Audio;
 
 namespace PathfindingTest
 {
@@ -130,6 +131,8 @@ namespace PathfindingTest
             graphics.PreferMultiSampling = true;
 
             StateManager.GetInstance().gameState = StateManager.State.MainMenu;
+
+            SoundManager.GetInstance();
 
             base.Initialize();
         }

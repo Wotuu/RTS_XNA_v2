@@ -11,6 +11,7 @@ using PathfindingTest.Units.Damage;
 using PathfindingTest.Multiplayer.Data;
 using SocketLibrary.Protocol;
 using PathfindingTest.Pathfinding;
+using PathfindingTest.Audio;
 
 namespace PathfindingTest.Units.Melee
 {
@@ -66,6 +67,9 @@ namespace PathfindingTest.Units.Melee
                 ((Unit)target).OnAggroRecieved(e);
                 this.OnAggro(e);
             }
+
+            SoundManager.GetInstance().PlaySound(SoundManager.GetInstance().swordSounds);
+
             DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), target, this);
             target.OnDamage(dmgEvent);
             this.fireCooldown = this.rateOfFire;

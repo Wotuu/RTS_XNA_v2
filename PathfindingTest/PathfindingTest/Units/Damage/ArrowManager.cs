@@ -5,6 +5,8 @@ using System.Text;
 using PathfindingTest.Units.Projectiles;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Graphics;
+using PathfindingTest.Audio;
+using Microsoft.Xna.Framework.Audio;
 
 namespace PathfindingTest.Units.Damage
 {
@@ -37,6 +39,7 @@ namespace PathfindingTest.Units.Damage
         public void AddProjectile(Projectile projectile)
         {
             this.projectiles.AddLast(projectile);
+            SoundManager.GetInstance().PlaySound(SoundManager.GetInstance().arrowSounds);
         }
 
         public void RemoveProjectile(Projectile projectile)
