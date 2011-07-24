@@ -56,6 +56,7 @@
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
             this.TBCollisionSize = new System.Windows.Forms.ToolStripTextBox();
             this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
+            this.BtnDrawNodes = new System.Windows.Forms.ToolStripButton();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -84,28 +85,28 @@
             // newMapToolStripMenuItem
             // 
             this.newMapToolStripMenuItem.Name = "newMapToolStripMenuItem";
-            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newMapToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.newMapToolStripMenuItem.Text = "New Map";
             this.newMapToolStripMenuItem.Click += new System.EventHandler(this.newMapToolStripMenuItem_Click);
             // 
             // openTilesetToolStripMenuItem
             // 
             this.openTilesetToolStripMenuItem.Name = "openTilesetToolStripMenuItem";
-            this.openTilesetToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.openTilesetToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.openTilesetToolStripMenuItem.Text = "Open Tileset";
             this.openTilesetToolStripMenuItem.Click += new System.EventHandler(this.openTilesetToolStripMenuItem_Click);
             // 
             // saveToolStripMenuItem
             // 
             this.saveToolStripMenuItem.Name = "saveToolStripMenuItem";
-            this.saveToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.saveToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.saveToolStripMenuItem.Text = "Save";
             this.saveToolStripMenuItem.Click += new System.EventHandler(this.saveToolStripMenuItem_Click);
             // 
             // loadToolStripMenuItem
             // 
             this.loadToolStripMenuItem.Name = "loadToolStripMenuItem";
-            this.loadToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.loadToolStripMenuItem.Size = new System.Drawing.Size(140, 22);
             this.loadToolStripMenuItem.Text = "Load";
             this.loadToolStripMenuItem.Click += new System.EventHandler(this.loadToolStripMenuItem_Click);
             // 
@@ -135,7 +136,8 @@
             this.BtnDrawCollision,
             this.BtnEraseCollision,
             this.toolStripLabel1,
-            this.TBCollisionSize});
+            this.TBCollisionSize,
+            this.BtnDrawNodes});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1264, 25);
@@ -296,6 +298,16 @@
             this.tileMapDisplay1.TabIndex = 0;
             this.tileMapDisplay1.Text = "tileMapDisplay1";
             // 
+            // BtnDrawNodes
+            // 
+            this.BtnDrawNodes.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.BtnDrawNodes.Image = ((System.Drawing.Image)(resources.GetObject("BtnDrawNodes.Image")));
+            this.BtnDrawNodes.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.BtnDrawNodes.Name = "BtnDrawNodes";
+            this.BtnDrawNodes.Size = new System.Drawing.Size(23, 22);
+            this.BtnDrawNodes.Text = "toolStripButton1";
+            this.BtnDrawNodes.Click += new System.EventHandler(this.BtnDrawNodes_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -345,6 +357,7 @@
         private System.Windows.Forms.ToolStripTextBox TBCollisionSize;
         private System.Windows.Forms.ToolStripMenuItem saveToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem loadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripButton BtnDrawNodes;
     }
 }
 

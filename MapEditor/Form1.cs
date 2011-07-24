@@ -18,6 +18,8 @@ using MapEditor.Helpers;
 using System.Reflection;
 using AStarCollisionMap.Collision;
 using AStarCollisionMap.QuadTree;
+using AStarCollisionMap.Pathfinding;
+using MapEditor.Pathfinding;
 namespace MapEditor
 {
     public partial class Form1 : Form
@@ -31,13 +33,13 @@ namespace MapEditor
         public Texture2D cursor;
         public Texture2D EraseTexture;
         public Texture2D tilemaptexture;
-        Texture2D linetexture;
+        public static Texture2D linetexture;
 
 
         CollisionMap CollisionMap;
         int[] CollisionData;
 
-        Camera camera = new Camera();
+        public static Camera camera = new Camera();
         Tileset tileset = null;
         Vector2 position = new Vector2();
 
@@ -61,6 +63,7 @@ namespace MapEditor
 
         int collisionsize = 5;
 
+        
 
         enum Brush
         {
@@ -149,9 +152,14 @@ namespace MapEditor
             long ticks = DateTime.UtcNow.Ticks;
             Render();
             Logic();
+            PathfindingNodeProcessor.GetInstance().Process();
+            foreach (Node i in PathfindingNodeManager.GetInstance().nodeList)
+            {
+                i.Draw(spriteBatch);
+            }
             spriteBatch.End();
             long runtime = (DateTime.UtcNow.Ticks - ticks) / 10000;
-
+            
             if (runtime < (1000 / 60))
             {
                 int sleeptime = (1000 / 60) - (int)runtime;
@@ -417,6 +425,12 @@ namespace MapEditor
                 tileMap.savemap(savefile.FileName);
             }
             
+
+            //Collisionmap saven
+            CollisionMap.collisionMapPath = savefile.FileName.Substring(0, savefile.FileName.LastIndexOf('\\') );
+            CollisionMap.collisionMapName = "Collisionmap";
+
+            CollisionMap.SaveToPng();
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -435,6 +449,8 @@ namespace MapEditor
                CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
                currentLayer = tileMap.layers[0];
             }
+
+            
         }
 
         #endregion
@@ -645,6 +661,18 @@ namespace MapEditor
             return new System.Drawing.Rectangle(point, new System.Drawing.Size(Engine.TileHeight, Engine.TileWidth));
         }
         #endregion
+
+        private void BtnDrawNodes_Click(object sender, EventArgs e)
+        {
+           // CollisionMap.GetNodeLocationsAroundEdges();
+            LinkedList<Point> pointList = CollisionMap.GetNodeLocationsAroundEdges();
+            PathfindingNodeManager.GetInstance().nodeList.Clear();
+            foreach (Point p in pointList)
+            {
+                new Node(CollisionMap, p.X, p.Y,GraphicsDevice);
+            }
+
+        }
 
        
 
