@@ -22,6 +22,7 @@ namespace AStarCollisionMap.Collision
         public String collisionMapName { get; set; }
         public int collisionMapTextureScale = 1;
         private int dataLength { get; set; }
+        public Rectangle windowSize { get; set; }
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -389,6 +390,7 @@ namespace AStarCollisionMap.Collision
         {
             this.game = game;
             this.graphicsDevice = game.GraphicsDevice;
+            this.windowSize = new Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
             Init(width, height, collisionMapPath, collisionMapName, drawMode, quadDepth);
         }
 
@@ -396,6 +398,7 @@ namespace AStarCollisionMap.Collision
             Boolean drawMode, int quadDepth)
         {
             this.graphicsDevice = graphicsDevice;
+            this.windowSize = new Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
             Init(width, height, "", "", drawMode, quadDepth);
         }
 
@@ -429,7 +432,7 @@ namespace AStarCollisionMap.Collision
 
             this.tree = new QuadRoot(new Rectangle(0, 0, width, height), this);
             this.tree.CreateTree(quadDepth);
-            SaveToPng();
+            // SaveToPng();
         }
     }
 }
