@@ -29,6 +29,7 @@ namespace PathfindingTest.Buildings
         public SpriteFont animationFont { get; set; }
         public Boolean drawAnimation { get; set; }
         public int animationCounter { get; set; }
+        public Boolean drawRange { get; set; }
 
         public ResourceGather(Player p, Color c)
             : base(p)
@@ -53,6 +54,11 @@ namespace PathfindingTest.Buildings
 
             this.drawAnimation = false;
             this.animationCounter = 0;
+
+            foreach (ResourceGather rg in p.buildings)
+            {
+                rg.drawRange = true;
+            }
         }
 
         public override void Update(KeyboardState ks, MouseState ms)
@@ -78,7 +84,7 @@ namespace PathfindingTest.Buildings
         {
             DefaultDraw(sb);
 
-            if (state == State.Preview || selected)
+            if (drawRange || selected)
             {
                 resourceRange.Draw(sb);
             }
@@ -108,45 +114,26 @@ namespace PathfindingTest.Buildings
 
             p.resources -= Building.GetCost(this.type);
             resources = CalculateRPS();
+
+            foreach (ResourceGather rg in p.buildings)
+            {
+                rg.drawRange = false;
+            }
         }
 
         public int CalculateRPS()
         {
-            resourceRange.SetSurface();
             resourceRange.UpdatePosition();
-            this.surface = resourceRange.surface;
 
             double rs = 50;
 
-            double total = 0;
-            double part = 0;
-
-            //Boolean[] boolMap = Game1.GetInstance().collision.tree.root.collisionTexture.TextureToBoolean();
-
-            //foreach (Circle circle in surface)
-            //{
-            //    Color[,] circleColors = DrawUtil.TextureTo2DArray(circle.outline);
-
-            //    for (int x = 0; x < circle.outline.Width - 1; x++)
-            //    {
-            //        for (int y = 0; y < circle.outline.Height - 1; y++)
-            //        {
-            //            if (circleColors[x, y].A > 0)
-            //            {
-            //                total++;
-
-            //                if (boolMap[x * y])
-            //                {
-            //                    part++;
-            //                }
-            //            }
-            //        }
-            //    }
-            //}
-
-            if (total != 0)
+            foreach (ResourceGather rg in p.buildings)
             {
-                rs -= rs * (part / total);
+                if (rg != this)
+                {
+                    double overlap = 1 - resourceRange.CalculateOverlap(rg.resourceRange);
+                    rs = overlap * rs;
+                }
             }
 
             return (int)rs;

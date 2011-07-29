@@ -557,6 +557,10 @@ namespace PathfindingTest.Buildings
             productionQueue = null;
             p.buildings.Remove(this);
             if (this.mesh != null) mesh.Reverse();
+            foreach (ResourceGather rg in p.buildings)
+            {
+                rg.CalculateRPS();
+            }
         }
 
         /// <summary>

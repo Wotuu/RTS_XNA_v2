@@ -48,7 +48,11 @@ namespace PathfindingTest.Audio
 
         public void PlaySound(LinkedList<SoundEffect> source)
         {
-            source.ElementAt(new Random().Next(source.Count)).Play();
+            SoundEffect play = source.ElementAt(new Random().Next(source.Count));
+            SoundEffectInstance playInstance = play.CreateInstance();
+
+            playInstance.Volume = 0.45f;
+            playInstance.Play();
         }
     }
 }

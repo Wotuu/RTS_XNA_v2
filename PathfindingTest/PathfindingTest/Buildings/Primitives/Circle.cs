@@ -72,6 +72,10 @@ namespace PathfindingTest.Primitives
             }
         }
 
+        /// <summary>
+        /// Get the Point in the center of the Circle
+        /// </summary>
+        /// <returns>The central Point</returns>
         public Point GetCenter()
         {
             return new Point((int)px + (outline.Width / 2), (int)py + (outline.Height / 2));
@@ -88,7 +92,21 @@ namespace PathfindingTest.Primitives
             }
         }
 
-        public Boolean Intersects(Circle oc)
+        /// <summary>
+        /// Get the total surface area of the Circle
+        /// </summary>
+        /// <returns>The total surface area</returns>
+        public double GetArea()
+        {
+            return Math.Pow(radius, 2) * Math.PI;
+        }
+
+        /// <summary>
+        /// Calculate the distance between the central point of two Circles
+        /// </summary>
+        /// <param name="oc">The other Circle</param>
+        /// <returns>The distance between the two Circles</returns>
+        public double CalculateDistance(Circle oc)
         {
             Point p1 = this.GetCenter();
             Point p2 = oc.GetCenter();
@@ -96,7 +114,19 @@ namespace PathfindingTest.Primitives
             double deltaY = Math.Abs(p1.Y - p2.Y);
 
             double distance = Math.Sqrt(Math.Pow(deltaX, 2) + Math.Pow(deltaY, 2));
+
+            return distance;
+        }
+
+        /// <summary>
+        /// Checks if two Circles overlap or not
+        /// </summary>
+        /// <param name="oc">The other Circle</param>
+        /// <returns>True if the two Circles overlap, false if not</returns>
+        public Boolean Intersects(Circle oc)
+        {
             double distanceSB = this.radius + oc.radius;
+            double distance = this.CalculateDistance(oc);
 
             if (distance < distanceSB)
             {
@@ -104,6 +134,34 @@ namespace PathfindingTest.Primitives
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// Calculates how much of two Circles overlap
+        /// Isn't Math great ಥ-ಥ
+        /// </summary>
+        /// <param name="oc">The other Circle</param>
+        /// <returns>The amount of overlap as a number between 0 and 1</returns>
+        public double CalculateOverlap(Circle oc)
+        {
+            if (this.Intersects(oc))
+            {
+                double c = this.CalculateDistance(oc);
+                double CBD = 2 * Math.Acos((Math.Pow(oc.radius, 2) + Math.Pow(c, 2) - Math.Pow(this.radius, 2)) / (2 * oc.radius * c));
+                double CAD = 2 * Math.Acos((Math.Pow(this.radius, 2) + Math.Pow(c, 2) - Math.Pow(oc.radius, 2)) / (2 * this.radius * c));
+                
+                double circleArea = this.GetArea();
+                double overlapArea = ((0.5 * CBD * Math.Pow(oc.radius, 2)) - (0.5 * Math.Pow(oc.radius, 2) * Math.Sin(CBD)))
+                                     + ((0.5 * CAD * Math.Pow(this.radius, 2)) - (0.5 * Math.Pow(this.radius, 2) * Math.Sin(CAD)));
+
+                double overlap = overlapArea / circleArea;
+
+                return overlap;
+            }
+            else
+            {
+                return 0;
+            }
         }
     }
 }
