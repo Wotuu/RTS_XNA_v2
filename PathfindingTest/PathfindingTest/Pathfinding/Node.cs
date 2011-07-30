@@ -12,7 +12,7 @@ using PathfindingTest.Collision;
 
 namespace PathfindingTest.Pathfinding
 {
-    public class Node : PathfindingNode, XMLAble, Offsetable
+    public class Node : PathfindingNode, Offsetable
     {
         public Color c { get; set; }
 
@@ -90,14 +90,6 @@ namespace PathfindingTest.Pathfinding
             // sb.DrawString(game.font, "" + score, new Vector2(drawX, drawY - 14), Color.Black);
             // sb.DrawString(game.font, "" + costToStart, new Vector2(drawX, drawY + texture.Height - 2), Color.Black);
             // sb.DrawString(game.font, "" + costToEnd, new Vector2(drawX, drawY + texture.Height + 8), Color.Black);
-        }
-
-        void XMLAble.AddToXML(XmlTextWriter textWriter)
-        {
-            textWriter.WriteStartElement("Node");
-            textWriter.WriteAttributeString("x", this.GetLocation().X + "");
-            textWriter.WriteAttributeString("y", this.GetLocation().Y + "");
-            textWriter.WriteEndElement();
         }
 
         public override String ToString()

@@ -705,6 +705,10 @@ namespace PathfindingTest.Units
             }
         }
 
+        /// <summary>
+        /// Gets the draw rectangle of this unit.
+        /// </summary>
+        /// <returns>The draw rectangle</returns>
         public Rectangle GetDrawRectangle()
         {
             Game1 game = Game1.GetInstance(); 

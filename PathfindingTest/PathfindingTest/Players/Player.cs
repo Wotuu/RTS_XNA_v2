@@ -120,7 +120,7 @@ namespace PathfindingTest.Players
 
                 for (int i = 0; i < unitCount; i++)
                 {
-                    
+
                     Point p = points.ElementAt(i);
                     if (i % 2 == 0)
                     {
@@ -130,8 +130,8 @@ namespace PathfindingTest.Players
                     {
                         temp_units.AddLast(rangedStore.getUnit(Unit.Type.Ranged, p.X, p.Y));
                     }
-                    
-                   // Point p = points.ElementAt(i);
+
+                    // Point p = points.ElementAt(i);
                     //temp_units.AddLast(meleeStore.getUnit(Unit.Type.Melee, p.X, p.Y));
                 }
             }
@@ -214,7 +214,7 @@ namespace PathfindingTest.Players
                 arrowManager.UpdateProjectiles(ks, ms);
             }
             catch (InvalidOperationException e) { }
-            
+
 
             if (command != null)
             {
@@ -222,7 +222,7 @@ namespace PathfindingTest.Players
             }
 
             // Show healthbar over units that mouse is hovering over
-            Boolean selectedAUnit = false;
+            /*Boolean selectedAUnit = false;
             if (this != Game1.CURRENT_PLAYER) return;
             try
             {
@@ -234,7 +234,7 @@ namespace PathfindingTest.Players
                         // Sometimes the unit would still be constructed, and it's updated already .. :c
                         // Debug only
                         if (u == null || u.texture == null) continue;
-                        if (!selectedAUnit && u.DefineRectangle().Contains(ms.X, ms.Y))
+                        if (!selectedAUnit && u.GetDrawRectangle().Contains(ms.X, ms.Y))
                         {
                             u.selected = true;
                             selectedAUnit = true;
@@ -249,7 +249,7 @@ namespace PathfindingTest.Players
             catch (Exception e)
             {
 
-            }
+            }*/
 
             hud.Update(ks, ms);
         }
@@ -295,15 +295,8 @@ namespace PathfindingTest.Players
                 catch (Exception e) { }
             }
 
-            for (int i = 0; i < this.units.Count; i++)
-            {
-                Unit u = this.units.ElementAt(i);
-                if (u.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
-                {
-                    this.units.ElementAt(i).DrawHealthBar(sb);
-                    break;
-                }
-            }
+            Unit mouseOver = GetMouseOverUnit();
+            if (mouseOver != null) mouseOver.DrawHealthBar(sb);
 
             foreach (Building b in buildings)
             {
@@ -332,6 +325,28 @@ namespace PathfindingTest.Players
         }
 
         /// <summary>
+        /// Gets the unit that the mouse is over, of all players.
+        /// </summary>
+        /// <returns>The unit.</returns>
+        public Unit GetMouseOverUnit()
+        {
+            foreach (Player p in Game1.GetInstance().players)
+            {
+                for (int i = 0; i < p.units.Count; i++)
+                {
+                    Unit u = p.units.ElementAt(i);
+
+                    if (u.GetDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                    {
+                        return u;
+                    }
+
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Whether the mouse is over a unit or not
         /// if it is, it'll return it. =D
         /// </summary>
@@ -340,7 +355,7 @@ namespace PathfindingTest.Players
         {
             foreach (Unit u in units)
             {
-                if (u.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return u;
+                if (u.GetDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return u;
             }
             return null;
         }
@@ -583,7 +598,7 @@ namespace PathfindingTest.Players
                                 this.currentSelection.MoveTo(previewPattern);
                             }
                             // If we're suppose to move in the first place
-                            else if( this.command == null || ( this.command != null && this.command.type != Command.Type.Repair ) )
+                            else if (this.command == null || (this.command != null && this.command.type != Command.Type.Repair))
                             {
                                 stopUnitSelection();
                                 this.currentSelection.MoveTo(GetNewPreviewPattern(m.location, 0));
@@ -641,7 +656,7 @@ namespace PathfindingTest.Players
                         Math.Max(currentSelection.units.Count * 5, (int)Util.GetHypoteneuseLength(e.location, previewPatternClick)),
                         angle);*/
                     Vector2 offset = Game1.GetInstance().drawOffset;
-                    Point location = new Point( (int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
+                    Point location = new Point((int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
                     previewPattern = GetNewPreviewPattern(location, (int)Util.GetHypoteneuseAngleDegrees(location, previewPatternClick));
                     /*previewPattern = new RectanglePattern(previewPatternClick,
                         currentSelection, 5,

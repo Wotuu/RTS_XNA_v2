@@ -281,6 +281,7 @@ namespace AStarCollisionMap.Collision
             if (IndexExists(p))
             {
                 Quad quad = this.tree.GetQuadByPoint(p);
+                if (quad == null) return false;
                 return quad.collisionTexture.CollisionAt((p.X - quad.rectangle.X) + ((p.Y - quad.rectangle.Y) * quad.rectangle.Width));
             }
             else return true;
@@ -410,6 +411,8 @@ namespace AStarCollisionMap.Collision
         public void LoadMap(String path, String mapname, int depth)
         {
             this.tree.CreateTree(depth);
+            this.collisionMapPath = path;
+            this.collisionMapName = mapname;
 
             for (int i = 0; i < depth; i++)
             {
@@ -418,6 +421,8 @@ namespace AStarCollisionMap.Collision
                     FileStream stream = new FileStream(path + "/" + mapname + "/" +
                         mapname + "_" + i + "_" + j +".png", FileMode.Open);
                     this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
+                    stream.Close();
+                    stream.Dispose();
                 }
             }
         }
