@@ -31,7 +31,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public XNAInputDialog gameNameInput { get; set; }
 
         public XNAPanel gamesPanel { get; set; }
-        private LinkedList<GameDisplayPanel> gameList = new LinkedList<GameDisplayPanel>();
+        public LinkedList<GameDisplayPanel> gameList = new LinkedList<GameDisplayPanel>();
 
 
         public MultiplayerLobby()
@@ -91,6 +91,16 @@ namespace PathfindingTest.UI.Menus.Multiplayer
                 if (game.multiplayerGame.id == gameID) return game.multiplayerGame;
             }
             return null;
+        }
+
+        /// <summary>
+        /// Gets a display panel by index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        /// <returns>The panel, or an exception.</returns>
+        public GameDisplayPanel GetGameDisplayPanelByIndex(int index)
+        {
+            return this.gameList.ElementAt(index);
         }
 
         /// <summary>

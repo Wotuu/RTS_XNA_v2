@@ -177,6 +177,7 @@ namespace GameServer.ChatServer
                         // Tell everyone in the game itsself that a game map name change has occured
                         MultiplayerGame game = MultiplayerGameManager.GetInstance().GetGameByHost(this.user);
                         ChannelManager.GetInstance().GetChannelByID(game.id).SendChatPacketToAll(p);
+                        ChannelManager.GetInstance().GetChannelByID(game.id).mapName = PacketUtil.DecodePacketString(p, 4);
                         break;
                     }
                 case Headers.CLIENT_DESTROY_GAME:

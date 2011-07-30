@@ -15,6 +15,7 @@ namespace GameServer.ChatServer.Channels
         public int id { get; set; }
         private LinkedList<ServerUser> users = new LinkedList<ServerUser>();
         public int objectCount { get; set; }
+        public String mapName { get; set; }
 
         public Channel()
         {
@@ -78,10 +79,18 @@ namespace GameServer.ChatServer.Channels
             // This is not the lobby, send the user all data
             else
             {
+                Packet p = new Packet(Headers.GAME_MAP_CHANGED);
+                if (this.mapName != null)
+                {
+                    p.AddInt(this.id);
+                    p.AddString(this.mapName);
+                    toAdd.chatListener.client.SendPacket(p);
+                }
+
                 for (int i = 0; i < this.users.Count; i++)
                 {
                     ServerUser user = this.users.ElementAt(i);
-                    Packet p = new Packet(Headers.GAME_COLOR_CHANGED);
+                    p = new Packet(Headers.GAME_COLOR_CHANGED);
                     p.AddInt(this.id);
                     p.AddInt(user.id);
                     p.AddInt(user.color);
@@ -264,7 +273,7 @@ namespace GameServer.ChatServer.Channels
                 users.ElementAt(i).chatListener.client.SendPacket(p);
             }
         }
-        
+
 
         /// <summary>
         /// Sends a packet to all users in this channel.

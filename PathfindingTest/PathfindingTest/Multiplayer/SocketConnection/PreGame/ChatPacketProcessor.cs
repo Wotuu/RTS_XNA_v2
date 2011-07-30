@@ -8,6 +8,8 @@ using PathfindingTest.UI.Menus;
 using XNAInterfaceComponents.AbstractComponents;
 using PathfindingTest.UI.Menus.Multiplayer;
 using SocketLibrary.Users;
+using SocketLibrary.Multiplayer;
+using PathfindingTest.UI.Menus.Multiplayer.Panels;
 
 namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
 {
@@ -48,6 +50,34 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         // Set the received user ID.
                         ChatServerConnectionManager.GetInstance().user.id = PacketUtil.DecodePacketInt(p, 0);
                         // Console.Out.WriteLine("Received user ID from the server: " + ChatServerConnectionManager.GetInstance().user.id);
+                        break;
+                    }
+                case Headers.GAME_MAP_CHANGED:
+                    {
+                        int gameID = PacketUtil.DecodePacketInt(p, 0);
+                        String mapName = PacketUtil.DecodePacketString(p, 4);
+
+                        ParentComponent menu = MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
+                        if (menu is MultiplayerLobby)
+                        {
+                            MultiplayerLobby lobby = ((MultiplayerLobby)menu);
+                            MultiplayerGame game = lobby.GetGameByID(gameID);
+                            game.mapname = mapName;
+                            for (int i = 0; i < lobby.gameList.Count; i++)
+                            {
+                                GameDisplayPanel panel = lobby.GetGameDisplayPanelByIndex(i);
+                                if (panel.multiplayerGame.id == gameID)
+                                {
+                                    panel.ChangeMapname(mapName);
+                                    break;
+                                }
+                            }
+                        }
+                        else if (menu is GameLobby)
+                        {
+                            GameLobby lobby = ((GameLobby)menu);
+                            lobby.mapPreviewPanel.selectedMapLbl.text = mapName;
+                        }
                         break;
                     }
                 case Headers.CLIENT_CHANNEL:

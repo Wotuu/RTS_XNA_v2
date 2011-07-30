@@ -72,13 +72,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
             foreach( MapEntryPanel panel in this.panels ){
                 if( panel.previewButton.selected ){
                     this.previewPanel.selectedMapLbl.text = panel.previewButton.text;
-                    if (Game1.GetInstance().IsMultiplayerGame())
-                    {
+
                         Packet p = new Packet(Headers.GAME_MAP_CHANGED);
                         p.AddInt(ChatServerConnectionManager.GetInstance().user.channelID);
                         p.AddString(this.previewPanel.selectedMapLbl.text);
                         ChatServerConnectionManager.GetInstance().SendPacket(p);
-                    }
 
                     break;
                 }

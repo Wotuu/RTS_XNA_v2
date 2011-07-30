@@ -27,6 +27,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         private XNATextField messageTextField { get; set; }
         private XNAButton startGameButton { get; set; }
         public XNAButton leaveGameButton { get; set; }
+        public MapPreviewPanel mapPreviewPanel { get; set; }
 
         private MultiplayerGame _multiplayerGame { get; set; }
         public MultiplayerGame multiplayerGame
@@ -57,7 +58,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             gameOptionsPanel = new XNAPanel(this, new Rectangle(5, 5, 500, 330));
             gameOptionsPanel.border = new Border(gameOptionsPanel, 1, Color.Blue);
 
-            XNAPanel mapPreviewPanel = new XNAPanel(this, new Rectangle(510, 5, 285, 330));
+            mapPreviewPanel = new MapPreviewPanel(this, new Rectangle(510, 5, 285, 330));
             mapPreviewPanel.border = new Border(mapPreviewPanel, 1, Color.Blue);
 
 

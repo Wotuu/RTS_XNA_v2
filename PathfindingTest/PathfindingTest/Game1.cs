@@ -220,25 +220,50 @@ namespace PathfindingTest
                     //if (frames % 2 == 0) 
 
 
-                    if (keyboardState.IsKeyDown(Keys.Left))
+                    // Use arrow keys to move the map
+                    if (keyboardState.IsKeyDown(Keys.Left) && drawOffset.X > 0)
                     {
-                        this.drawOffset = new Vector2(this.drawOffset.X - mapMoveSensitivity,
-                                                      this.drawOffset.Y);
+                        if (drawOffset.X - mapMoveSensitivity < 0)
+                        {
+                            this.drawOffset = new Vector2(0, this.drawOffset.Y);
+                        }
+                        else
+                        {
+                            this.drawOffset = new Vector2(this.drawOffset.X - mapMoveSensitivity, this.drawOffset.Y);
+                        }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Right))
+                    if (keyboardState.IsKeyDown(Keys.Right) && drawOffset.X + 1024 < collision.mapWidth)
                     {
-                        this.drawOffset = new Vector2(this.drawOffset.X + mapMoveSensitivity,
-                                                      this.drawOffset.Y); 
+                        if (drawOffset.X + mapMoveSensitivity > collision.mapWidth)
+                        {
+                            this.drawOffset = new Vector2(collision.mapWidth, this.drawOffset.Y);
+                        }
+                        else
+                        {
+                            this.drawOffset = new Vector2(this.drawOffset.X + mapMoveSensitivity, this.drawOffset.Y);
+                        }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Up))
+                    if (keyboardState.IsKeyDown(Keys.Up) && drawOffset.Y > 0)
                     {
-                        this.drawOffset = new Vector2(this.drawOffset.X,
-                                                      this.drawOffset.Y - mapMoveSensitivity); 
+                        if (drawOffset.Y - mapMoveSensitivity < 0)
+                        {
+                            this.drawOffset = new Vector2(this.drawOffset.X, 0);
+                        }
+                        else
+                        {
+                            this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y - mapMoveSensitivity);
+                        }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Down))
+                    if (keyboardState.IsKeyDown(Keys.Down) && drawOffset.Y + 768 < collision.mapHeight)
                     {
-                        this.drawOffset = new Vector2(this.drawOffset.X,
-                                                      this.drawOffset.Y + mapMoveSensitivity); 
+                        if (drawOffset.Y + mapMoveSensitivity > collision.mapHeight)
+                        {
+                            this.drawOffset = new Vector2(this.drawOffset.X, collision.mapHeight);
+                        }
+                        else
+                        {
+                            this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y + mapMoveSensitivity);
+                        }
                     }
 
 
