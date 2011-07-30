@@ -16,7 +16,6 @@ namespace PathfindingTest.Primitives
         public int radius { get; set; }
         public int outerRadius { get; set; }
         public Texture2D outline { get; set; }
-        public LinkedList<Circle> surface { get; set; }
         public Building drawOn { get; set; }
         public Color color { get; set; }
         public float px { get; set; }
@@ -29,7 +28,6 @@ namespace PathfindingTest.Primitives
             this.outline = new Texture2D(Game1.GetInstance().GraphicsDevice, outerRadius, outerRadius);
             this.drawOn = drawOn;
             this.color = color;
-            this.surface = new LinkedList<Circle>();
 
             Color[] data = new Color[outerRadius * outerRadius];
 
@@ -58,17 +56,6 @@ namespace PathfindingTest.Primitives
         {
             this.UpdatePosition();
             sb.Draw(outline, new Rectangle((int)px, (int)py, outerRadius, outerRadius), color);
-        }
-
-        /// <summary>
-        /// Set the surface Texture for this Circle
-        /// </summary>
-        public void SetSurface()
-        {
-            for (int i = radius; i >= drawOn.texture.Width / 2; i -= 16)
-            {
-                surface.AddLast(new Circle(i, this.drawOn, Color.Blue));
-            }
         }
 
         /// <summary>

@@ -55,6 +55,7 @@ namespace PathfindingTest.Buildings
         public ProgressBar progressBar { get; set; }
 
         public LinkedList<Unit> constructionQueue { get; set; }
+        public Point originWaypoint { get; set; }
         public Point waypoint { get; set; }
 
         public BuildingMultiplayerData multiplayerData { get; set; }
@@ -468,7 +469,8 @@ namespace PathfindingTest.Buildings
                     case Unit.Type.Engineer:
                         if (this.type == Type.Fortress)
                         {
-                            newUnit = p.meleeStore.getUnit(pu.type, waypoint.X, waypoint.Y);
+                            newUnit = p.meleeStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
+                            newUnit.MoveToQueue(waypoint);
                             productionQueue.RemoveFirst();
                         }
                         break;
@@ -476,7 +478,8 @@ namespace PathfindingTest.Buildings
                     case Unit.Type.Melee:
                         if (this.type == Type.Barracks)
                         {
-                            newUnit = p.meleeStore.getUnit(pu.type, waypoint.X, waypoint.Y);
+                            newUnit = p.meleeStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
+                            newUnit.MoveToQueue(waypoint);
                             productionQueue.RemoveFirst();
                         }
                         break;
@@ -484,7 +487,8 @@ namespace PathfindingTest.Buildings
                     case Unit.Type.HeavyMelee:
                         if (this.type == Type.Factory)
                         {
-                            newUnit = p.meleeStore.getUnit(pu.type, waypoint.X, waypoint.Y);
+                            newUnit = p.meleeStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
+                            newUnit.MoveToQueue(waypoint);
                             productionQueue.RemoveFirst();
                         }
                         break;
@@ -492,7 +496,8 @@ namespace PathfindingTest.Buildings
                     case Unit.Type.Fast:
                         if (this.type == Type.Barracks)
                         {
-                            newUnit = p.fastStore.getUnit(pu.type, waypoint.X, waypoint.Y);
+                            newUnit = p.fastStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
+                            newUnit.MoveToQueue(waypoint);
                             productionQueue.RemoveFirst();
                         }
                         break;
@@ -500,7 +505,8 @@ namespace PathfindingTest.Buildings
                     case Unit.Type.Ranged:
                         if (this.type == Type.Barracks)
                         {
-                            newUnit = p.rangedStore.getUnit(pu.type, waypoint.X, waypoint.Y);
+                            newUnit = p.rangedStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
+                            newUnit.MoveToQueue(waypoint);
                             productionQueue.RemoveFirst();
                         }
                         break;
@@ -508,7 +514,8 @@ namespace PathfindingTest.Buildings
                     case Unit.Type.HeavyRanged:
                         if (this.type == Type.Factory)
                         {
-                            newUnit = p.rangedStore.getUnit(pu.type, waypoint.X, waypoint.Y);
+                            newUnit = p.rangedStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
+                            newUnit.MoveToQueue(waypoint);
                             productionQueue.RemoveFirst();
                         }
                         break;

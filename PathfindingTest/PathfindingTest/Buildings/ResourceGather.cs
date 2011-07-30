@@ -103,6 +103,7 @@ namespace PathfindingTest.Buildings
             this.constructedBy = e;
             e.constructing = this;
             this.mesh = Game1.GetInstance().collision.PlaceBuilding(this.DefineSelectedRectangle());
+            this.originWaypoint = new Point((int)this.x + (this.texture.Width / 2), (int)this.y + this.texture.Height + 20);
             this.waypoint = new Point((int)this.x + (this.texture.Width / 2), (int)this.y + this.texture.Height + 20);
             Game1.GetInstance().IsMouseVisible = true;
 

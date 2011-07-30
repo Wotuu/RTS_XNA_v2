@@ -308,7 +308,10 @@ namespace PathfindingTest.Players
                 command.Draw(sb);
             }
 
-            hud.Draw(sb);
+            if (this == Game1.CURRENT_PLAYER)
+            {
+                hud.Draw(sb);
+            }
         }
 
         /// <summary>
@@ -607,6 +610,15 @@ namespace PathfindingTest.Players
                         previewPattern = null;
 
                     }
+                }
+            }
+
+            if (this.buildingSelection != null && this.buildingSelection.buildings.Count != 0
+                && m.button == MouseEvent.MOUSE_BUTTON_3)
+            {
+                foreach (Building b in buildingSelection.buildings)
+                {
+                    b.waypoint = m.location;
                 }
             }
         }

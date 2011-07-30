@@ -12,7 +12,6 @@ using System.Diagnostics;
 using PathfindingTest.Units;
 using System.Timers;
 using PathfindingTest.Collision;
-using PathfindingTest.SaveLoad;
 using PathfindingTest.Selection;
 using PathfindingTest.Selection.Patterns;
 using PathfindingTest.Players;
@@ -63,6 +62,8 @@ namespace PathfindingTest
         public int objectsCreated { get; set; }
 
         public int exceptionsCount { get; set; }
+
+        public int mapMoveSensitivity { get; set; }
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -133,6 +134,8 @@ namespace PathfindingTest
             StateManager.GetInstance().gameState = StateManager.State.MainMenu;
 
             SoundManager.GetInstance();
+
+            this.mapMoveSensitivity = 8;
 
             base.Initialize();
         }
@@ -215,6 +218,29 @@ namespace PathfindingTest
                      * This is done to save a massive lagspike when updating the collision mesh!
                      */
                     //if (frames % 2 == 0) 
+
+
+                    if (keyboardState.IsKeyDown(Keys.Left))
+                    {
+                        this.drawOffset = new Vector2(this.drawOffset.X - mapMoveSensitivity,
+                                                      this.drawOffset.Y);
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Right))
+                    {
+                        this.drawOffset = new Vector2(this.drawOffset.X + mapMoveSensitivity,
+                                                      this.drawOffset.Y); 
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Up))
+                    {
+                        this.drawOffset = new Vector2(this.drawOffset.X,
+                                                      this.drawOffset.Y - mapMoveSensitivity); 
+                    }
+                    if (keyboardState.IsKeyDown(Keys.Down))
+                    {
+                        this.drawOffset = new Vector2(this.drawOffset.X,
+                                                      this.drawOffset.Y + mapMoveSensitivity); 
+                    }
+
 
                     DateTime UtcNow = new DateTime(DateTime.UtcNow.Ticks);
                     DateTime baseTime = new DateTime(1970, 1, 1, 0, 0, 0);

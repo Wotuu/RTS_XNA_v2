@@ -205,8 +205,10 @@ namespace PathfindingTest.Units
             {
                 return;
             }
+
             Point waypoint = this.waypoints.ElementAt(0);
-            SetMoveToTarget(waypoint.X - (int)Game1.GetInstance().drawOffset.X, waypoint.Y - (int)Game1.GetInstance().drawOffset.Y);
+            
+            SetMoveToTarget(waypoint.X, waypoint.Y);
 
             if (this.collisionWith.Count > 0)
             {
@@ -412,6 +414,9 @@ namespace PathfindingTest.Units
         /// <returns>The list containing all the points that you should visit.</returns>
         public LinkedList<Point> CalculatePath(Point p)
         {
+            p.X = p.X + (int)Game1.GetInstance().drawOffset.X;
+            p.Y = p.Y + (int)Game1.GetInstance().drawOffset.Y;
+
             LinkedList<Point> result = new LinkedList<Point>();
             long ticks = DateTime.UtcNow.Ticks;
             if (Game1.GetInstance().collision.IsCollisionBetween(new Point((int)this.x, (int)this.y), p))
@@ -705,6 +710,10 @@ namespace PathfindingTest.Units
             }
         }
 
+        /// <summary>
+        /// Gets the draw rectangle of this unit.
+        /// </summary>
+        /// <returns>The draw rectangle</returns>
         public Rectangle GetDrawRectangle()
         {
             Game1 game = Game1.GetInstance(); 

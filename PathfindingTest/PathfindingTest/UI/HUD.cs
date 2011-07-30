@@ -355,7 +355,7 @@ namespace PathfindingTest.UI
                         }
                     }
                 }
-
+                
                 foreach (HUDCommandObject co in commandObjects)
                 {
                     if (co.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
@@ -386,7 +386,7 @@ namespace PathfindingTest.UI
                             case HUDCommandObject.Type.Move:
                                 if (!co.disabled)
                                 {
-                                    player.command = new Command(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDMove"), this.player, Command.Type.Move, Mouse.GetState().X, Mouse.GetState().Y, new Color(0, 50, 255, 255));
+                                    player.command = new Command(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDMove"), this.player, Command.Type.Move, Mouse.GetState().X, Mouse.GetState().Y, new Color(0, 100, 255, 255));
                                 }
                                 break;
 
