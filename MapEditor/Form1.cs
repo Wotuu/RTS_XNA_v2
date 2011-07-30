@@ -27,12 +27,13 @@ namespace MapEditor
 #region class fields
         NewMapForm mapform = new NewMapForm();
 
-        TileMap.TileMap tileMap = null;
+        public static TileMap.TileMap tileMap = null;
         public SpriteBatch spriteBatch;
+        public SpriteBatch spriteBatchMiniMap;
 
         public Texture2D cursor;
         public Texture2D EraseTexture;
-        public Texture2D tilemaptexture;
+        public static Texture2D tilemaptexture;
         public static Texture2D linetexture;
 
 
@@ -40,7 +41,7 @@ namespace MapEditor
         int[] CollisionData;
 
         public static Camera camera = new Camera();
-        Tileset tileset = null;
+        public static Tileset tileset = null;
         Vector2 position = new Vector2();
 
         public Rectangle selectedrectangle;
@@ -73,7 +74,9 @@ namespace MapEditor
             Marqueeerase = 4,
             Fill = 5,
             CollisionPaint = 6,
-            EraseCollision = 7
+            EraseCollision = 7,
+            AddNode = 8,
+            RemoveNode = 9
         }
         public struct MarqueeData
         {
@@ -91,6 +94,8 @@ namespace MapEditor
         {
             get { return tileMapDisplay1.GraphicsDevice; }
         }
+
+      
 #endregion
 
         #region Constructor
@@ -101,6 +106,9 @@ namespace MapEditor
             BtnShowGrid.CheckOnClick = true;
             tileMapDisplay1.OnInitialize += new EventHandler(tileDisplay1_OnInitialize);
             tileMapDisplay1.OnDraw += new EventHandler(tileDisplay1_OnDraw);
+
+          
+
 
             tileMapDisplay1.MouseEnter +=
                  new EventHandler(tileDisplay1_MouseEnter);
@@ -125,7 +133,10 @@ namespace MapEditor
         }
         #endregion
 
-        #region Display 
+
+
+
+        #region Display
         void tileDisplay1_OnInitialize(object sender, EventArgs e)
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
@@ -152,11 +163,8 @@ namespace MapEditor
             long ticks = DateTime.UtcNow.Ticks;
             Render();
             Logic();
-            PathfindingNodeProcessor.GetInstance().Process();
-            foreach (Node i in PathfindingNodeManager.GetInstance().nodeList)
-            {
-                i.Draw(spriteBatch);
-            }
+            
+            
             spriteBatch.End();
             long runtime = (DateTime.UtcNow.Ticks - ticks) / 10000;
             
@@ -335,20 +343,40 @@ namespace MapEditor
                 }
             }
             //Collisionmap
-            CollisionMap.drawOffset = camera.Position;
-            CollisionMap.tree.Draw(spriteBatch);
+            if (BtnShowGrid.Checked)
+            {
+
+                CollisionMap.drawOffset = camera.Position;
+                CollisionMap.tree.Draw(spriteBatch);
+                PathfindingNodeProcessor.GetInstance().Process();
+                foreach (Node i in PathfindingNodeManager.GetInstance().nodeList)
+                {
+                    i.Draw(spriteBatch);
+                }
+            }
 
             //SELECTION CURSOR RED
-            spriteBatch.Draw(cursor,
-                new Rectangle(
-                    (int)(position.X / Engine.TileWidth) * Engine.TileWidth
-                     - (int)camera.Position.X,
-                    (int)(position.Y / Engine.TileHeight) * Engine.TileHeight
-                     - (int)camera.Position.Y,
-                    Engine.TileWidth,
-                    Engine.TileHeight),
-                    Color.Red);
-            
+            if (currentbrush != Brush.CollisionPaint && currentbrush != Brush.EraseCollision)
+            {
+
+                spriteBatch.Draw(cursor,
+                    new Rectangle(
+                        (int)(position.X / Engine.TileWidth) * Engine.TileWidth
+                         - (int)camera.Position.X,
+                        (int)(position.Y / Engine.TileHeight) * Engine.TileHeight
+                         - (int)camera.Position.Y,
+                        Engine.TileWidth,
+                        Engine.TileHeight),
+                        Color.Red);
+            }
+            else
+            {
+                spriteBatch.Draw(cursor,
+                    new Rectangle((int)position.X,(int)position.Y,
+                        int.Parse(TBCollisionSize.Text),
+                        int.Parse(TBCollisionSize.Text)),
+                        Color.Red);
+            }
 
         }
         #endregion
@@ -411,7 +439,11 @@ namespace MapEditor
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
         {
             mapform.ShowDialog();
-            createNewMap();
+            if (mapform.completed)
+            {
+                createNewMap();
+            }
+             
         }
 
         private void saveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -423,14 +455,16 @@ namespace MapEditor
             if (savefile.ShowDialog() == DialogResult.OK)
             {
                 tileMap.savemap(savefile.FileName);
+                //Collisionmap saven
+                CollisionMap.collisionMapPath = savefile.FileName.Substring(0, savefile.FileName.LastIndexOf('\\'));
+
+                CollisionMap.collisionMapName = savefile.FileName.Substring(savefile.FileName.LastIndexOf('\\')).Replace(".xml", "");
+
+                CollisionMap.SaveToPng();
             }
             
 
-            //Collisionmap saven
-            CollisionMap.collisionMapPath = savefile.FileName.Substring(0, savefile.FileName.LastIndexOf('\\') );
-            CollisionMap.collisionMapName = "Collisionmap";
-
-            CollisionMap.SaveToPng();
+            
         }
 
         private void loadToolStripMenuItem_Click(object sender, EventArgs e)
@@ -445,7 +479,11 @@ namespace MapEditor
                 tileMap = new TileMap.TileMap(1, 1);
 
                tileMap = tileMap.opentilemap(openfile.FileName);
+                
+                //load Collisionmap
+
                CollisionMap = new CollisionMap(GraphicsDevice, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight, true, Util.GetQuadDepth(tileMap.MapWidth));
+               CollisionMap.LoadMap(openfile.FileName.Substring(0, openfile.FileName.LastIndexOf('\\')), openfile.FileName.Substring(openfile.FileName.LastIndexOf('\\')).Replace(".xml", ""));
                CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
                currentLayer = tileMap.layers[0];
             }
@@ -673,23 +711,6 @@ namespace MapEditor
             }
 
         }
-
-       
-
-      
-       
-
-       
-
- 
-
-
-
-        
-
-       
-
-        
 
     }
 }

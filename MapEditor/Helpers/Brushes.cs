@@ -8,6 +8,8 @@ using MapEditor.TileMap;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using AStarCollisionMap.Pathfinding;
+using MapEditor.Pathfinding;
 namespace MapEditor
 {
     partial class Form1
@@ -17,88 +19,72 @@ namespace MapEditor
         private void BtnPaint_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.Paint;
-            BtnPaint.Checked = true;
-            BtnErase.Checked = false;
-            BtnMarqueeerase.Checked = false;
-            BtnMarqueePaint.Checked = false;
-            BtnFill.Checked = false;
-            BtnDrawCollision.Checked = false;
-            BtnEraseCollision.Checked = false;
+            CheckButton(BtnPaint);
         }
 
         private void BtnMarqueePaint_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.Marquee;
-            BtnPaint.Checked = false;
-            BtnErase.Checked = false;
-            BtnMarqueeerase.Checked = false;
-            BtnMarqueePaint.Checked = true;
-            BtnFill.Checked = false;
-            BtnDrawCollision.Checked = false;
-            BtnEraseCollision.Checked = false;
+            CheckButton(BtnMarqueeerase );
         }
 
         private void BtnErase_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.painterase;
-            BtnPaint.Checked = false;
-            BtnErase.Checked = true;
-            BtnMarqueeerase.Checked = false;
-            BtnMarqueePaint.Checked = false;
-            BtnFill.Checked = false;
-            BtnDrawCollision.Checked = false;
-            BtnEraseCollision.Checked = false;
+            CheckButton(BtnErase );
         }
 
         private void BtnMarqueeerase_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.Marqueeerase;
-            BtnPaint.Checked = false;
-            BtnErase.Checked = false;
-            BtnMarqueeerase.Checked = true;
-            BtnMarqueePaint.Checked = false;
-            BtnFill.Checked = false;
-            BtnDrawCollision.Checked = false;
-            BtnEraseCollision.Checked = false;
+            CheckButton(BtnMarqueeerase);
         }
 
         private void BtnFill_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.Fill;
-            BtnPaint.Checked = false;
-            BtnErase.Checked = false;
-            BtnMarqueeerase.Checked = false;
-            BtnMarqueePaint.Checked = false;
-            BtnFill.Checked = true;
-            BtnDrawCollision.Checked = false;
-            BtnEraseCollision.Checked = false;
+            CheckButton(BtnFill );
         }
 
         private void BtnDrawCollision_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.CollisionPaint;
-            BtnPaint.Checked = false;
-            BtnErase.Checked = false;
-            BtnMarqueeerase.Checked = false;
-            BtnMarqueePaint.Checked = false;
-            BtnFill.Checked = false;
-            BtnDrawCollision.Checked = true;
-            BtnEraseCollision.Checked = false;
+            CheckButton(BtnDrawCollision);
         }
 
 
         private void BtnEraseCollision_Click(object sender, EventArgs e)
         {
             currentbrush = Brush.EraseCollision;
+            CheckButton(BtnEraseCollision);
+        }
+
+        private void BtnAddNode_Click(object sender, EventArgs e)
+        {
+            currentbrush = Brush.AddNode;
+            CheckButton(BtnAddNode);
+        }
+
+        private void BtnRemoveNode_Click(object sender, EventArgs e)
+        {
+            currentbrush = Brush.RemoveNode;
+            CheckButton(BtnRemoveNode);
+        }
+
+
+        private void CheckButton(ToolStripButton btn)
+        {
             BtnPaint.Checked = false;
             BtnErase.Checked = false;
             BtnMarqueeerase.Checked = false;
             BtnMarqueePaint.Checked = false;
             BtnFill.Checked = false;
             BtnDrawCollision.Checked = false;
-            BtnEraseCollision.Checked = true;
+            BtnEraseCollision.Checked = false;
+            BtnAddNode.Checked = false;
+            BtnRemoveNode.Checked = false;
+            btn.Checked = true;
         }
-
         private void TBCollisionSize_KeyPress(object sender, KeyPressEventArgs e)
         {
             if (!System.Text.RegularExpressions.Regex.IsMatch(e.KeyChar.ToString(), "\\d+") && e.KeyChar != (char)System.Windows.Forms.Keys.Back)
@@ -142,6 +128,12 @@ namespace MapEditor
                     break;
                 case Brush.EraseCollision:
                     EraseCollision(sender, e);
+                    break;
+                case Brush.AddNode:
+                    AddNode(sender, e);
+                    break;
+                case Brush.RemoveNode:
+                    RemoveNode(sender, e);
                     break;
                    
 
@@ -306,6 +298,26 @@ namespace MapEditor
         {
             Rectangle colrect = new Rectangle(e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, collisionsize, collisionsize);
             CollisionMap.UpdateCollisionMap(colrect, false);
+        }
+
+
+        private void AddNode(object sender, MouseEventArgs e)
+        {
+            new Pathfinding.Node(CollisionMap, e.X + (int)camera.Position.X, e.Y + (int)camera.Position.Y, GraphicsDevice);
+        }
+
+        private void RemoveNode(object sender, MouseEventArgs e)
+        {
+            PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
+            foreach (Node node in manager.nodeList)
+            {
+                if (node.GetDrawRectangle().Contains(e.X ,e.Y ))
+                {
+                    node.Destroy();
+                    manager.nodeList.Remove(node);
+                    break;
+                }
+            }
         }
 
         /// <summary>

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Xml;
-
+using System.IO;
 namespace MapEditor.TileMap
 {
     public class TileMap
@@ -222,5 +222,7 @@ namespace MapEditor.TileMap
            
 
         }
+
+        
     }
 }

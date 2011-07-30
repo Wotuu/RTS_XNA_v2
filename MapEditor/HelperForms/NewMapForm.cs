@@ -13,6 +13,7 @@ namespace MapEditor.HelperForms
     {
         public int MapWidth;
         public int MapHeight;
+        public Boolean completed = false;
         public NewMapForm()
         {
             InitializeComponent();
@@ -24,6 +25,7 @@ namespace MapEditor.HelperForms
             // Check Numeric values
             this.MapWidth = int.Parse(TbWidth.Text);
             this.MapHeight = int.Parse(TbHeight.Text);
+            completed = true;
             this.Close();
         }
 
