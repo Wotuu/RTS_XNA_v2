@@ -408,15 +408,14 @@ namespace AStarCollisionMap.Collision
         /// </summary>
         /// <param name="path">The path of the map, WITHOUT a trailing slash.</param>
         /// <param name="mapname">The mapname.</param>
-        public void LoadMap(String path, String mapname, int depth)
+        public void LoadMap(String path, String mapname)
         {
-            this.tree.CreateTree(depth);
             this.collisionMapPath = path;
             this.collisionMapName = mapname;
 
-            for (int i = 0; i < depth; i++)
+            for (int i = 0; i < (int)(this.mapWidth / this.tree.quadWidth); i++)
             {
-                for (int j = 0; j < depth; j++)
+                for (int j = 0; j < (int)(this.mapHeight / this.tree.quadHeight); j++)
                 {
                     FileStream stream = new FileStream(path + "/" + mapname + "/" +
                         mapname + "_" + i + "_" + j +".png", FileMode.Open);

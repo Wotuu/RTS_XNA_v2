@@ -6,11 +6,14 @@ using XNAInterfaceComponents.Components;
 using XNAInterfaceComponents.AbstractComponents;
 using SocketLibrary.Multiplayer;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
     public class MapPreviewPanel : XNAPanel
     {
+
+        public Texture2D mapPreview;
 
         public MapPreviewPanel(ParentComponent parent, Rectangle bounds) :
             base(parent, new Rectangle())
