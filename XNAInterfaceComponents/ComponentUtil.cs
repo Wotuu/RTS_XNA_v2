@@ -118,6 +118,14 @@ namespace XNAInterfaceComponents
                 width, z);
         }
 
+        /// <summary>
+        /// Draws a clear rectangle on the sreen.
+        /// </summary>
+        /// <param name="batch">Spritebatch to draw on.</param>
+        /// <param name="rect">The rectangle to draw</param>
+        /// <param name="width">Width of the border</param>
+        /// <param name="c">The color.</param>
+        /// <param name="z">Z-index</param>
         public static void DrawClearRectangle(SpriteBatch batch, Rectangle rect, int width, Color c, float z)
         {
             ComponentUtil.DrawLine(batch,

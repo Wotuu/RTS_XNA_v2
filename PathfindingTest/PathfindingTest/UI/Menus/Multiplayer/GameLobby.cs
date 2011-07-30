@@ -57,8 +57,8 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             gameOptionsPanel = new XNAPanel(this, new Rectangle(5, 5, 500, 330));
             gameOptionsPanel.border = new Border(gameOptionsPanel, 1, Color.Blue);
 
-            XNAPanel mapPreviewPanel = new XNAPanel(this, new Rectangle(510, 5, 200, 200));
-            mapPreviewPanel.border = new Border(gameOptionsPanel, 1, Color.Blue);
+            XNAPanel mapPreviewPanel = new XNAPanel(this, new Rectangle(510, 5, 285, 330));
+            mapPreviewPanel.border = new Border(mapPreviewPanel, 1, Color.Blue);
 
 
             this.creationTime = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;

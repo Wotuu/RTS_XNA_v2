@@ -388,22 +388,14 @@ namespace PathfindingTest
             else if (e.button == MouseEvent.MOUSE_BUTTON_3)
             {
                 PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-                // We need to capture it, because it will be reset after this most probably
-                PathfindingNode selectedNode = manager.selectedNode;
-                Node removedNode = null;
                 foreach (Node node in manager.nodeList)
                 {
-                    if (node.drawRect.Contains(e.location))
+                    if (node.GetDrawRectangle().Contains(e.location))
                     {
+                        node.Destroy();
                         manager.nodeList.Remove(node);
-                        removedNode = node;
                         break;
                     }
-                }
-                foreach (Node node in PathfindingNodeManager.GetInstance().nodeList)
-                {
-                    if (removedNode == null) node.selected = false;
-                    else node.RemoveConnection(removedNode);
                 }
             }
         }
@@ -421,7 +413,7 @@ namespace PathfindingTest
                     PathfindingNode selectedNode = manager.selectedNode;
                     foreach (Node node in manager.nodeList)
                     {
-                        if (!selectedANode && node.drawRect.Contains(e.location))
+                        if (!selectedANode && node.GetDrawRectangle().Contains(e.location))
                         {
                             // Update connections
                             Boolean controlDown = (keyboardState.IsKeyDown(Keys.RightControl) || keyboardState.IsKeyDown(Keys.LeftControl));

@@ -171,7 +171,12 @@ namespace GameServer.ChatServer
                     }
                 case Headers.GAME_MAP_CHANGED:
                     {
+                        // Tell everyone in the lobby that a game map name change has occured
+                        ChannelManager.GetInstance().GetChannelByID(1).SendChatPacketToAll(p);
 
+                        // Tell everyone in the game itsself that a game map name change has occured
+                        MultiplayerGame game = MultiplayerGameManager.GetInstance().GetGameByHost(this.user);
+                        ChannelManager.GetInstance().GetChannelByID(game.id).SendChatPacketToAll(p);
                         break;
                     }
                 case Headers.CLIENT_DESTROY_GAME:

@@ -81,7 +81,8 @@ namespace AStarCollisionMap.QuadTree
                 sb.Draw(this.collisionTexture.texture, this.GetDrawRectangle(), null, this.tree.drawColor, 0f, 
                     Vector2.Zero, SpriteEffects.None, 1f);
                 // Draw the rectangle bounds
-                DrawUtil.DrawClearRectangle(sb, this.GetDrawRectangle(), this.tree.borderWidth, this.tree.borderColor);
+                if( this.tree.drawGridLines ) 
+                    DrawUtil.DrawClearRectangle(sb, this.GetDrawRectangle(), this.tree.borderWidth, this.tree.borderColor);
 
                 // Draw the ????
                 if (this.highlighted)

@@ -20,6 +20,8 @@ namespace AStarCollisionMap.QuadTree
         public int borderWidth { get; set; }
         public Color borderColor { get; set; }
 
+        public Boolean drawGridLines { get; set; }
+
         public Vector2 drawOffset { get; set; }
 
         public CollisionMap collisionMap { get; set; }
@@ -37,6 +39,8 @@ namespace AStarCollisionMap.QuadTree
             this.drawColor = Color.White;
             this.borderColor = Color.Green;
             this.rectangle = rect;
+
+            this.drawGridLines = false;
 
             this.collisionMap = map;
         }
