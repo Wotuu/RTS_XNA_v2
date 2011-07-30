@@ -27,6 +27,10 @@ namespace PathfindingTest.UI
 
         public enum Type
         {
+            Move,
+            Attack,
+            Defend,
+            Stop,
             Repair
         }
 

@@ -32,8 +32,8 @@ namespace PathfindingTest.Buildings
         {
             int w = building.texture.Width;
             int h = 5;
-            int x = (int)building.x;
-            int y = (int)building.y + (building.texture.Height) + h;
+            int x = (int)building.x - (int)Game1.GetInstance().drawOffset.X;
+            int y = (int)building.y + (building.texture.Height) + h - (int)Game1.GetInstance().drawOffset.Y;
             int innerWidth = (int)((w / 100.0) * progress);
 
 

@@ -56,8 +56,7 @@ namespace PathfindingTest.Primitives
 
         internal void Draw(SpriteBatch sb)
         {
-            this.px = drawOn.x - radius + (drawOn.texture.Width / 2);
-            this.py = drawOn.y - radius + (drawOn.texture.Height / 2);
+            this.UpdatePosition();
             sb.Draw(outline, new Rectangle((int)px, (int)py, outerRadius, outerRadius), color);
         }
 
@@ -78,18 +77,13 @@ namespace PathfindingTest.Primitives
         /// <returns>The central Point</returns>
         public Point GetCenter()
         {
-            return new Point((int)px + (outline.Width / 2), (int)py + (outline.Height / 2));
+            return new Point((int)px + (outline.Width / 2) - (int)Game1.GetInstance().drawOffset.X, (int)py + (outline.Height / 2) - (int)Game1.GetInstance().drawOffset.Y);
         }
 
         public void UpdatePosition()
         {
-            this.px = drawOn.x - radius + (drawOn.texture.Width / 2);
-            this.py = drawOn.y - radius + (drawOn.texture.Height / 2);
-
-            foreach (Circle circle in surface)
-            {
-                circle.UpdatePosition();
-            }
+            this.px = drawOn.x - radius + (drawOn.texture.Width / 2) - Game1.GetInstance().drawOffset.X;
+            this.py = drawOn.y - radius + (drawOn.texture.Height / 2) - Game1.GetInstance().drawOffset.Y;
         }
 
         /// <summary>
@@ -137,11 +131,11 @@ namespace PathfindingTest.Primitives
         }
 
         /// <summary>
-        /// Calculates how much of two Circles overlap
+        /// Calculates how much of two Circles overlaps
         /// Isn't Math great ಥ-ಥ
         /// </summary>
         /// <param name="oc">The other Circle</param>
-        /// <returns>The amount of overlap as a number between 0 and 1</returns>
+        /// <returns>The amount of overlap as a double between 0 and 1</returns>
         public double CalculateOverlap(Circle oc)
         {
             if (this.Intersects(oc))

@@ -24,6 +24,7 @@ namespace PathfindingTest.UI
         public SpriteFont sf;
 
         public Boolean loadForEngineer { get; set; }
+        public Boolean loadForUnit { get; set; }
         public Boolean loadForResources { get; set; }
         public Boolean loadForBarracks { get; set; }
         public Boolean loadForFactory { get; set; }
@@ -38,6 +39,10 @@ namespace PathfindingTest.UI
         private float startCommandX = 673;
         private float startCommandY = 688;
 
+        public HUDCommandObject moveCommand { get; set; }
+        public HUDCommandObject attackCommand { get; set; }
+        public HUDCommandObject defendCommand { get; set; }
+        public HUDCommandObject stopCommand { get; set; }
         public HUDCommandObject repairCommand { get; set; }
 
         public HUDObject resourceObject { get; set; }
@@ -68,6 +73,8 @@ namespace PathfindingTest.UI
             sf = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/SpriteFont1");
 
             loadForEngineer = false;
+            loadForUnit = false;
+            loadForResources = false;
             loadForBarracks = false;
             loadForFactory = false;
             loadForFortress = false;
@@ -88,6 +95,22 @@ namespace PathfindingTest.UI
             startCommandY = 688;
 
             //No more than 8 seperate Commands!!!
+            moveCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDMove"), HUDCommandObject.Type.Move, startCommandX, startCommandY, new Color(0, 100, 255, 255), this.color);
+            commandObjects.AddLast(moveCommand);
+            IncrementStartCommandXY(startCommandX);
+
+            attackCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDAttack"), HUDCommandObject.Type.Attack, startCommandX, startCommandY, new Color(255, 0, 12, 255), this.color);
+            commandObjects.AddLast(attackCommand);
+            IncrementStartCommandXY(startCommandX);
+
+            defendCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDDefend"), HUDCommandObject.Type.Defend, startCommandX, startCommandY, new Color(255, 125, 0, 255), this.color);
+            commandObjects.AddLast(defendCommand);
+            IncrementStartCommandXY(startCommandX);
+
+            stopCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDStop"), HUDCommandObject.Type.Stop, startCommandX, startCommandY, new Color(255, 0, 0, 255), this.color);
+            commandObjects.AddLast(stopCommand);
+            IncrementStartCommandXY(startCommandX);
+
             repairCommand = new HUDCommandObject(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDRepair"), HUDCommandObject.Type.Repair, startCommandX, startCommandY, new Color(255, 187, 0, 255), this.color);
             commandObjects.AddLast(repairCommand);
             IncrementStartCommandXY(startCommandX);
@@ -134,7 +157,17 @@ namespace PathfindingTest.UI
 
                 foreach (HUDCommandObject co in commandObjects)
                 {
-                    if (co.type == HUDCommandObject.Type.Repair)
+                    if (co.type == HUDCommandObject.Type.Repair || co.type == HUDCommandObject.Type.Move || co.type == HUDCommandObject.Type.Stop || co.type == HUDCommandObject.Type.Defend)
+                    {
+                        co.disabled = false;
+                    }
+                }
+            }
+            if (loadForUnit)
+            {
+                foreach (HUDCommandObject co in commandObjects)
+                {
+                    if (co.type == HUDCommandObject.Type.Attack || co.type == HUDCommandObject.Type.Defend || co.type == HUDCommandObject.Type.Move || co.type == HUDCommandObject.Type.Stop)
                     {
                         co.disabled = false;
                     }
@@ -184,14 +217,14 @@ namespace PathfindingTest.UI
 
         public void IncrementStartCommandXY(float startX)
         {
-            if (startX == 825)
+            if (startX == 787)
             {
                 startCommandY += 38;
             }
 
-            if (startX == 825)
+            if (startX == 787)
             {
-                startCommandX = 688;
+                startCommandX = 673;
             }
             else
             {
@@ -336,6 +369,45 @@ namespace PathfindingTest.UI
                                 }
                                 break;
 
+                            case HUDCommandObject.Type.Attack:
+                                if (!co.disabled)
+                                {
+                                    player.command = new Command(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDAttack"), this.player, Command.Type.Attack, Mouse.GetState().X, Mouse.GetState().Y, new Color(255, 0, 12, 255));
+                                }
+                                break;
+
+                            case HUDCommandObject.Type.Defend:
+                                if (!co.disabled)
+                                {
+                                    player.command = new Command(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDDefend"), this.player, Command.Type.Defend, Mouse.GetState().X, Mouse.GetState().Y, new Color(255, 125, 0, 255));
+                                }
+                                break;
+
+                            case HUDCommandObject.Type.Move:
+                                if (!co.disabled)
+                                {
+                                    player.command = new Command(Game1.GetInstance().Content.Load<Texture2D>("HUD/Commands/HUDMove"), this.player, Command.Type.Move, Mouse.GetState().X, Mouse.GetState().Y, new Color(0, 50, 255, 255));
+                                }
+                                break;
+
+                            case HUDCommandObject.Type.Stop:
+                                if (!co.disabled)
+                                {
+                                    if (player.currentSelection != null)
+                                    {
+                                        foreach (Unit u in player.currentSelection.units)
+                                        {
+                                            u.unitToDefend = null;
+                                            u.unitToStalk = null;
+                                            u.waypoints.Clear();
+                                            u.job = Unit.Job.Idle;
+                                            u.hasToMove = false;
+                                            u.buildingToDestroy = null;
+                                        }
+                                    }
+                                }
+                                break;
+
                             default:
                                 break;
                         }
@@ -405,6 +477,7 @@ namespace PathfindingTest.UI
         public void CountUnits()
         {
             int engineerCounter = 0;
+            int unitCounter = 0;
 
             if (player.currentSelection != null)
             {
@@ -414,6 +487,26 @@ namespace PathfindingTest.UI
                     {
                         case Unit.Type.Engineer:
                             engineerCounter++;
+                            break;
+
+                        case Unit.Type.Fast:
+                            unitCounter++;
+                            break;
+
+                        case Unit.Type.HeavyMelee:
+                            unitCounter++;
+                            break;
+
+                        case Unit.Type.HeavyRanged:
+                            unitCounter++;
+                            break;
+
+                        case Unit.Type.Melee:
+                            unitCounter++;
+                            break;
+
+                        case Unit.Type.Ranged:
+                            unitCounter++;
                             break;
 
                         default:
@@ -431,6 +524,14 @@ namespace PathfindingTest.UI
                 loadForEngineer = false;
             }
 
+            if (unitCounter > 0)
+            {
+                loadForUnit = true;
+            }
+            else
+            {
+                loadForUnit = false;
+            }
 
             int resourcesCounter = 0;
             int barracksCounter = 0;

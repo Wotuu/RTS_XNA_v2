@@ -102,8 +102,8 @@ namespace PathfindingTest.Buildings
                     {
                         canPlace = Game1.GetInstance().collision.CanPlace(this.DefineRectangle());
                     }
-                    this.x = (ms.X - (texture.Width / 2));
-                    this.y = (ms.Y - (texture.Height / 2));
+                    this.x = (ms.X - (texture.Width / 2)) + Game1.GetInstance().drawOffset.X;
+                    this.y = (ms.Y - (texture.Height / 2)) + Game1.GetInstance().drawOffset.Y;
                     break;
 
                 case State.Constructing:
@@ -540,12 +540,12 @@ namespace PathfindingTest.Buildings
 
         public Rectangle DefineRectangle()
         {
-            return new Rectangle((int)this.x, (int)this.y, texture.Width, texture.Height);
+            return new Rectangle((int)this.x - (int)Game1.GetInstance().drawOffset.X, (int)this.y - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
         }
 
         public Rectangle DefineSelectedRectangle()
         {
-            return new Rectangle((int)this.x - 3, (int)this.y - 3, texture.Width + 6, texture.Height + 6);
+            return new Rectangle((int)this.x - 3 - (int)Game1.GetInstance().drawOffset.X, (int)this.y - 3 - (int)Game1.GetInstance().drawOffset.Y, texture.Width + 6, texture.Height + 6);
         }
 
         /// <summary>
@@ -557,6 +557,7 @@ namespace PathfindingTest.Buildings
             productionQueue = null;
             p.buildings.Remove(this);
             if (this.mesh != null) mesh.Reverse();
+
             foreach (ResourceGather rg in p.buildings)
             {
                 rg.CalculateRPS();

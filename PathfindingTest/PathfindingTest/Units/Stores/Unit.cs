@@ -206,7 +206,7 @@ namespace PathfindingTest.Units
                 return;
             }
             Point waypoint = this.waypoints.ElementAt(0);
-            SetMoveToTarget(waypoint.X, waypoint.Y);
+            SetMoveToTarget(waypoint.X - (int)Game1.GetInstance().drawOffset.X, waypoint.Y - (int)Game1.GetInstance().drawOffset.Y);
 
             if (this.collisionWith.Count > 0)
             {
@@ -527,7 +527,7 @@ namespace PathfindingTest.Units
         /// <returns></returns>
         public Rectangle DefineRectangle()
         {
-            return new Rectangle((int)x - (texture.Width / 2), (int)y - (texture.Height / 2), texture.Width, texture.Height);
+            return new Rectangle((int)x - (texture.Width / 2) - (int)Game1.GetInstance().drawOffset.X, (int)y - (texture.Height / 2) - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
         }
 
         public abstract void OnAggroRecieved(AggroEvent e);

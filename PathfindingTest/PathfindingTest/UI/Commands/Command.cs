@@ -9,6 +9,7 @@ using XNAInputHandler.MouseInput;
 using PathfindingTest.Players;
 using PathfindingTest.Units;
 using System.Diagnostics;
+using PathfindingTest.Buildings;
 
 namespace PathfindingTest.UI.Commands
 {
@@ -25,6 +26,10 @@ namespace PathfindingTest.UI.Commands
 
         public enum Type
         {
+            Move,
+            Attack,
+            Defend,
+            Stop,
             Repair
         }
 
@@ -88,6 +93,70 @@ namespace PathfindingTest.UI.Commands
                             if (tempE != null)
                             {
                                 tempE.Repair(player.IsMouseOverFriendlyBuilding());
+                            }
+                        }
+                        this.Dispose();
+                        break;
+
+                    case Type.Move:
+                        if (player.currentSelection != null)
+                        {
+                            foreach (Unit u in player.currentSelection.units)
+                            {
+                                u.MoveToQueue(new Point((int)x, (int)y));
+                            }
+                        }
+                        this.Dispose();
+                        break;
+
+                    case Type.Defend:
+                        if (player.GetMouseOverUnit(player.units) != null)
+                        {
+                            if (player.currentSelection != null)
+                            {
+                                if (player.GetMouseOverUnit(player.units).player == this.player)
+                                {
+                                    foreach (Unit u in player.currentSelection.units)
+                                    {
+                                        u.Defend(player.GetMouseOverUnit(player.units));
+                                        player.GetMouseOverUnit(player.units).friendliesProtectingMe.AddLast(u);
+                                        u.MoveToQueue(new Point((int)x, (int)y));
+                                    }
+                                }
+                            }
+                        }
+                        this.Dispose();
+                        break;
+
+                    case Type.Attack:
+                        if (player.GetMouseOverUnit(player.units) != null)
+                        {
+                            Unit unitToAttack = player.GetMouseOverUnit(player.units);
+
+                            if (unitToAttack.player != this.player)
+                            {
+                                if (player.currentSelection != null)
+                                {
+                                    foreach (Unit u in player.currentSelection.units)
+                                    {
+                                        u.AttackUnit(unitToAttack);
+                                    }
+                                }
+                            }
+                        }
+                        else if (player.GetMouseOverBuilding(player.buildings) != null)
+                        {
+                            Building buildingToAttack = player.GetMouseOverBuilding(player.buildings);
+
+                            if (buildingToAttack.p != this.player)
+                            {
+                                if (player.buildingSelection != null)
+                                {
+                                    foreach (Unit u in player.currentSelection.units)
+                                    {
+                                        u.AttackBuilding(buildingToAttack);
+                                    }
+                                }
                             }
                         }
                         this.Dispose();

@@ -558,7 +558,7 @@ namespace PathfindingTest.Players
                     else
                     {
                         Unit selectedEnemy = GetMouseOverUnit(player.units);
-                        if (selectedEnemy != null)
+                        if (selectedEnemy != null && (this.command == null || (this.command != null && this.command.type != Command.Type.Defend)))
                         {
                             foreach (Unit unit in currentSelection.units)
                             {
@@ -583,7 +583,7 @@ namespace PathfindingTest.Players
                                 this.currentSelection.MoveTo(previewPattern);
                             }
                             // If we're suppose to move in the first place
-                            else if( this.command == null || ( this.command != null && this.command.type != Command.Type.Repair ) )
+                            else if( this.command == null || ( this.command != null && this.command.type != Command.Type.Repair && this.command.type != Command.Type.Defend && this.command.type != Command.Type.Attack ) )
                             {
                                 stopUnitSelection();
                                 this.currentSelection.MoveTo(GetNewPreviewPattern(m.location, 0));
