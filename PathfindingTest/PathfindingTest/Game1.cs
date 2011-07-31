@@ -182,11 +182,15 @@ namespace PathfindingTest
             MouseManager.GetInstance().Update(this);
             KeyboardManager.GetInstance().Update(Keyboard.GetState());
 
+            // Update the SoundManager
+            SoundManager.GetInstance().Update();
+
             // Updates all interface componentss
             ComponentManager.GetInstance().Update();
             switch (sm.gameState)
             {
                 case StateManager.State.MainMenu:
+                    SoundManager.GetInstance().PlayBGM(SoundManager.BGMType.Menu);
                     break;
                 case StateManager.State.GameInit:
                     break;

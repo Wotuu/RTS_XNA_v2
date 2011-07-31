@@ -369,6 +369,11 @@ namespace PathfindingTest.Units
         /// <param name="p">The point to move to, in a few frames depending on the queue</param>
         public void MoveToQueue(Point p)
         {
+            if (p == this.GetLocation())
+            {
+                return;
+            }
+
             if (p == Point.Zero) return;
 
             if (!Game1.GetInstance().IsMultiplayerGame())
@@ -454,6 +459,11 @@ namespace PathfindingTest.Units
         /// <param name="p">The point to move to</param>
         public void MoveToNow(Point p)
         {
+            if (p == this.GetLocation())
+            {
+                return;
+            }
+
             if (Game1.GetInstance().IsMultiplayerGame())
             {
                 PathfindingProcessor.GetInstance().Remove(this);

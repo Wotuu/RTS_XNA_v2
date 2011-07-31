@@ -470,8 +470,6 @@ namespace PathfindingTest.Buildings
                         if (this.type == Type.Fortress)
                         {
                             newUnit = p.meleeStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
-                            newUnit.MoveToQueue(waypoint);
-                            productionQueue.RemoveFirst();
                         }
                         break;
 
@@ -479,8 +477,6 @@ namespace PathfindingTest.Buildings
                         if (this.type == Type.Barracks)
                         {
                             newUnit = p.meleeStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
-                            newUnit.MoveToQueue(waypoint);
-                            productionQueue.RemoveFirst();
                         }
                         break;
 
@@ -488,8 +484,6 @@ namespace PathfindingTest.Buildings
                         if (this.type == Type.Factory)
                         {
                             newUnit = p.meleeStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
-                            newUnit.MoveToQueue(waypoint);
-                            productionQueue.RemoveFirst();
                         }
                         break;
 
@@ -497,8 +491,6 @@ namespace PathfindingTest.Buildings
                         if (this.type == Type.Barracks)
                         {
                             newUnit = p.fastStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
-                            newUnit.MoveToQueue(waypoint);
-                            productionQueue.RemoveFirst();
                         }
                         break;
 
@@ -506,8 +498,6 @@ namespace PathfindingTest.Buildings
                         if (this.type == Type.Barracks)
                         {
                             newUnit = p.rangedStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
-                            newUnit.MoveToQueue(waypoint);
-                            productionQueue.RemoveFirst();
                         }
                         break;
 
@@ -515,13 +505,20 @@ namespace PathfindingTest.Buildings
                         if (this.type == Type.Factory)
                         {
                             newUnit = p.rangedStore.getUnit(pu.type, originWaypoint.X, originWaypoint.Y);
-                            newUnit.MoveToQueue(waypoint);
-                            productionQueue.RemoveFirst();
                         }
                         break;
 
                     default:
                         break;
+                }
+
+                if (newUnit != null)
+                {
+                    if (originWaypoint != waypoint)
+                    {
+                        newUnit.MoveToQueue(waypoint);
+                    }
+                    productionQueue.RemoveFirst();
                 }
 
                 //// Synchronize this unit, since the unit has moved (in other words, teleported)

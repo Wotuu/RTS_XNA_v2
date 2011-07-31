@@ -20,7 +20,7 @@ namespace PathfindingTest.Units
         private ArrowManager arrowManager;
 
         public Bowman(Player p, int x, int y)
-            : base(p, x, y, 1f, 100f, 100f, 60)
+            : base(p, x, y, 1f, 100f, 100f, 120)
         {
             this.baseDamage = baseDamage;
 

@@ -39,7 +39,7 @@ namespace PathfindingTest.Units.Damage
         public void AddProjectile(Projectile projectile)
         {
             this.projectiles.AddLast(projectile);
-            SoundManager.GetInstance().PlaySound(SoundManager.GetInstance().arrowSounds);
+            SoundManager.GetInstance().PlaySFX(SoundManager.GetInstance().arrowSounds);
         }
 
         public void RemoveProjectile(Projectile projectile)

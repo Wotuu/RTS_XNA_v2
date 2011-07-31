@@ -18,7 +18,7 @@ namespace PathfindingTest.Units.Melee
     class Swordman : Unit
     {
         public Swordman(Player p, int x, int y)
-            : base(p, x, y, 1.25f, 20f, 100f, 60)
+            : base(p, x, y, 1.25f, 20f, 100f, 120)
         {
             this.baseDamage = (int)Unit.Damage.Swordman;
             this.player = p;
@@ -33,20 +33,21 @@ namespace PathfindingTest.Units.Melee
 
         public override void Update(KeyboardState ks, MouseState ms)
         {
-                UpdateMovement();
-                if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
-                {
-                    UpdateAttack();
-                }
-                else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
-                {
-                    UpdateDefense();
-                }
+            fireCooldown--;
+            UpdateMovement();
+            if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+            {
+                UpdateAttack();
+            }
+            else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
+            {
+                UpdateDefense();
+            }
 
-                if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
-                {
-                    TryToSwing();
-                }
+            if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
+            {
+                TryToSwing();
+            }
         }
 
         internal override void Draw(SpriteBatch sb)
@@ -61,23 +62,26 @@ namespace PathfindingTest.Units.Melee
         /// </summary>
         public override void Swing(Damageable target)
         {
-            if (target is Unit)
+            if (fireCooldown < 0)
             {
-                AggroEvent e = new AggroEvent(this, target, true);
-                ((Unit)target).OnAggroRecieved(e);
-                this.OnAggro(e);
-            }
+                if (target is Unit)
+                {
+                    AggroEvent e = new AggroEvent(this, target, true);
+                    ((Unit)target).OnAggroRecieved(e);
+                    this.OnAggro(e);
+                }
 
-            SoundManager.GetInstance().PlaySound(SoundManager.GetInstance().swordSounds);
+                SoundManager.GetInstance().PlaySFX(SoundManager.GetInstance().swordSounds);
 
-            DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), target, this);
-            target.OnDamage(dmgEvent);
-            this.fireCooldown = this.rateOfFire;
+                DamageEvent dmgEvent = new DamageEvent(new MeleeSwing(PathfindingTest.Combat.DamageEvent.DamageType.Melee, baseDamage), target, this);
+                target.OnDamage(dmgEvent);
+                this.fireCooldown = this.rateOfFire;
 
-            // We already know that this unit is local
-            if (Game1.GetInstance().IsMultiplayerGame())
-            {
-                Synchronizer.GetInstance().QueueDamageEvent(dmgEvent);
+                // We already know that this unit is local
+                if (Game1.GetInstance().IsMultiplayerGame())
+                {
+                    Synchronizer.GetInstance().QueueDamageEvent(dmgEvent);
+                }
             }
         }
 
