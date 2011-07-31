@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.IO;
+using MapEditor.Pathfinding;
+using AStarCollisionMap.Pathfinding;
 namespace MapEditor.TileMap
 {
     public class TileMap
@@ -156,6 +158,16 @@ namespace MapEditor.TileMap
                     Rowsnode.AppendChild(rownode);
                 }
             }
+
+            //Nodes ook opslaan
+            XmlElement Nodes = mapxml.CreateElement("Nodes");
+            rootNode.AppendChild(Nodes);
+            foreach(Node node in PathfindingNodeManager.GetInstance().nodeList){
+                XmlElement NodeElement = mapxml.CreateElement("Node");
+                NodeElement.SetAttribute("x", node.x.ToString());
+                NodeElement.SetAttribute("y", node.y.ToString());
+                Nodes.AppendChild(NodeElement);
+            }
             mapxml.Save(filename);
         }
 
@@ -215,6 +227,8 @@ namespace MapEditor.TileMap
                         map.layers[i].SetTile(c, r, int.Parse(tiles[c]));
                     }
                 }
+
+                // nodes inladen
                
             }
 

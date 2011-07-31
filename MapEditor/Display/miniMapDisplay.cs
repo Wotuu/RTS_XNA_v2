@@ -44,26 +44,26 @@ namespace MapEditor.Display
             sp.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
             long ticks = DateTime.UtcNow.Ticks;
             GraphicsDevice.Clear(Microsoft.Xna.Framework.Color.Red);
-            if (Form1.tileMap != null && Form1.tilemaptexture != null)
-            {
+            //if (Form1.tileMap != null && Form1.tilemaptexture != null)
+            //{
                 
                 
-                //foreach (TileMapLayer layer in Form1.tileMap.layers)
-                //{
-                    for (int x = 0; x < Form1.tileMap.MapWidth; x++)
-                    {
-                        for (int y = 0; y < Form1.tileMap.MapHeight; y++)
-                        {
-                            int tile = Form1.tileMap.layers[0].GetTile(x , y );
-                            if (tile != -1)
-                            {
-                                sp.Draw(Form1.tilemaptexture, new Rectangle(x * 2, y * 2, 2, 2), (Rectangle)Form1.tileset.tiles[tile], Color.White);
-                            }
-                        }
-                    }
-                //}
+            //    //foreach (TileMapLayer layer in Form1.tileMap.layers)
+            //    //{
+            //        for (int x = 0; x < Form1.tileMap.MapWidth; x++)
+            //        {
+            //            for (int y = 0; y < Form1.tileMap.MapHeight; y++)
+            //            {
+            //                int tile = Form1.tileMap.layers[0].GetTile(x , y );
+            //                if (tile != -1)
+            //                {
+            //                    sp.Draw(Form1.tilemaptexture, new Rectangle(x * 3, y * 3, 3, 3), (Rectangle)Form1.tileset.tiles[tile], Color.White);
+            //                }
+            //            }
+            //        }
+            //    //}
                
-            }
+            //}
             sp.End();
 
             long runtime = (DateTime.UtcNow.Ticks - ticks) / 10000;
