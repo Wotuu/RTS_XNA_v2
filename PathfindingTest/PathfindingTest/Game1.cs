@@ -190,12 +190,16 @@ namespace PathfindingTest
             switch (sm.gameState)
             {
                 case StateManager.State.MainMenu:
+                    // Play Music
                     SoundManager.GetInstance().PlayBGM(SoundManager.BGMType.Menu);
                     break;
                 case StateManager.State.GameInit:
                     break;
                 case StateManager.State.GameRunning:
                     // TODO: Add your update logic here
+
+                    // Play Music
+                    SoundManager.GetInstance().PlayBGM(SoundManager.BGMType.InGame);
 
                     // Update units
                     foreach (Player p in players)

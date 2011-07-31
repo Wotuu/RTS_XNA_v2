@@ -259,9 +259,12 @@ namespace PathfindingTest.Buildings
             }
             else if (this.state == State.Producing)
             {
-                ProductionUnit pu = productionQueue.ElementAt(0);
-                progressBar.progress = pu.productionProgress;
-                progressBar.Draw(sb);
+                if (productionQueue.Count > 0)
+                {
+                    ProductionUnit pu = productionQueue.ElementAt(0);
+                    progressBar.progress = pu.productionProgress;
+                    progressBar.Draw(sb);
+                }
             }
         }
 
