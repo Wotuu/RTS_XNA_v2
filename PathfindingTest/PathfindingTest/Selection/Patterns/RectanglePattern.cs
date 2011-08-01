@@ -49,7 +49,7 @@ namespace PathfindingTest.Selection.Patterns
                     newPoint = Util.GetPointOnCircle(location, Util.GetHypoteneuseLength(newPoint, this.location),
                         orientation - (Util.GetHypoteneuseAngleRad(newPoint, this.location) * (180 / Math.PI)));
                     // If it collided with a wall, adjust the pattern to fit
-                    CollisionMap c = Game1.GetInstance().collision;
+                    CollisionMap c = Game1.GetInstance().map.collisionMap;
                     // If this point is in the middle of collision
                     if (c.CollisionAt(newPoint))
                     {

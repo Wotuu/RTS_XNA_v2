@@ -32,6 +32,7 @@ using SocketLibrary.Multiplayer;
 using PathfindingTest.Multiplayer.Data;
 using PathfindingTest.Misc;
 using PathfindingTest.Audio;
+using PathfindingTest.Map;
 
 namespace PathfindingTest
 {
@@ -43,7 +44,6 @@ namespace PathfindingTest
 
         public GraphicsDeviceManager graphics { get; set; }
         SpriteBatch spriteBatch;
-        public RTSCollisionMap collision { get; set; }
         public SpriteFont font { get; set; }
         public QuadRoot quadTree { get; set; }
         //
@@ -64,6 +64,7 @@ namespace PathfindingTest
         public int exceptionsCount { get; set; }
 
         public int mapMoveSensitivity { get; set; }
+        public GameMap map { get; set; }
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -74,7 +75,7 @@ namespace PathfindingTest
             }
             set
             {
-                if (collision != null) collision.drawOffset = value;
+                if (map != null && map.collisionMap != null) map.collisionMap.drawOffset = value;
                 this._drawOffset = value;
             }
         }
@@ -86,8 +87,6 @@ namespace PathfindingTest
         {
             return instance;
         }
-
-
 
 
         /// <summary>
@@ -108,11 +107,15 @@ namespace PathfindingTest
             graphics.ApplyChanges();
             this.InactiveSleepTime = new System.TimeSpan(0);
 
+
             drawOffset = Vector2.Zero;
         }
 
 
 
+
+        private Texture2D testTex;
+        private Texture2D testTex2;
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -122,6 +125,25 @@ namespace PathfindingTest
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
+
+            /*Texture2D[] texs = new Texture2D[] { 
+                Content.Load<Texture2D>("Test/background"), 
+            Content.Load<Texture2D>("Test/layer1"),
+            Content.Load<Texture2D>("Test/layer2")};
+            this.testTex = map.BlendTextures(texs, GameMap.BlendMode.PriorityBlend);
+
+            Texture2D red = Content.Load<Texture2D>("Test/red");
+            Texture2D green = Content.Load<Texture2D>("Test/green");
+            Texture2D blue = Content.Load<Texture2D>("Test/blue");
+            Texture2D black = Content.Load<Texture2D>("Test/black");
+
+            texs = new Texture2D[] { red, green, blue, black };
+            Texture2D[] subResults = new Texture2D[4];
+            for (int i = 0; i < subResults.Length; i++)
+            {
+                subResults[i] = map.MergeTextures(texs);
+            }
+            this.testTex2 = map.MergeTextures(subResults);*/
 
             DrawUtil.lineTexture = this.Content.Load<Texture2D>("Misc/solid");
             font = Content.Load<SpriteFont>("Fonts/Arial");
@@ -240,11 +262,11 @@ namespace PathfindingTest
                             this.drawOffset = new Vector2(this.drawOffset.X - mapMoveSensitivity, this.drawOffset.Y);
                         }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Right) && drawOffset.X + 1024 < collision.mapWidth)
+                    if (keyboardState.IsKeyDown(Keys.Right) && drawOffset.X + 1024 < map.collisionMap.mapWidth)
                     {
-                        if (drawOffset.X + mapMoveSensitivity > collision.mapWidth)
+                        if (drawOffset.X + mapMoveSensitivity > map.collisionMap.mapWidth)
                         {
-                            this.drawOffset = new Vector2(collision.mapWidth, this.drawOffset.Y);
+                            this.drawOffset = new Vector2(map.collisionMap.mapWidth, this.drawOffset.Y);
                         }
                         else
                         {
@@ -262,11 +284,11 @@ namespace PathfindingTest
                             this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y - mapMoveSensitivity);
                         }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Down) && drawOffset.Y + 768 < collision.mapHeight)
+                    if (keyboardState.IsKeyDown(Keys.Down) && drawOffset.Y + 768 < map.collisionMap.mapHeight)
                     {
-                        if (drawOffset.Y + mapMoveSensitivity > collision.mapHeight)
+                        if (drawOffset.Y + mapMoveSensitivity > map.collisionMap.mapHeight)
                         {
-                            this.drawOffset = new Vector2(this.drawOffset.X, collision.mapHeight);
+                            this.drawOffset = new Vector2(this.drawOffset.X, map.collisionMap.mapHeight);
                         }
                         else
                         {
@@ -343,8 +365,8 @@ namespace PathfindingTest
             else if (sm.gameState == StateManager.State.GameRunning)
             {
                 //quadTree.Draw(spriteBatch);
-                collision.DrawMap(spriteBatch);
-
+                // map.collisionMap.DrawMap(spriteBatch);
+                map.Draw(spriteBatch);
                 try
                 {
                     LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
@@ -369,8 +391,10 @@ namespace PathfindingTest
 
             }
 
-
-
+            /*
+            spriteBatch.Draw(testTex, new Rectangle(20, 20, 100, 100), Color.White);
+            spriteBatch.Draw(testTex2, new Rectangle(120, 20, 160, 160), Color.White);
+            */
 
             spriteBatch.End();
 

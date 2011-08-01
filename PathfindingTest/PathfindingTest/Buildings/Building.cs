@@ -101,7 +101,7 @@ namespace PathfindingTest.Buildings
                     }
                     else
                     {
-                        canPlace = Game1.GetInstance().collision.CanPlace(this.DefineRectangle());
+                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefineRectangle());
                     }
                     this.x = (ms.X - (texture.Width / 2)) + Game1.GetInstance().drawOffset.X;
                     this.y = (ms.Y - (texture.Height / 2)) + Game1.GetInstance().drawOffset.Y;

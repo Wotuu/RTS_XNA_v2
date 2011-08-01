@@ -38,7 +38,7 @@ namespace PathfindingTest.Selection.Patterns
             for( int i = 0; i < selection.units.Count; i++ )
             {
                 Point p = Util.GetPointOnCircle(location, this.radius, currentAngle);
-                RTSCollisionMap c = Game1.GetInstance().collision;
+                RTSCollisionMap c = Game1.GetInstance().map.collisionMap;
                 // If this point is in the middle of collision
                 if (c.CollisionAt(p))
                 {

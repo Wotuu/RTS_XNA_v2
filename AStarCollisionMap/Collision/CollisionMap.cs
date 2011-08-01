@@ -415,7 +415,13 @@ namespace AStarCollisionMap.Collision
                 {
                     FileStream stream = new FileStream(path + "/" + mapname + "/" +
                         mapname + "_" + i + "_" + j +".png", FileMode.Open);
-                    this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
+                    if (stream.Length == 0)
+                    {
+                        this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture =
+                            new Texture2D(this.graphicsDevice, (int)this.tree.quadWidth, (int)this.tree.quadHeight);
+                    } else this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
+                    stream.Close();
+                    stream.Dispose();
                 }
             }
         }
