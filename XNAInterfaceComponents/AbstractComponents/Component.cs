@@ -34,7 +34,8 @@ namespace XNAInterfaceComponents.Components
             this.mouseOverColor = Color.Orange;
             this.visible = true;
             this.border = new Border(this, 1, Color.Black);
-            this.z = 1f - this.GetDrawDepthOffset();
+            if (parent != null) this.z = parent.z - 0.01f;
+            else this.z = 1f - this.GetDrawDepthOffset();
         }
 
         /// <summary>

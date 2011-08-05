@@ -590,8 +590,16 @@ namespace PathfindingTest
         {
             if (e.key == Keys.Escape)
             {
-                MenuManager.GetInstance().ShowMenu(MenuManager.Menu.IngameMenu);
-                if (!this.IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.GamePaused;
+                if (MenuManager.GetInstance().GetCurrentlyDisplayedMenu() == null)
+                {
+                    MenuManager.GetInstance().ShowMenu(MenuManager.Menu.IngameMenu);
+                    if (!this.IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.GamePaused;
+                }
+                else
+                {
+                    MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
+                    if (!this.IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.GameRunning;
+                }
             }
         }
 

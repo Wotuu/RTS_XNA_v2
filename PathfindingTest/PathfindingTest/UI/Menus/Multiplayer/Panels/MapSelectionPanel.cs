@@ -49,6 +49,15 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         }
 
         /// <summary>
+        /// Override the XNADialog GetDepth() function to be a fraction lower.
+        /// </summary>
+        /// <returns>A high depth</returns>
+        public override int GetDepth()
+        {
+            return 15;
+        }
+
+        /// <summary>
         /// Loads the mapnames from disk.
         /// </summary>
         /// <returns>The list of names.</returns>
@@ -85,19 +94,16 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <param name="source">The XNA Button</param>
         public virtual void OnOKClick(XNAButton source)
         {
-            foreach (MapEntryPanel panel in this.panels)
+            if (!Game1.GetInstance().IsMultiplayerGame()) return;
+            String map = this.GetSelectedMap();
+            if (map != null)
             {
-                if (panel.previewButton.selected)
-                {
-                    this.previewPanel.selectedMapLbl.text = panel.previewButton.text;
+                this.previewPanel.selectedMapLbl.text = map;
 
-                    Packet p = new Packet(Headers.GAME_MAP_CHANGED);
-                    p.AddInt(ChatServerConnectionManager.GetInstance().user.channelID);
-                    p.AddString(this.previewPanel.selectedMapLbl.text);
-                    ChatServerConnectionManager.GetInstance().SendPacket(p);
-
-                    break;
-                }
+                Packet p = new Packet(Headers.GAME_MAP_CHANGED);
+                p.AddInt(ChatServerConnectionManager.GetInstance().user.channelID);
+                p.AddString(this.previewPanel.selectedMapLbl.text);
+                ChatServerConnectionManager.GetInstance().SendPacket(p);
             }
         }
 
@@ -107,7 +113,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 (this.bounds.Width / 2) - (this.buttonWidth) - (this.buttonSpacing / 2),
                 this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 20,
                 this.buttonWidth, 40), "OK");
-            this.okBtn.onClickListeners += this.Dispose;
+            // this.okBtn.onClickListeners += this.Dispose;
             this.okBtn.onClickListeners += this.OnOKClick;
 
             this.cancelBtn = new XNAButton(this, new Rectangle(

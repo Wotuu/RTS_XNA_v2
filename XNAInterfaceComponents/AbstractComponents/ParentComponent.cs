@@ -22,10 +22,8 @@ namespace XNAInterfaceComponents.AbstractComponents
             else
             {
                 this.parent.children.AddLast(this);
-                this.z = parent.z - this.GetDrawDepthOffset();
+                // this.z = parent.z - 0.01f;
             }
-
-
         }
 
         #region Child functions

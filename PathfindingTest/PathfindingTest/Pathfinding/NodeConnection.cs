@@ -31,7 +31,7 @@ namespace PathfindingTest.Pathfinding
             Point node1Location = this.conn.node1.GetLocation(), node2Location = this.conn.node2.GetLocation();
             DrawUtil.DrawLine(sb, new Point( node1Location.X - (int)game.drawOffset.X, node1Location.Y - (int)game.drawOffset.Y ),
                 new Point(node2Location.X - (int)game.drawOffset.X, node2Location.Y - (int)game.drawOffset.Y),
-                this.drawColor, 1, 0.1f);
+                this.drawColor, 1, 0.9f);
             //sb.DrawString( game.font, 
             //    (int) Util.GetHypoteneuseLength( node1.GetLocation(), node2.GetLocation() ) + "", 
             //    new Vector2( lengthDrawOffset.X, lengthDrawOffset.Y ), this.drawColor );

@@ -76,7 +76,7 @@ namespace PathfindingTest.Pathfinding
         /// <param name="sb"></param>
         internal void Draw(SpriteBatch sb)
         {
-            sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
+            sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, 0.9f);
             // Draw some connections twice, but o well!
 
             // if( Monitor.TryEnter(this.connections, 0) ){

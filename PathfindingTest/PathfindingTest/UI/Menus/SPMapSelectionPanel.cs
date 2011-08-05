@@ -24,6 +24,8 @@ namespace PathfindingTest.UI.Menus
                 StateManager.GetInstance().gameState = StateManager.State.GameInit;
                 MenuManager.GetInstance().ShowMenu(MenuManager.Menu.SinglePlayerLoadMenu);
                 StateManager.GetInstance().gameState = StateManager.State.GameLoading;
+
+                this.Dispose();
             }
             else XNAMessageDialog.CreateDialog("Please select a map first.", XNAMessageDialog.DialogType.OK);
         }
