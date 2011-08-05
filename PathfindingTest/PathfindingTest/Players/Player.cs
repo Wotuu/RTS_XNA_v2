@@ -669,6 +669,7 @@ namespace PathfindingTest.Players
                         angle);*/
                     Vector2 offset = Game1.GetInstance().drawOffset;
                     Point location = new Point((int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
+                    // Point location = new Point((int)(m.location.X), (int)(m.location.Y));
                     previewPattern = GetNewPreviewPattern(location, (int)Util.GetHypoteneuseAngleDegrees(location, previewPatternClick));
                     /*previewPattern = new RectanglePattern(previewPatternClick,
                         currentSelection, 5,

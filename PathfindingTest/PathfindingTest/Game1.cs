@@ -33,13 +33,16 @@ using PathfindingTest.Multiplayer.Data;
 using PathfindingTest.Misc;
 using PathfindingTest.Audio;
 using PathfindingTest.Map;
+using PathfindingTest.UI.Menus;
+using SocketLibrary.Protocol;
+using PathfindingTest.Multiplayer.PreGame.SocketConnection;
 
 namespace PathfindingTest
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game, MouseClickListener, MouseMotionListener
+    public class Game1 : Microsoft.Xna.Framework.Game, MouseClickListener, MouseMotionListener, KeyboardListener
     {
 
         public GraphicsDeviceManager graphics { get; set; }
@@ -80,6 +83,10 @@ namespace PathfindingTest
             }
         }
 
+        public int maxLoadProgress { get; set; }
+        public int currentLoadProgress { get; set; }
+        public String loadingWhat { get; set; }
+
 
         private static Game1 instance { get; set; }
 
@@ -113,9 +120,6 @@ namespace PathfindingTest
 
 
 
-
-        private Texture2D testTex;
-        private Texture2D testTex2;
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -157,6 +161,10 @@ namespace PathfindingTest
 
             SoundManager.GetInstance();
 
+            KeyboardManager.GetInstance().keyPressedListeners += this.OnKeyPressed;
+            KeyboardManager.GetInstance().keyReleasedListeners += this.OnKeyReleased;
+            KeyboardManager.GetInstance().keyTypedListeners += this.OnKeyTyped;
+
             this.mapMoveSensitivity = 8;
 
             base.Initialize();
@@ -196,8 +204,8 @@ namespace PathfindingTest
             // {
             GameTimeManager.GetInstance().OnStartUpdate();
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            //    this.Exit();
             StateManager sm = StateManager.GetInstance();
 
             // Update input
@@ -216,6 +224,33 @@ namespace PathfindingTest
                     SoundManager.GetInstance().PlayBGM(SoundManager.BGMType.Menu);
                     break;
                 case StateManager.State.GameInit:
+                    break;
+                case StateManager.State.GameLoading:
+                    SPLoadScreen loadingscreen = ((SPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+                    loadingscreen.progressBar.maxValue = maxLoadProgress;
+                    loadingscreen.progressBar.currentValue = currentLoadProgress;
+                    loadingscreen.loadingWhatLabel.text = loadingWhat;
+
+
+                    // Finished loading
+                    if (maxLoadProgress != 0 && currentLoadProgress == maxLoadProgress)
+                    {
+                        // Notify the rest that we're done with loading
+                        if (this.IsMultiplayerGame())
+                        {
+                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
+
+                            ComponentManager.GetInstance().UnloadAllPanels();
+
+                            Packet doneLoadingPacket = new Packet(Headers.DONE_LOADING);
+                            doneLoadingPacket.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
+                            ChatServerConnectionManager.GetInstance().SendPacket(doneLoadingPacket);
+                        }
+                        else
+                        {
+                            StateManager.GetInstance().FinishedLoadingMap();
+                        }
+                    }
                     break;
                 case StateManager.State.GameRunning:
                     // TODO: Add your update logic here
@@ -362,7 +397,8 @@ namespace PathfindingTest
             {
 
             }
-            else if (sm.gameState == StateManager.State.GameRunning)
+            else if (sm.gameState == StateManager.State.GameRunning ||
+               sm.gameState == StateManager.State.GamePaused)
             {
                 //quadTree.Draw(spriteBatch);
                 // map.collisionMap.DrawMap(spriteBatch);
@@ -381,10 +417,6 @@ namespace PathfindingTest
                     }
                 }
                 catch (Exception e) { }
-            }
-            else if (sm.gameState == StateManager.State.GamePaused)
-            {
-
             }
             else if (sm.gameState == StateManager.State.GameShutdown)
             {
@@ -504,24 +536,15 @@ namespace PathfindingTest
             }
         }
 
-        private MouseEvent previousEvent { get; set; }
+        // private MouseEvent previousEvent { get; set; }
         void MouseMotionListener.OnMouseDrag(MouseEvent e)
         {
-            if (e.button == MouseEvent.MOUSE_BUTTON_3)
-            {
-                if (previousEvent != null)
-                {
-                    this.drawOffset = new Vector2(this.drawOffset.X - (e.location.X - previousEvent.location.X),
-                        this.drawOffset.Y - (e.location.Y - previousEvent.location.Y));
-                }
 
-                previousEvent = e;
-            }
         }
 
         void MouseMotionListener.OnMouseMotion(MouseEvent e)
         {
-            previousEvent = null;
+            // previousEvent = null;
             // Console.Out.WriteLine("Mouse moved!");
 
             ///if( e.location.X >= 10 && e.location.X <= graphics.PreferredBackBufferWidth - 10 &&
@@ -561,6 +584,25 @@ namespace PathfindingTest
         public Boolean IsOnScreen(Rectangle rect)
         {
             return rect.Intersects(new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+        }
+
+        public void OnKeyPressed(KeyEvent e)
+        {
+            if (e.key == Keys.Escape)
+            {
+                MenuManager.GetInstance().ShowMenu(MenuManager.Menu.IngameMenu);
+                if (!this.IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.GamePaused;
+            }
+        }
+
+        public void OnKeyTyped(KeyEvent e)
+        {
+
+        }
+
+        public void OnKeyReleased(KeyEvent e)
+        {
+
         }
     }
 }

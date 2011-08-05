@@ -491,7 +491,6 @@ namespace PathfindingTest.Units
             this.attackRange = attackRange;
             this.aggroRange = aggroRange;
             this.rateOfFire = rateOfFire;
-            (this.quad = Game1.GetInstance().quadTree.GetQuadByPoint(this.GetLocation())).highlighted = true;
 
             this.color = player.color;
             this.waypoints = new LinkedList<Point>();

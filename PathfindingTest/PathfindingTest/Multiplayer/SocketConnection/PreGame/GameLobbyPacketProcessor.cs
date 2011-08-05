@@ -259,13 +259,8 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                                 "<Gamename>", "<Mapname>");
 
                             StateManager.GetInstance().gameState = StateManager.State.GameInit;
-                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
-
-                            ComponentManager.GetInstance().UnloadAllPanels();
-
-                            Packet doneLoadingPacket = new Packet(Headers.DONE_LOADING);
-                            doneLoadingPacket.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
-                            ChatServerConnectionManager.GetInstance().SendPacket(doneLoadingPacket);
+                            // Loading will start now
+                            // See Game1.cs for sending the packet that the game is done loading (update loop)
                         }
 
                         break;

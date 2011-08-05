@@ -63,9 +63,7 @@ namespace PathfindingTest.UI
 
         public void StartGameClicked(XNAButton source)
         {
-            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
-            StateManager.GetInstance().gameState = StateManager.State.GameInit;
-            StateManager.GetInstance().gameState = StateManager.State.GameRunning;
+            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.SinglePlayerMapSelectionMenu);
         }
 
         public void MultiplayerClicked(XNAButton source)

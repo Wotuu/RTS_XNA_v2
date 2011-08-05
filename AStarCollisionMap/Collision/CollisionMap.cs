@@ -10,6 +10,7 @@ using AStarCollisionMap.QuadTree;
 using System.IO;
 
 public delegate void OnCollisionChanged(CollisionChangedEvent c_event);
+public delegate void OnMapTileLoad(CollisionMap source);
 
 namespace AStarCollisionMap.Collision
 {
@@ -23,6 +24,9 @@ namespace AStarCollisionMap.Collision
         public int collisionMapTextureScale = 1;
         private int dataLength { get; set; }
         public Rectangle windowSize { get; set; }
+
+        // Progress bars
+        public OnMapTileLoad onMapTileLoadListeners { get; set; }
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -422,6 +426,8 @@ namespace AStarCollisionMap.Collision
                     } else this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
                     stream.Close();
                     stream.Dispose();
+
+                    if (onMapTileLoadListeners != null) onMapTileLoadListeners(this);
                 }
             }
         }

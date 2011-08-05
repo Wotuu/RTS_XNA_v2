@@ -6,6 +6,12 @@ using Microsoft.Xna.Framework.Graphics;
 using PathfindingTest.Collision;
 using Microsoft.Xna.Framework;
 using System.Xml;
+using PathfindingTest.Map;
+using System.IO;
+using AStarCollisionMap.Collision;
+
+
+public delegate void OnLoadProgressChanged(GameMap source, int percentDone);
 
 namespace PathfindingTest.Map
 {
@@ -24,6 +30,8 @@ namespace PathfindingTest.Map
 
         public LinkedList<Layer> layers = new LinkedList<Layer>();
 
+        public OnLoadProgressChanged onLoadProgressChangedListeners { get; set; }
+
         public enum BlendMode
         {
             PriorityBlend,
@@ -33,7 +41,9 @@ namespace PathfindingTest.Map
         public GameMap(String mapName)
         {
             this.mapName = mapName;
+            Game1.GetInstance().loadingWhat = "Initializing graphics";
             this.tileMap = Game1.GetInstance().Content.Load<Texture2D>("Tilemap/StandardTileset");
+
 
             for (int y = 0; y <= tileMap.Height / TILE_HEIGHT; y++)
             {
@@ -48,19 +58,46 @@ namespace PathfindingTest.Map
             int yCount = 0;
             this.tiles = Split(this.tileMap, TILE_WIDTH, TILE_HEIGHT, out xCount, out yCount);
 
+            // For every texture in the collisionmap
+            Game1.GetInstance().maxLoadProgress += Directory.GetFileSystemEntries("./Maps/" + mapName.Replace(".xml", "") + "/").Length * 400;
+            Console.Out.WriteLine("Max load progress: " + Game1.GetInstance().maxLoadProgress);
+            Game1.GetInstance().loadingWhat = "Layers";
             LoadLayers("./Maps/" + mapName);
+            Game1.GetInstance().loadingWhat = "Optimizing layers";
             MergeLayers();
 
             this.collisionMap = new RTSCollisionMap(Game1.GetInstance().GraphicsDevice,
                 this.mapTiles.GetLength(0) * TILE_WIDTH, this.mapTiles.GetLength(1) * TILE_HEIGHT,
                 CalculateQuadDepth(this.mapTiles.GetLength(0)));
 
+            this.collisionMap.onMapTileLoadListeners += this.OnMapTileLoaded;
+
+            Game1.GetInstance().loadingWhat = "Collisionmap";
             this.collisionMap.LoadMap("./Maps/", mapName.Replace(".xml", ""));
+
+            Console.Out.WriteLine("Finished loading! " + Game1.GetInstance().currentLoadProgress + " / " + Game1.GetInstance().maxLoadProgress);
+            // Just in case
+            Game1.GetInstance().currentLoadProgress = Game1.GetInstance().maxLoadProgress;
         }
 
-        public static int CalculateQuadDepth(int width)
+        /// <summary>
+        /// Called when a map tile of the collisionmap is loaded!
+        /// </summary>
+        /// <param name="source">The collisionmap that triggered this event.</param>
+        private void OnMapTileLoaded(CollisionMap source)
         {
-            double Depth = Math.Sqrt(width);
+            Game1.GetInstance().currentLoadProgress += 400;
+        }
+
+        public static int CalculateQuadCount(int mapWidth)
+        {
+            int depth = CalculateQuadDepth(mapWidth);
+            return (int)(Math.Pow(depth, 2) * Math.Pow(depth, 2));
+        }
+
+        public static int CalculateQuadDepth(int mapHeight)
+        {
+            double Depth = Math.Sqrt(mapHeight);
             Depth = Depth / 3;
 
             return (int)(Math.Min(Math.Ceiling(Depth), 7));
@@ -289,14 +326,25 @@ namespace PathfindingTest.Map
                 mapwidth = row.InnerText.Split(',').Count();
 
                 Layer currentLayer = new Layer(new int[mapwidth, mapheight]);
+                // Adjust the max progress
+                if (this.layers.Count == 0)
+                {
+                    // For every layer that we load
+                    Game1.GetInstance().maxLoadProgress += mapwidth * mapheight * 3;
+
+                    // For every texture that we blend, but that's 3 times heavier than this one, I guess!
+                    Game1.GetInstance().maxLoadProgress += mapwidth * mapheight * 9;
+                }
                 this.layers.AddLast(currentLayer);
 
-                for (int y = 0; y < rows.ChildNodes.Count; y++)
+                for (int y = 0; y < mapheight; y++)
                 {
                     string[] tiles = rows.ChildNodes[y].InnerText.Split(',');
                     for (int x = 0; x < mapwidth; x++)
                     {
                         currentLayer.data[x, y] = int.Parse(tiles[x]);
+                        // One step closer to completion
+                        Game1.GetInstance().currentLoadProgress++;
                     }
                 }
             }
@@ -324,6 +372,9 @@ namespace PathfindingTest.Map
                         if (data != -1) preBlend.AddLast(this.tiles[data]);
                     }
                     mapTiles[i, j] = this.BlendTextures(preBlend.ToArray(), BlendMode.PriorityBlend);
+
+                    // One step closer to completion
+                    Game1.GetInstance().currentLoadProgress += 9;
                 }
             }
 
