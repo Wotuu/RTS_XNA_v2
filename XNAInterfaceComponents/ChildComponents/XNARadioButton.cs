@@ -56,7 +56,7 @@ namespace XNAInterfaceComponents.ChildComponents
             }
             if (innerCircle == null)
             {
-                innerCircle = new Circle(this, (int)(this.bounds.Width / 2) - 3, 2,
+                innerCircle = new Circle(this, (int)(this.bounds.Width / 2) - 3, 1,
                     new Point(this.bounds.X + (this.bounds.Width / 2) + 3, this.bounds.Y + (this.bounds.Height / 2) + 3), Color.Red);
                 innerCircle.InitCircle(sb);
             }

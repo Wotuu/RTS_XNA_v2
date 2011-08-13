@@ -79,7 +79,16 @@ namespace PathfindingTest
             }
             set
             {
-                if (map != null && map.collisionMap != null) map.collisionMap.drawOffset = value;
+                if (map != null && map.collisionMap != null)
+                {
+                    if (value.X < 0) value.X = 0;
+                    if (value.Y < 0) value.Y = 0;
+                    if (value.X > (map.collisionMap.mapWidth - graphics.PreferredBackBufferWidth))
+                        value.X = map.collisionMap.mapWidth - graphics.PreferredBackBufferWidth;
+                    if (value.Y > (map.collisionMap.mapHeight - graphics.PreferredBackBufferHeight))
+                        value.Y = map.collisionMap.mapHeight - graphics.PreferredBackBufferHeight;
+                    map.collisionMap.drawOffset = value;
+                }
                 this._drawOffset = value;
             }
         }
@@ -452,7 +461,7 @@ namespace PathfindingTest
             {
 
             }
-            
+
             // spriteBatch.Draw(testTexture, new Rectangle(100, 100, testTexture.Width, testTexture.Height), Color.White);
 
             /*
@@ -616,6 +625,25 @@ namespace PathfindingTest
         public Boolean IsOnScreen(Rectangle rect)
         {
             return rect.Intersects(new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+        }
+
+        /// <summary>
+        /// Gets the OFFSETTED screen location
+        /// </summary>
+        /// <returns>The offsetted screen location</returns>
+        public Point GetScreenLocation()
+        {
+            return new Point((int)Math.Abs(this.drawOffset.X), (int)Math.Abs(this.drawOffset.Y));
+        }
+
+        /// <summary>
+        /// Gets the OFFSETTED screen bounds.
+        /// </summary>
+        /// <returns>The offsetted screen bounds</returns>
+        public Rectangle GetScreenBounds()
+        {
+            return new Rectangle((int)(this.drawOffset.X * -1), (int)(this.drawOffset.Y * -1),
+                graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight);
         }
 
         public void OnKeyPressed(KeyEvent e)

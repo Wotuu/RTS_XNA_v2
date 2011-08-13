@@ -17,10 +17,11 @@ namespace PathfindingTest.UI
     public class HUD : MouseClickListener
     {
 
-        Player player;
-        Color color;
+        public Player player;
+        public Color color;
 
-        Texture2D hudTex;
+        public Texture2D hudTex;
+        public Texture2D miniMapTex;
         public SpriteFont sf;
 
         public Boolean loadForEngineer { get; set; }
@@ -70,6 +71,7 @@ namespace PathfindingTest.UI
             this.color = c;
 
             hudTex = Game1.GetInstance().Content.Load<Texture2D>("HUD/HUD");
+            miniMapTex = Game1.GetInstance().Content.Load<Texture2D>("HUD/HUDMiniMap");
             sf = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/SpriteFont1");
 
             loadForEngineer = false;
@@ -238,6 +240,15 @@ namespace PathfindingTest.UI
         /// <param name="sb">Default SpriteBatch</param>
         internal void Draw(SpriteBatch sb)
         {
+
+            // Set this, can't do it in the constructor
+            Game1.GetInstance().map.miniMap.rectangleColor = this.color;
+            Game1.GetInstance().map.miniMap.z = 0.09998f;
+
+            // Draw mini map
+            sb.Draw(miniMapTex, this.DefineMiniMapRectangle(), null, color, 0f, Vector2.Zero, SpriteEffects.None, 0.09999f);
+            Game1.GetInstance().map.miniMap.Draw(sb, new Rectangle(834, 574, 185, 189));
+
             if (draw)
             {
                 sb.Draw(hudTex, new Rectangle(0, 652, 1024, 116), null, color, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
@@ -646,6 +657,15 @@ namespace PathfindingTest.UI
         public Rectangle DefineRectangle()
         {
             return new Rectangle(195, 652, 634, 116);
+        }
+
+        /// <summary>
+        /// Defines the space the minimap is using
+        /// </summary>
+        /// <returns>The rectangle the minimap is using</returns>
+        public Rectangle DefineMiniMapRectangle()
+        {
+            return new Rectangle(831, 571, 191, 195);
         }
     }
 }

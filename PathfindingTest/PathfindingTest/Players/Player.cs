@@ -457,8 +457,8 @@ namespace PathfindingTest.Players
                 }
             }
 
-
-            if (!hud.DefineRectangle().Contains(new Rectangle(m.location.X, m.location.Y, 1, 1)))
+            if (!hud.DefineRectangle().Contains(m.location) &&
+                !hud.DefineMiniMapRectangle().Contains(m.location))
             {
                 if (m.button == MouseEvent.MOUSE_BUTTON_1)
                 {
@@ -646,7 +646,9 @@ namespace PathfindingTest.Players
             // Bots dont use the mouse, or shouldn't
             if (Game1.CURRENT_PLAYER != this) return;
             this.previewPattern = null;
-            if (m.button == MouseEvent.MOUSE_BUTTON_1)
+            if (m.button == MouseEvent.MOUSE_BUTTON_1 &&
+                !hud.DefineRectangle().Contains(m.location) &&
+                !hud.DefineMiniMapRectangle().Contains(m.location))
             {
                 if (selectBox == null)
                 {

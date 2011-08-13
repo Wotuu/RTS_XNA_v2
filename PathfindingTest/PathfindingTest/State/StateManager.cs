@@ -136,14 +136,14 @@ namespace PathfindingTest.State
             else
             {
                 Alliance redAlliance = new Alliance();
-                Player humanPlayer = new Player(redAlliance, Color.Red);
+                Player humanPlayer = new Player(redAlliance, Color.Blue);
                 Game1.CURRENT_PLAYER = humanPlayer;
                 humanPlayer.SpawnStartUnits(new Point((int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2,
                     (int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2));
 
 
                 Alliance greenAlliance = new Alliance();
-                Player aiPlayer = new Player(greenAlliance, Color.Green);
+                Player aiPlayer = new Player(greenAlliance, Color.Purple);
                 aiPlayer.SpawnStartUnits(new Point((int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2, 200));
 
                 //SaveManager.GetInstance().SaveNodes("C:\\Users\\Wouter\\Desktop\\test.xml");
