@@ -418,7 +418,7 @@ namespace PathfindingTest.UI
                 {
                     if (b.state == Building.State.Preview &&
                         !this.DefineRectangle().Contains(new Rectangle(me.location.X, me.location.Y, 1, 1)) &&
-                        Game1.GetInstance().map.collisionMap.CanPlace(b.DefineRectangle()))
+                        Game1.GetInstance().map.collisionMap.CanPlace(b.DefineDrawRectangle()))
                     {
                         Engineer temp = null;
 

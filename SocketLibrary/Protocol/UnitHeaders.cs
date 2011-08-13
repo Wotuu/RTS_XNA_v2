@@ -7,6 +7,12 @@ namespace SocketLibrary.Protocol
 {
     public class UnitHeaders
     {
+        // 0 - 31   Chat reserved ranges (0x00, 0x1F )
+        // 32 - 47  General game reserved ranges (0x20, 0x2F)
+        // 48 - 63  Unit reserved ranges (0x30, 0x3F)
+        // 64 - 79  Building reserved ranges (0x40, 0x4F)
+        // 80 - 96  Test reserved ranges (0x50, 0x5F);
+
         /// <summary>
         /// Types to be used to request object IDs
         /// </summary>

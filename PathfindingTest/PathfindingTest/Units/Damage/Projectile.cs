@@ -219,7 +219,7 @@ namespace PathfindingTest.Units.Projectiles
                     {
                         foreach (Building building in player.buildings)
                         {
-                            if (building.DefineRectangle().Contains(
+                            if (building.DefineDrawRectangle().Contains(
                                 // Front of projectile!
                                 collisionLocation))
                             {
@@ -266,10 +266,10 @@ namespace PathfindingTest.Units.Projectiles
             this.y = -20;
             this.maxRange = 1;
 
-            if (Game1.GetInstance().IsMultiplayerGame())
-            {
-                Console.Out.WriteLine("Disposing projectile");
-            }
+            //if (Game1.GetInstance().IsMultiplayerGame())
+            //{
+            //    Console.Out.WriteLine("Disposing projectile");
+            //}
         }
 
         public Rectangle GetDrawRectangle()

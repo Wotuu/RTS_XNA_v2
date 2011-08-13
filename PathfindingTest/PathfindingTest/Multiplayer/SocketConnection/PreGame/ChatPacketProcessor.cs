@@ -32,10 +32,15 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
 
                         // Request for a user ID
                         Packet newPacket = new Packet(Headers.CLIENT_USERNAME);
-                        newPacket.AddString(ChatServerConnectionManager.GetInstance().user.username);
+
+                            newPacket.AddString(ChatServerConnectionManager.GetInstance().user.username);
+                        // Random user names are for testing only, so we don't want to show the menu
+                        if (!ChatServerConnectionManager.GetInstance().useRandomUsername)
+                        {
+                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.MultiplayerLobby);
+                        }
                         ChatServerConnectionManager.GetInstance().SendPacket(newPacket);
 
-                        MenuManager.GetInstance().ShowMenu(MenuManager.Menu.MultiplayerLobby);
                         break;
                     }
                 case Headers.SERVER_DISCONNECT:
@@ -68,7 +73,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                                 GameDisplayPanel panel = lobby.GetGameDisplayPanelByIndex(i);
                                 if (panel.multiplayerGame.id == gameID)
                                 {
-                                    panel.ChangeMapname(mapName);
+                                    panel.ChangeMap(mapName);
                                     break;
                                 }
                             }
@@ -76,7 +81,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         else if (menu is GameLobby)
                         {
                             GameLobby lobby = ((GameLobby)menu);
-                            lobby.mapPreviewPanel.selectedMapLbl.text = mapName;
+                            lobby.mapPreviewPanel.ChangeMap(mapName);
                         }
                         break;
                     }

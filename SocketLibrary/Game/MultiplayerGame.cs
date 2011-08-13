@@ -38,5 +38,40 @@ namespace SocketLibrary.Multiplayer
         {
             this.users.Remove(user);
         }
+
+        /// <summary>
+        /// Gets a user at an index.
+        /// </summary>
+        /// <param name="index">The index.</param>
+        public User GetUser(int index)
+        {
+            return this.users.ElementAt(index);
+        }
+
+        /// <summary>
+        /// Gets the amount of users in this multiplayer game.
+        /// </summary>
+        /// <returns>The count.</returns>
+        public int GetUserCount()
+        {
+            return this.users.Count;
+        }
+
+        /// <summary>
+        /// Gets a user by its ID.
+        /// </summary>
+        /// <param name="userID">The ID of the user.</param>
+        /// <returns>The User, or null</returns>
+        public User GetUserByID(int userID)
+        {
+            foreach (User user in this.users)
+            {
+                if (user.id == userID)
+                {
+                    return user;
+                }
+            }
+            return null;
+        }
     }
 }

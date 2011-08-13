@@ -9,6 +9,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using XNAInterfaceComponents.ChildComponents;
+using System.Threading;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
@@ -33,9 +34,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 
             this.selectMapButton = new XNAButton(this, new Rectangle(5, this.bounds.Height - 35, this.bounds.Width - 10, 30), "Select map");
             this.selectMapButton.onClickListeners += this.OnSelectMapButtonClicked;
+            this.selectMapButton.visible = false;
+
             this.imageBounds = new Rectangle(
-                this.GetScreenBounds().X + 5, this.GetScreenBounds().Y + 5,
-                this.GetScreenBounds().Width - 10, this.GetScreenBounds().Height - 10);
+                this.GetScreenBounds().X + 15, this.GetScreenBounds().Y + 15,
+                this.GetScreenBounds().Width - 30, this.GetScreenBounds().Height - 90);
         }
 
         public void OnSelectMapButtonClicked(XNAButton source)
@@ -47,7 +50,33 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         {
             base.Draw(sb);
 
-            if (mapPreview != null) sb.Draw(mapPreview, this.imageBounds, Color.White);
+            if (mapPreview != null) sb.Draw(mapPreview, this.imageBounds, null, Color.White, 0f,
+                Vector2.Zero, SpriteEffects.None, this.z - 0.001f);
+        }
+
+        public void ChangeMap(String mapName)
+        {
+            this.selectedMapLbl.text = mapName;
+            int tries = 0;
+            int maxTries = 10;
+            while (tries < maxTries)
+            {
+                try
+                {
+                    Stream stream = new FileStream(Game1.MAPS_FOLDER_LOCATION + "/" + mapName + "/" +
+                                mapName + "_preview.png", FileMode.Open);
+                    this.mapPreview = Texture2D.FromStream(Game1.GetInstance().GraphicsDevice,
+                           stream);
+                    stream.Close();
+                    stream.Dispose();
+                }
+                catch (IOException ioe)
+                {
+                    // Do nothing
+                }
+                Thread.Sleep(100);
+                tries++;
+            }
         }
     }
 }

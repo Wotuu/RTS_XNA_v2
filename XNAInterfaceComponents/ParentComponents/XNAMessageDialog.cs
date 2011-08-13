@@ -140,7 +140,6 @@ namespace XNAInterfaceComponents.ParentComponents
             this.buttonWidth = 100;
             this.buttonSpacing = 30;
 
-            this.backgroundColor = Color.Blue;
             this.DoLayout();
         }
     }

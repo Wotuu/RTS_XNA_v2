@@ -16,6 +16,7 @@ using PathfindingTest.Players;
 using Microsoft.Xna.Framework;
 using PathfindingTest.State;
 using XNAInterfaceComponents.Managers;
+using PathfindingTest.Multiplayer.SocketConnection.InGame;
 
 namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
 {
@@ -255,10 +256,13 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         }
                         else if (menu is GameLobby)
                         {
+                            GameLobby lobby = ((GameLobby)menu);
                             Game1.GetInstance().multiplayerGame = new MultiplayerGame(ChatServerConnectionManager.GetInstance().user.channelID,
                                 "<Gamename>", "<Mapname>");
 
                             StateManager.GetInstance().gameState = StateManager.State.GameInit;
+                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.MultiPlayerLoadMenu);
+                            StateManager.GetInstance().gameState = StateManager.State.GameLoading;
                             // Loading will start now
                             // See Game1.cs for sending the packet that the game is done loading (update loop)
                         }
@@ -268,6 +272,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                 case Headers.DONE_LOADING:
                     {
                         int playerID = PacketUtil.DecodePacketInt(p, 0);
+                        Console.Out.WriteLine("Done loading packet received! -> " + playerID);
                         Game1.GetInstance().GetPlayerByMultiplayerID(playerID).doneLoading = true;
                         foreach (Player player in Game1.GetInstance().players)
                         {
@@ -281,6 +286,33 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                             player.SpawnStartUnits(new Point(200 * (count + 1), 200 * (count + 1)));
                             count++;
                         }
+                        break;
+                    }
+
+                case Headers.LOADING_PROGRESS:
+                    {
+                        int userID = PacketUtil.DecodePacketInt(p, 0);
+                        int percentage = PacketUtil.DecodePacketInt(p, 4);
+
+                        User user = Game1.GetInstance().multiplayerGame.GetUserByID(userID);
+
+
+                        MPLoadScreen loadScreen = ((MPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+                        // It may be null for a split second after the loading finishes
+                        if( loadScreen != null ) loadScreen.SetPercentageDone(user, percentage);
+                        break;
+                    }
+                case Headers.LOADING_WHAT:
+                    {
+                        int userID = PacketUtil.DecodePacketInt(p, 0);
+                        String what = PacketUtil.DecodePacketString(p, 4);
+
+                        User user = Game1.GetInstance().multiplayerGame.GetUserByID(userID);
+
+
+                        MPLoadScreen loadScreen = ((MPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+                        // It may be null for a split second after the loading finishes
+                        if (loadScreen != null) loadScreen.SetLoadingWhat(user, what);
                         break;
                     }
             }

@@ -9,6 +9,8 @@ using System.Xml;
 using PathfindingTest.Map;
 using System.IO;
 using AStarCollisionMap.Collision;
+using PathfindingTest.Pathfinding;
+using AStarCollisionMap.Pathfinding;
 
 
 public delegate void OnLoadProgressChanged(GameMap source, int percentDone);
@@ -58,24 +60,38 @@ namespace PathfindingTest.Map
             int yCount = 0;
             this.tiles = Split(this.tileMap, TILE_WIDTH, TILE_HEIGHT, out xCount, out yCount);
 
-            // For every texture in the collisionmap
-            Game1.GetInstance().maxLoadProgress += Directory.GetFileSystemEntries("./Maps/" + mapName.Replace(".xml", "") + "/").Length * 400;
+            // For every texture in the collisionmap, minus the map preview texture
+            Game1.GetInstance().maxLoadProgress +=
+                (Directory.GetFileSystemEntries(Game1.MAPS_FOLDER_LOCATION + mapName.Replace(".xml", "") + "/").Length - 1) * 400;
+            // For initing the collisionmap
+            Game1.GetInstance().maxLoadProgress += 4000;
+
             Console.Out.WriteLine("Max load progress: " + Game1.GetInstance().maxLoadProgress);
             Game1.GetInstance().loadingWhat = "Layers";
-            LoadLayers("./Maps/" + mapName);
-            Game1.GetInstance().loadingWhat = "Optimizing layers";
-            MergeLayers();
+            // Max progress will be determined in here as well!
+            this.LoadLayers(Game1.MAPS_FOLDER_LOCATION + mapName);
 
+
+            Game1.GetInstance().loadingWhat = "Optimizing layers";
+            this.MergeLayers();
+
+
+            Game1.GetInstance().loadingWhat = "Initialising collisionmap";
             this.collisionMap = new RTSCollisionMap(Game1.GetInstance().GraphicsDevice,
                 this.mapTiles.GetLength(0) * TILE_WIDTH, this.mapTiles.GetLength(1) * TILE_HEIGHT,
                 CalculateQuadDepth(this.mapTiles.GetLength(0)));
+            Game1.GetInstance().currentLoadProgress += 4000;
 
             this.collisionMap.onMapTileLoadListeners += this.OnMapTileLoaded;
 
             Game1.GetInstance().loadingWhat = "Collisionmap";
-            this.collisionMap.LoadMap("./Maps/", mapName.Replace(".xml", ""));
+            this.collisionMap.LoadMap(Game1.MAPS_FOLDER_LOCATION, mapName.Replace(".xml", ""));
+
+            Game1.GetInstance().loadingWhat = "Pathfinding";
+            this.LoadPathfindingNodes(Game1.MAPS_FOLDER_LOCATION + mapName);
 
             Console.Out.WriteLine("Finished loading! " + Game1.GetInstance().currentLoadProgress + " / " + Game1.GetInstance().maxLoadProgress);
+            Game1.GetInstance().loadingWhat = "Finished";
             // Just in case
             Game1.GetInstance().currentLoadProgress = Game1.GetInstance().maxLoadProgress;
         }
@@ -301,6 +317,7 @@ namespace PathfindingTest.Map
                 throw new Exception("XML document is not formatted correctly");
             }
 
+            XmlNode nodes = rootNode.ChildNodes.Item(1);
             for (int i = 0; i < layers.ChildNodes.Count; i++)
             {
                 XmlNode layer = layers.ChildNodes[i];
@@ -334,6 +351,9 @@ namespace PathfindingTest.Map
 
                     // For every texture that we blend, but that's 3 times heavier than this one, I guess!
                     Game1.GetInstance().maxLoadProgress += mapwidth * mapheight * 9;
+
+                    // 100 for every collision node
+                    Game1.GetInstance().maxLoadProgress += nodes.ChildNodes.Count * 100;
                 }
                 this.layers.AddLast(currentLayer);
 
@@ -347,6 +367,45 @@ namespace PathfindingTest.Map
                         Game1.GetInstance().currentLoadProgress++;
                     }
                 }
+            }
+        }
+
+
+        /// <summary>
+        /// Loads all the pathfinding nodes in the game. Also creates the connections.
+        /// </summary>
+        /// <param name="filename">The filename of the map to load from</param>
+        public void LoadPathfindingNodes(String filename)
+        {
+            PathfindingNodeManager.GetInstance().nodeList.Clear();
+
+
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.Load(filename);
+
+
+            XmlNode rootNode = xmldoc.ChildNodes[1];
+
+            XmlNode nodes = rootNode.ChildNodes.Item(1);
+            if (!nodes.Name.Equals("Nodes"))
+            {
+                throw new Exception("XML document is not formatted correctly");
+            }
+
+            for (int i = 0; i < nodes.ChildNodes.Count; i++)
+            {
+                XmlNode node = nodes.ChildNodes[i];
+
+                if (!node.Name.Equals("Node"))
+                {
+                    throw new Exception("XML document is not formatted correctly");
+                }
+
+                new Node(this.collisionMap,
+                    Int32.Parse(node.Attributes.GetNamedItem("x").Value),
+                    Int32.Parse(node.Attributes.GetNamedItem("y").Value), true);
+                // One more node ready
+                Game1.GetInstance().currentLoadProgress += 100;
             }
         }
 
@@ -379,14 +438,6 @@ namespace PathfindingTest.Map
             }
 
         }
-
-
-
-
-
-
-
-
 
 
 
@@ -435,6 +486,23 @@ namespace PathfindingTest.Map
                 }
             //Return the array of parts.
             return r;
+        }
+
+        /// <summary>
+        /// Disposes of the game map, unloading most resources used by it.
+        /// </summary>
+        public void Dispose()
+        {
+            // tileMap.Dispose();
+            foreach (Texture2D tex in this.tiles)
+            {
+                tex.Dispose();
+            }
+            foreach (Texture2D tex in this.mapTiles)
+            {
+                tex.Dispose();
+            }
+            this.collisionMap.Dispose();
         }
     }
 }

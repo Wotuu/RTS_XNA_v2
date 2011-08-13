@@ -115,14 +115,13 @@ namespace XNAInterfaceComponents.Managers
                 ParentComponent pc = this.componentList.ElementAt(i);
                 if (pc is XNAMessageDialog)
                 {
-                    pc.RequestFocusAt(m_event.location);
-                    return;
+                    if( pc.RequestFocusAt(m_event.location) ) return;
                 }
             }
             // Otherwise, the rest comes
             foreach (ParentComponent pc in this.componentList)
             {
-                pc.RequestFocusAt(m_event.location);
+                if (pc.RequestFocusAt(m_event.location)) return;
             }
         }
 

@@ -19,6 +19,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         private XNALabel connectingLbl { get; set; }
         private XNATextField usernameTF { get; set; }
         private XNATextField ipTF { get; set; }
+        private XNAButton testConnectionBtn { get; set; }
 
         public LoginScreen()
             : base(null, new Rectangle(
@@ -26,23 +27,25 @@ namespace PathfindingTest.UI.Menus.Multiplayer
                 Game1.GetInstance().graphics.PreferredBackBufferHeight / 2 - 200,
                 400, 400))
         {
-            XNALabel ipLbl = new XNALabel(this, new Rectangle(70, 70, 100, 30), "IP");
+            XNALabel ipLbl = new XNALabel(this, new Rectangle(10, 70, 100, 30), "IP");
             ipLbl.border = null;
             ipLbl.textAlign = XNALabel.TextAlign.RIGHT;
             ipLbl.font = MenuManager.BIG_TEXTFIELD_FONT;
 
-            ipTF = new XNATextField(this, new Rectangle(190, 70, 100, 35), 1);
-            ipTF.border = new Border(ipTF, 1, Color.Blue);
+            ipTF = new XNATextField(this, new Rectangle(120, 70, 100, 35), 1);
             ipTF.font = MenuManager.BIG_TEXTFIELD_FONT;
             ipTF.text = "localhost";
 
-            XNALabel usernameLbl = new XNALabel(this, new Rectangle(70, 110, 100, 30), "Username");
+            testConnectionBtn = new XNAButton(this, new Rectangle(240, 70, 150, 35), "Test connection");
+            testConnectionBtn.font = MenuManager.BIG_TEXTFIELD_FONT;
+            testConnectionBtn.onClickListeners += this.OnTestConnectionClicked;
+
+            XNALabel usernameLbl = new XNALabel(this, new Rectangle(10, 110, 100, 30), "Username");
             usernameLbl.border = null;
             usernameLbl.textAlign = XNALabel.TextAlign.RIGHT;
             usernameLbl.font = MenuManager.BIG_TEXTFIELD_FONT;
 
-            usernameTF = new XNATextField(this, new Rectangle(190, 110, 100, 35), 1);
-            usernameTF.border = new Border(usernameTF, 1, Color.Blue);
+            usernameTF = new XNATextField(this, new Rectangle(120, 110, 100, 35), 1);
             usernameTF.font = MenuManager.BIG_TEXTFIELD_FONT;
 
             connectingLbl = new XNALabel(this, new Rectangle(0, 160, 400, 30), "");
@@ -97,6 +100,15 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public void BackClicked(XNAButton source)
         {
             MenuManager.GetInstance().ShowMenu(MenuManager.Menu.MainMenu);
+        }
+
+        /// <summary>
+        /// When the user wants to test his/her connection.
+        /// </summary>
+        /// <param name="source">The button source</param>
+        public void OnTestConnectionClicked(XNAButton source)
+        {
+            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.TestConnection);
         }
     }
 }

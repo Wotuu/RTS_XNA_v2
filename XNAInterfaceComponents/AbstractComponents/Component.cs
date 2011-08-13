@@ -27,8 +27,9 @@ namespace XNAInterfaceComponents.Components
 
         public float z { get; set; }
 
-        public Component(Rectangle bounds)
+        public Component(ParentComponent parent, Rectangle bounds)
         {
+            this.parent = parent;
             this.bounds = bounds;
             this.backgroundColor = Color.White;
             this.mouseOverColor = Color.Orange;

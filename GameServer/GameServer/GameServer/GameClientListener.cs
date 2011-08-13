@@ -224,6 +224,7 @@ namespace GameServer.GameServer
 
                         break;
                     }
+                    /*
                 case UnitHeaders.GAME_UNIT_RANGED_DAMAGE:
                     {
                         Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
@@ -238,7 +239,7 @@ namespace GameServer.GameServer
                         }
 
                         break;
-                    }
+                    }*/
                 default:
                     {
                         String currTime = System.DateTime.Now.ToLongTimeString() + "," + System.DateTime.Now.Millisecond + " ";

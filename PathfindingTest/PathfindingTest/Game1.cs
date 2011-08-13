@@ -36,6 +36,7 @@ using PathfindingTest.Map;
 using PathfindingTest.UI.Menus;
 using SocketLibrary.Protocol;
 using PathfindingTest.Multiplayer.PreGame.SocketConnection;
+using PathfindingTest.UI.Menus.Multiplayer;
 
 namespace PathfindingTest
 {
@@ -83,8 +84,12 @@ namespace PathfindingTest
             }
         }
 
+        public static String MAPS_FOLDER_LOCATION = "./Maps/";
+
         public int maxLoadProgress { get; set; }
         public int currentLoadProgress { get; set; }
+        public int previousLoadPercentageMP { get; set; }
+        public String previousLoadWhatMP { get; set; }
         public String loadingWhat { get; set; }
 
 
@@ -190,6 +195,8 @@ namespace PathfindingTest
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            if (Game1.GetInstance().map != null)
+                Game1.GetInstance().map.Dispose();
         }
         #endregion
 
@@ -226,30 +233,61 @@ namespace PathfindingTest
                 case StateManager.State.GameInit:
                     break;
                 case StateManager.State.GameLoading:
-                    SPLoadScreen loadingscreen = ((SPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
-                    loadingscreen.progressBar.maxValue = maxLoadProgress;
-                    loadingscreen.progressBar.currentValue = currentLoadProgress;
-                    loadingscreen.loadingWhatLabel.text = loadingWhat;
-
-
-                    // Finished loading
-                    if (maxLoadProgress != 0 && currentLoadProgress == maxLoadProgress)
+                    // Singleplayer
+                    if (MenuManager.GetInstance().GetCurrentlyDisplayedMenu() is SPLoadScreen)
                     {
-                        // Notify the rest that we're done with loading
-                        if (this.IsMultiplayerGame())
-                        {
-                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
+                        SPLoadScreen loadingscreen = ((SPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+                        loadingscreen.progressBar.maxValue = maxLoadProgress;
+                        loadingscreen.progressBar.currentValue = currentLoadProgress;
+                        loadingscreen.loadingWhatLabel.text = loadingWhat;
 
-                            ComponentManager.GetInstance().UnloadAllPanels();
 
-                            Packet doneLoadingPacket = new Packet(Headers.DONE_LOADING);
-                            doneLoadingPacket.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
-                            ChatServerConnectionManager.GetInstance().SendPacket(doneLoadingPacket);
-                        }
-                        else
+                        // Finished loading
+                        if (maxLoadProgress != 0 && currentLoadProgress == maxLoadProgress)
                         {
                             StateManager.GetInstance().FinishedLoadingMap();
                         }
+                    }
+                    else if (MenuManager.GetInstance().GetCurrentlyDisplayedMenu() is MPLoadScreen)
+                    {
+                        MPLoadScreen loadingscreen = ((MPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+
+                        int percentage = (int)((this.currentLoadProgress / (double)this.maxLoadProgress) * 100.0);
+                        loadingscreen.SetPercentageDone(ChatServerConnectionManager.GetInstance().user,
+                            percentage);
+                        loadingscreen.SetLoadingWhat(ChatServerConnectionManager.GetInstance().user,
+                            this.loadingWhat);
+
+                        if (previousLoadPercentageMP != percentage)
+                        {
+                            Packet p = new Packet(Headers.LOADING_PROGRESS);
+                            p.AddInt(ChatServerConnectionManager.GetInstance().user.id);
+                            p.AddInt(percentage);
+                            ChatServerConnectionManager.GetInstance().SendPacket(p);
+                        }
+
+                        if (this.loadingWhat != this.previousLoadWhatMP)
+                        {
+                            Packet p = new Packet(Headers.LOADING_WHAT);
+                            p.AddInt(ChatServerConnectionManager.GetInstance().user.id);
+                            p.AddString(loadingWhat);
+                            ChatServerConnectionManager.GetInstance().SendPacket(p);
+                        }
+
+                        // Just once
+                        if (percentage == 100 && this.previousLoadPercentageMP != 100)
+                        {
+                            StateManager.GetInstance().FinishedLoadingMap();
+                            Console.Out.WriteLine("Sending finished loading packet! -> " + ChatServerConnectionManager.GetInstance().user.id);
+                            Packet p = new Packet(Headers.DONE_LOADING);
+                            p.AddInt(ChatServerConnectionManager.GetInstance().user.id);
+                            p.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
+                            ChatServerConnectionManager.GetInstance().SendPacket(p);
+                        }
+
+
+                        this.previousLoadPercentageMP = percentage;
+                        this.previousLoadWhatMP = this.loadingWhat;
                     }
                     break;
                 case StateManager.State.GameRunning:
@@ -588,7 +626,10 @@ namespace PathfindingTest
 
         public void OnKeyPressed(KeyEvent e)
         {
-            if (e.key == Keys.Escape)
+
+            if (e.key == Keys.Escape &&
+                (StateManager.GetInstance().gameState == StateManager.State.GameRunning ||
+                StateManager.GetInstance().gameState == StateManager.State.GamePaused))
             {
                 if (MenuManager.GetInstance().GetCurrentlyDisplayedMenu() == null)
                 {

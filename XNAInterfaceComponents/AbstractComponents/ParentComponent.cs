@@ -14,9 +14,8 @@ namespace XNAInterfaceComponents.AbstractComponents
         protected LinkedList<Component> children { get; set; }
 
         public ParentComponent(ParentComponent parent, Rectangle bounds)
-            : base(bounds)
+            : base(parent, bounds)
         {
-            this.parent = parent;
             this.children = new LinkedList<Component>();
             if (parent == null) ComponentManager.GetInstance().QueueLoad(this);
             else

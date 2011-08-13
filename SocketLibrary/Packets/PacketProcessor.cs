@@ -12,6 +12,7 @@ namespace SocketLibrary.Packets
     public class PacketProcessor
     {
         private LinkedList<PacketReceiverPair> receivedPackets = new LinkedList<PacketReceiverPair>();
+        private LinkedList<PacketReceiverPair> buggedPackets = new LinkedList<PacketReceiverPair>();
         private LinkedList<PacketSenderPair> sentPackets = new LinkedList<PacketSenderPair>();
         private readonly object syncSentPackets;
 
@@ -82,7 +83,18 @@ namespace SocketLibrary.Packets
         /// <param name="fullData"></param>
         public void QueuePacket(byte[] fullData, SocketClient receiver)
         {
-            this.receivedPackets.AddLast(new PacketReceiverPair(fullData, receiver));
+            PacketReceiverPair pair = PacketReceiverPair.empty;
+            try
+            {
+                this.receivedPackets.AddLast((pair = new PacketReceiverPair(fullData, receiver)));
+            }
+            catch (NullReferenceException e)
+            {
+                Console.Error.WriteLine("QueuePacket got a nullpointer!");
+                // if (pair.Equals( null )) Console.Error.WriteLine("Pair was null");
+                if (fullData == null) Console.Error.WriteLine("fullData was null!");
+                if (receiver == null) Console.Error.WriteLine("receiver was null!");
+            }
         }
 
         /// <summary>
@@ -114,6 +126,11 @@ namespace SocketLibrary.Packets
             Console.Out.WriteLine("Starting processing thread!");
             while (isRunning)
             {
+                if (buggedPackets.Count > 100)
+                {
+                    Console.Out.WriteLine("Bugged packets is higher than 100. Enjoy your exception");
+                    int crash = Int32.Parse("LOL");
+                }
                 while (receivedPackets.Count > 0)
                 {
                     if (onProcessPacket == null)
@@ -122,25 +139,44 @@ namespace SocketLibrary.Packets
                     }
                     else
                     {
-                        // Process the packet
-                        Packet receivedPacket = this.ConstructPacket(receivedPackets.First.Value.packet);
-                        onProcessPacket(receivedPacket);
+                        //if (receivedPackets.First == null) continue;
+                        //try
+                        //{
+                            // Process the packet
+                            Packet receivedPacket = this.ConstructPacket(receivedPackets.First.Value.packet);
+                            onProcessPacket(receivedPacket);
 
-                        if (receivedPacket.GetHeader() != Headers.PACKET_RECEIVED)
-                        {
-                            //Console.Out.WriteLine("Confirming packet with header " + receivedPacket.GetHeader() +
-                            //    " ID " + receivedPacket.GetPacketID());
-                            // Send a confirmation packet, that the packet is processed and received
-                            Packet confirmPacket = new Packet(Headers.PACKET_RECEIVED);
-                            confirmPacket.SetPacketID(receivedPacket.GetPacketID());
-                            receivedPackets.First.Value.client.SendPacket(confirmPacket);
-                        }
-                        else
-                        {
-                            ConfirmPacket(receivedPacket.GetPacketID());
-                        }
+                            if (receivedPacket.GetHeader() != Headers.PACKET_RECEIVED)
+                            {
+                                //Console.Out.WriteLine("Confirming packet with header " + receivedPacket.GetHeader() +
+                                //    " ID " + receivedPacket.GetPacketID());
+                                // Send a confirmation packet, that the packet is processed and received
+                                Packet confirmPacket = new Packet(Headers.PACKET_RECEIVED);
+                                confirmPacket.SetPacketID(receivedPacket.GetPacketID());
+                                receivedPackets.First.Value.client.SendPacket(confirmPacket);
+                            }
+                            else
+                            {
+                                ConfirmPacket(receivedPacket.GetPacketID());
+                            }
 
-                        receivedPackets.RemoveFirst();
+                            receivedPackets.RemoveFirst();
+                        /*}
+                        catch (Exception e)
+                        {
+                            Console.WriteLine("Nullpointer in PacketProcessor D=. Removing first to buggedPackets");
+                            if (receivedPackets.First == null)
+                            {
+                                Console.WriteLine("First is null");
+                            }
+                            else
+                            {
+                                buggedPackets.AddLast(receivedPackets.First.Value);
+                                receivedPackets.RemoveFirst();
+                            }
+                            // Stop for now, try again later
+                            break;
+                        }*/
                     }
                 }
 
@@ -170,9 +206,11 @@ namespace SocketLibrary.Packets
         {
             public byte[] packet;
             public SocketClient client;
+            public static PacketReceiverPair empty = new PacketReceiverPair(null, null);
 
             public PacketReceiverPair(byte[] packet, SocketClient client)
             {
+                // if (packet == null) Console.WriteLine("PacketReceiverPair with null as packet incoming!");
                 this.packet = packet;
                 this.client = client;
             }

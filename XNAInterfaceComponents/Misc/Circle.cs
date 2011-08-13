@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using System.Diagnostics;
+using XNAInterfaceComponents.Components;
 
 namespace XNAInterfaceComponents.ChildComponents
 {
@@ -19,8 +20,11 @@ namespace XNAInterfaceComponents.ChildComponents
         public Point center { get; set; }
         public Color color { get; set; }
 
-        public Circle(int radius, int circleWidth, Point center, Color color)
+        public Component component { get; set; }
+
+        public Circle(Component compontent, int radius, int circleWidth, Point center, Color color)
         {
+            this.component = compontent;
             this.radius = radius;
             this.circleWidth = circleWidth;
 
@@ -63,7 +67,8 @@ namespace XNAInterfaceComponents.ChildComponents
 
         internal void Draw(SpriteBatch sb)
         {
-            sb.Draw(outline, new Rectangle((int)center.X - radius, (int)center.Y - radius, outerRadius, outerRadius), color);
+            sb.Draw(outline, new Rectangle((int)center.X - radius, (int)center.Y - radius, outerRadius, outerRadius), null, color, 
+               0f, Vector2.Zero, SpriteEffects.None, this.component.z - 0.0001f);
         }
 
         /// <summary>

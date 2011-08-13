@@ -16,7 +16,6 @@ namespace PathfindingTest.Units.Damage
 
         public ArrowManager()
         {
-            Console.WriteLine("new ArrowManager made");
             projectiles = new LinkedList<Projectile>();
         }
 
