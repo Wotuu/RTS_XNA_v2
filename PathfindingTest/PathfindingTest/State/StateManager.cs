@@ -45,13 +45,15 @@ namespace PathfindingTest.State
                     String mapname = "";
                     if (game.IsMultiplayerGame())
                     {
-
+                        mapname = ((GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu()).mapPreviewPanel.selectedMapLbl.text;
+                        this.PrepareMultiplayerGame();
                     }
                     else
                     {
                         mapname = ((SPMapSelectionPanel)MenuManager.GetInstance().GetCurrentlyDisplayedMenu()).GetSelectedMap();
                     }
-                    this.mapToLoad = mapname + ".xml";
+                    this.mapToLoad = mapname;
+                    if (!mapToLoad.EndsWith(".xml")) this.mapToLoad += ".xml"; 
                     new Thread(this.LoadMap).Start();
                 }
                 else if (value == State.GameLoading)
@@ -106,11 +108,19 @@ namespace PathfindingTest.State
             Game1 game = Game1.GetInstance();
             game.maxLoadProgress += 5000;
             game.map = new GameMap(this.mapToLoad);
-            game.map.collisionMap.PlaceNodesAroundEdges();
+            // game.map.collisionMap.PlaceNodesAroundEdges();
 
             (game.quadTree = new QuadRoot(new Rectangle(0, 0,
                 game.graphics.PreferredBackBufferWidth, game.graphics.PreferredBackBufferHeight)
                 )).CreateTree(5);
+            if (game.IsMultiplayerGame())
+            {
+                GameServerConnectionManager.GetInstance().user =
+                    ChatServerConnectionManager.GetInstance().user;
+                GameServerConnectionManager.GetInstance().serverLocation =
+                    ChatServerConnectionManager.GetInstance().serverLocation;
+                GameServerConnectionManager.GetInstance().ConnectToServer();
+            }
         }
 
         /// <summary>
@@ -121,35 +131,7 @@ namespace PathfindingTest.State
             Game1 game = Game1.GetInstance();
             if (game.IsMultiplayerGame())
             {
-                GameServerConnectionManager.GetInstance().user =
-                    ChatServerConnectionManager.GetInstance().user;
-                GameServerConnectionManager.GetInstance().ConnectToServer();
-
-
-                GameLobby lobby = (GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
-                foreach (User user in UserManager.GetInstance().users)
-                {
-                    Game1.GetInstance().multiplayerGame.AddUser(user);
-                }
-
-                Alliance[] alliances = new Alliance[8];
-                for (int i = 0; i < alliances.Length; i++)
-                {
-                    alliances[i] = new Alliance();
-                }
-
-                for (int i = 0; i < lobby.GetDisplayPanelCount(); i++)
-                {
-                    UserDisplayPanel panel = lobby.GetDisplayPanel(i);
-                    Alliance alli = alliances[Int32.Parse(panel.teamDropdown.GetSelectedOption()) - 1];
-                    Player player = new Player(alli, panel.GetSelectedColor());
-                    player.multiplayerID = i;
-                    if (panel.user.id == ChatServerConnectionManager.GetInstance().user.id)
-                    {
-                        Game1.CURRENT_PLAYER = player;
-                    }
-                    alli.members.AddLast(player);
-                }
+                // Do nothing, used to be something here
             }
             else
             {
@@ -172,6 +154,43 @@ namespace PathfindingTest.State
             MouseManager.GetInstance().mouseMotionListeners += ((MouseMotionListener)game).OnMouseMotion;
             MouseManager.GetInstance().mouseDragListeners += ((MouseMotionListener)game).OnMouseDrag;
             StateManager.GetInstance().gameState = StateManager.State.GameRunning;
+        }
+
+        /// <summary>
+        /// Prepares the multiplayer game
+        /// </summary>
+        public void PrepareMultiplayerGame()
+        {
+            GameLobby lobby = (GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
+            if (ChatServerConnectionManager.GetInstance().user.username == "Testy")
+            {
+                // Wait 5 seconds, this is purely for debugging to prevent I/O exceptions when
+                // 2 local clients are accessing the same files.
+                Thread.Sleep(5000);
+            }
+            foreach (User user in UserManager.GetInstance().users)
+            {
+                Game1.GetInstance().multiplayerGame.AddUser(user);
+            }
+
+            Alliance[] alliances = new Alliance[8];
+            for (int i = 0; i < alliances.Length; i++)
+            {
+                alliances[i] = new Alliance();
+            }
+
+            for (int i = 0; i < lobby.GetDisplayPanelCount(); i++)
+            {
+                UserDisplayPanel panel = lobby.GetDisplayPanel(i);
+                Alliance alli = alliances[Int32.Parse(panel.teamDropdown.GetSelectedOption()) - 1];
+                Player player = new Player(alli, panel.GetSelectedColor());
+                player.multiplayerID = panel.user.id;
+                if (panel.user.id == ChatServerConnectionManager.GetInstance().user.id)
+                {
+                    Game1.CURRENT_PLAYER = player;
+                }
+                alli.members.AddLast(player);
+            }
         }
     }
 }

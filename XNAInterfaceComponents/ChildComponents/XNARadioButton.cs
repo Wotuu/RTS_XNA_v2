@@ -50,13 +50,13 @@ namespace XNAInterfaceComponents.ChildComponents
             if (this.clearTexture == null) this.clearTexture = ComponentUtil.GetClearTexture2D(sb);
             if (outerCircle == null)
             {
-                outerCircle = new Circle((int)(this.bounds.Width / 2), 1,
+                outerCircle = new Circle(this, (int)(this.bounds.Width / 2), 1,
                     new Point(this.bounds.X + (this.bounds.Width / 2), this.bounds.Y + (this.bounds.Height / 2)), Color.Red);
                 outerCircle.InitCircle(sb);
             }
             if (innerCircle == null)
             {
-                innerCircle = new Circle((int)(this.bounds.Width / 2) - 3, 1,
+                innerCircle = new Circle(this, (int)(this.bounds.Width / 2) - 3, 2,
                     new Point(this.bounds.X + (this.bounds.Width / 2) + 3, this.bounds.Y + (this.bounds.Height / 2) + 3), Color.Red);
                 innerCircle.InitCircle(sb);
             }

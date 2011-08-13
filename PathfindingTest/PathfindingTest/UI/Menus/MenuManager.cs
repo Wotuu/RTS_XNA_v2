@@ -31,8 +31,10 @@ namespace PathfindingTest.UI.Menus
             IngameMenu,
 
             MultiplayerLogin,
+            TestConnection,
             MultiplayerLobby,
             GameLobby,
+            MultiPlayerLoadMenu,
 
 
             NoMenu
@@ -66,7 +68,7 @@ namespace PathfindingTest.UI.Menus
             {
                 this.addedComponents.AddLast(new SPLoadScreen(
                     new Rectangle((Game1.GetInstance().graphics.PreferredBackBufferWidth / 2) - 200,
-                         (Game1.GetInstance().graphics.PreferredBackBufferHeight / 2) - 200, 400, 400)));
+                         (Game1.GetInstance().graphics.PreferredBackBufferHeight / 2) - 200, 400, 250)));
             }
             else if (menu == Menu.OptionsMenu)
             {
@@ -80,6 +82,10 @@ namespace PathfindingTest.UI.Menus
             {
                 this.addedComponents.AddLast(new LoginScreen());
             }
+            else if (menu == Menu.TestConnection)
+            {
+                this.addedComponents.AddLast(new TestConnectionMenu());
+            }
             else if (menu == Menu.MultiplayerLobby)
             {
                 this.addedComponents.AddLast(new MultiplayerLobby());
@@ -87,6 +93,10 @@ namespace PathfindingTest.UI.Menus
             else if (menu == Menu.GameLobby)
             {
                 this.addedComponents.AddLast(new GameLobby());
+            }
+            else if (menu == Menu.MultiPlayerLoadMenu)
+            {
+                this.addedComponents.AddLast(new MPLoadScreen());
             }
             else if (menu == Menu.NoMenu)
             {

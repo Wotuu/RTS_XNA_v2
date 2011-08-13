@@ -10,6 +10,7 @@ using System.IO;
 using PathfindingTest.Multiplayer.PreGame.SocketConnection;
 using SocketLibrary.Packets;
 using SocketLibrary.Protocol;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
@@ -23,6 +24,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 
         public LinkedList<MapEntryPanel> panels = new LinkedList<MapEntryPanel>();
         public XNARadioButtonGroup group { get; set; }
+        public Texture2D previewTexture { get; set; }
+
+        public Vector2 previewTextureSize = new Vector2(200f, 200f);
 
         public MapSelectionPanel(MapPreviewPanel previewPanel, String selectedMapName)
             : base()
@@ -41,10 +45,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 index++;
             }
 
+            int panelHeight = (int)Math.Max(this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70, 300);
             this.bounds = new Rectangle(((CLIENT_WINDOW_WIDTH / 2) - 250),
-                ((CLIENT_WINDOW_HEIGHT / 2) - (this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70 / 2)),
+                ((CLIENT_WINDOW_HEIGHT / 2) - (panelHeight / 2)),
                 500,
-                (int)Math.Max(this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70, 200));
+                panelHeight);
             this.DoLayout();
         }
 
@@ -63,7 +68,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <returns>The list of names.</returns>
         public LinkedList<String> LoadMapNames()
         {
-            DirectoryInfo di = new DirectoryInfo("./Maps/");
+            DirectoryInfo di = new DirectoryInfo(Game1.MAPS_FOLDER_LOCATION);
             LinkedList<String> names = new LinkedList<String>();
             foreach (FileInfo fi in di.GetFiles())
             {
@@ -94,7 +99,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <param name="source">The XNA Button</param>
         public virtual void OnOKClick(XNAButton source)
         {
-            if (!Game1.GetInstance().IsMultiplayerGame()) return;
+            if (!ChatServerConnectionManager.GetInstance().connection.Receiving) return;
             String map = this.GetSelectedMap();
             if (map != null)
             {
@@ -105,22 +110,41 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 p.AddString(this.previewPanel.selectedMapLbl.text);
                 ChatServerConnectionManager.GetInstance().SendPacket(p);
             }
+            this.Dispose();
         }
 
         public override void DoLayout()
         {
             this.okBtn = new XNAButton(this, new Rectangle(
                 (this.bounds.Width / 2) - (this.buttonWidth) - (this.buttonSpacing / 2),
-                this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 20,
+                this.bounds.Height - 50,
                 this.buttonWidth, 40), "OK");
             // this.okBtn.onClickListeners += this.Dispose;
             this.okBtn.onClickListeners += this.OnOKClick;
 
             this.cancelBtn = new XNAButton(this, new Rectangle(
                 (this.bounds.Width / 2) + (this.buttonSpacing / 2),
-                this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 20,
+                this.bounds.Height - 50,
                 this.buttonWidth, 40), "Cancel");
             this.cancelBtn.onClickListeners += this.Dispose;
+        }
+
+        public override void Draw(SpriteBatch sb)
+        {
+            base.Draw(sb);
+            if( previewTexture == null ) return;
+            sb.Draw(this.previewTexture, 
+                new Rectangle( this.bounds.X + MapEntryPanel.ENTRY_WIDTH + 20, this.bounds.Y + 10, 
+                    (int)previewTextureSize.X, (int)previewTextureSize.Y), 
+                null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.001f);
+        }
+
+        /// <summary>
+        /// Called when the map selection has changed.
+        /// </summary>
+        public void OnMapSelectionChanged(MapEntryPanel newSelection)
+        {
+            this.previewTexture = newSelection.previewTexture;
         }
 
         public override void Unload()

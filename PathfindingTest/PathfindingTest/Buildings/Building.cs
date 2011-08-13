@@ -101,7 +101,7 @@ namespace PathfindingTest.Buildings
                     }
                     else
                     {
-                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefineRectangle());
+                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefineDrawRectangle());
                     }
                     this.x = (ms.X - (texture.Width / 2)) + Game1.GetInstance().drawOffset.X;
                     this.y = (ms.Y - (texture.Height / 2)) + Game1.GetInstance().drawOffset.Y;
@@ -192,7 +192,7 @@ namespace PathfindingTest.Buildings
                     break;
             }
 
-            if (this.DefineRectangle().Contains(ms.X, ms.Y))
+            if (this.DefineDrawRectangle().Contains(ms.X, ms.Y))
             {
                 this.mouseOver = true;
             }
@@ -389,7 +389,7 @@ namespace PathfindingTest.Buildings
         {
             return (int)(Util.GetHypoteneuseLength(
                 new Point((int)this.x, (int)this.y),
-                new Point(DefineRectangle().Left, DefineRectangle().Bottom)) / 2);
+                new Point(DefineDrawRectangle().Left, DefineDrawRectangle().Bottom)) / 2);
         }
 
         public void CreateUnit(Unit.Type type)
@@ -545,7 +545,20 @@ namespace PathfindingTest.Buildings
             return false;
         }
 
+        /// <summary>
+        /// Gets the rectangle of this building, WITHOUT the draw offset.
+        /// </summary>
+        /// <returns>The rectangle</returns>
         public Rectangle DefineRectangle()
+        {
+            return new Rectangle((int)this.x, (int)this.y, texture.Width, texture.Height);
+        }
+
+        /// <summary>
+        /// Defines the draw rectangle of this building, WITH the draw offset (giving screen coordinates)
+        /// </summary>
+        /// <returns>The rectangle</returns>
+        public Rectangle DefineDrawRectangle()
         {
             return new Rectangle((int)this.x - (int)Game1.GetInstance().drawOffset.X, (int)this.y - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
         }

@@ -55,12 +55,13 @@ namespace PathfindingTest.Pathfinding
         /// </summary>
         /// <param name="x">The X</param>
         /// <param name="y">The Y</param>
-        /// <param name="forceNodeCreation">Instantly creates connections. This param does nothing.</param>
+        /// <param name="forceNodeCreation">Instantly creates connections.</param>
         public Node(RTSCollisionMap map, int x, int y, Boolean forceNodeCreation)
             : base(map)
         {
             Init(x, y);
-            this.CreateConnections();
+            if (forceNodeCreation) this.CreateConnections();
+            else SmartPathfindingNodeProcessor.GetInstance().Push(this);
         }
 
         public Node(RTSCollisionMap map, int x, int y)
@@ -80,11 +81,11 @@ namespace PathfindingTest.Pathfinding
             // Draw some connections twice, but o well!
 
             // if( Monitor.TryEnter(this.connections, 0) ){
-            /*foreach (PathfindingNodeConnection conn in this.connections)
+            foreach (PathfindingNodeConnection conn in this.connections)
             {
                 new DrawableNodeConnection(conn).Draw(sb);
-            }*/
-            
+            }
+
             // sb.DrawString(game.font, "" + score, new Vector2(drawX, drawY - 14), Color.Black);
             // sb.DrawString(game.font, "" + costToStart, new Vector2(drawX, drawY + texture.Height - 2), Color.Black);
             // sb.DrawString(game.font, "" + costToEnd, new Vector2(drawX, drawY + texture.Height + 8), Color.Black);

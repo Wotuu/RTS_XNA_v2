@@ -21,7 +21,8 @@ namespace PathfindingTest.Selection.Patterns
 
         internal void Draw(SpriteBatch sb)
         {
-            sb.Draw(texture, new Rectangle(location.X - (texture.Width / 2), location.Y - (texture.Height / 2), 
+            sb.Draw(texture, new Rectangle(location.X - (texture.Width / 2) - (int)Game1.GetInstance().drawOffset.X,
+                location.Y - (texture.Height / 2) - (int)Game1.GetInstance().drawOffset.Y, 
                 texture.Width, texture.Height), Color.White);
         }
     }

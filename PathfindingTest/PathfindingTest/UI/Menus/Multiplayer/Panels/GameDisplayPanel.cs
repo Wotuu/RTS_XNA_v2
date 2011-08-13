@@ -46,7 +46,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// Change the map name.
         /// </summary>
         /// <param name="newMapname">The new mapname.</param>
-        public void ChangeMapname(String newMapname)
+        public void ChangeMap(String newMapname)
         {
             this.mapNameLbl.text = newMapname;
         }

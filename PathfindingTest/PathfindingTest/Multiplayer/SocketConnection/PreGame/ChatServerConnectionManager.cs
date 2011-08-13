@@ -13,6 +13,7 @@ using XNAInterfaceComponents.AbstractComponents;
 using XNAInterfaceComponents.ParentComponents;
 using SocketLibrary.Users;
 using SocketLibrary.Multiplayer;
+using PathfindingTest.Multiplayer.SocketConnection.PreGame;
 
 namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
 {
@@ -20,6 +21,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
     {
         private static ChatServerConnectionManager instance { get; set; }
         public SocketClient connection { get; set; }
+        public Boolean useRandomUsername = false;
 
         public String serverLocation = "localhost";
         private int serverPort = 14051;
@@ -29,6 +31,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
 
         private ChatPacketProcessor chatPacketProcessor = new ChatPacketProcessor();
         private GameLobbyPacketProcessor gameLobbyPacketProcessor = new GameLobbyPacketProcessor();
+        private ConnectionTestPacketProcessor testPacketProcessor = new ConnectionTestPacketProcessor();
 
         private ChatServerConnectionManager()
         {
@@ -94,8 +97,11 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
             // Give the above thread some time to start running! 
             // Else we'll get a nullpointer right here.
             Thread.Sleep(50);
+
             this.connection.packetProcessor.onProcessPacket += chatPacketProcessor.DataReceived;
             this.connection.packetProcessor.onProcessPacket += gameLobbyPacketProcessor.DataReceived;
+            this.connection.packetProcessor.onProcessPacket += testPacketProcessor.DataReceived;
+
             this.connection.DisableLogging();
             this.connection.onDisconnectListeners += this.OnDisconnect;
 

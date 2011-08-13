@@ -10,7 +10,8 @@ namespace SocketLibrary.Protocol
         // 0 - 31   Chat reserved ranges (0x00, 0x1F )
         // 32 - 47  General game reserved ranges (0x20, 0x2F)
         // 48 - 63  Unit reserved ranges (0x30, 0x3F)
-        // 64 - 79  Building reserved ranged (0x40, 0x4F)
+        // 64 - 79  Building reserved ranges (0x40, 0x4F)
+        // 80 - 96  Test reserved ranges (0x50, 0x5F);
 
         // Client requests a connection
         public const byte HANDSHAKE_1 = 0x00;
@@ -158,6 +159,18 @@ namespace SocketLibrary.Protocol
         /// [Header] [Int32 packetID]
         /// </summary>
         public const byte PACKET_RECEIVED = 0x25;
+
+        /// <summary>
+        /// Client notifies the rest of the clients of its current loading progress
+        /// [Header] [Int32 userID] [Int32 percentage done]
+        /// </summary>
+        public const byte LOADING_PROGRESS = 0x26;
+
+        /// <summary>
+        /// Client notifies the rest of the clients of what it's currently loading
+        /// [Header] [Int32 userID] [String what]
+        /// </summary>
+        public const byte LOADING_WHAT = 0x27;
 
 
 

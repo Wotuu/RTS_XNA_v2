@@ -62,7 +62,8 @@ namespace PathfindingTest.UI.Menus
 
         public void OnExitGame(XNAButton source)
         {
-            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.MainMenu);
+            Game1.GetInstance().map.Dispose();
+            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
             if (!Game1.GetInstance().IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.MainMenu;
         }
 

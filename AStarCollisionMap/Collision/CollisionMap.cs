@@ -465,5 +465,16 @@ namespace AStarCollisionMap.Collision
             this.tree.CreateTree(quadDepth);
             // SaveToPng();
         }
+
+        /// <summary>
+        /// Disposes of this collisionmap, releasing most resources used by the map.
+        /// </summary>
+        public void Dispose()
+        {
+            foreach (Quad q in this.tree.leafList)
+            {
+                q.collisionTexture.texture.Dispose();
+            }
+        }
     }
 }

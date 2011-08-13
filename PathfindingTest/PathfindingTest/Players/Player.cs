@@ -372,7 +372,7 @@ namespace PathfindingTest.Players
         {
             foreach (Building b in buildings)
             {
-                if (b.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return b;
+                if (b.DefineDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return b;
             }
             return null;
         }
@@ -381,7 +381,7 @@ namespace PathfindingTest.Players
         {
             foreach (Building b in buildings)
             {
-                if (b.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                if (b.DefineDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
                 {
                     return b;
                 }
@@ -453,7 +453,7 @@ namespace PathfindingTest.Players
                 }
                 else
                 {
-                    previewPatternClick = m.location;
+                    previewPatternClick = GetOffsettedMouseLocation(m);
                 }
             }
 
@@ -604,7 +604,8 @@ namespace PathfindingTest.Players
                             else if( this.command == null || ( this.command != null && this.command.type != Command.Type.Repair && this.command.type != Command.Type.Defend && this.command.type != Command.Type.Attack ) )
                             {
                                 stopUnitSelection();
-                                this.currentSelection.MoveTo(GetNewPreviewPattern(m.location, 0));
+                                Point offsettedMouseLocation = GetOffsettedMouseLocation(m);
+                                this.currentSelection.MoveTo(GetNewPreviewPattern(previewPatternClick, offsettedMouseLocation, 0));
                             }
                         }
                         previewPattern = null;
@@ -644,33 +645,35 @@ namespace PathfindingTest.Players
         {
             // Bots dont use the mouse, or shouldn't
             if (Game1.CURRENT_PLAYER != this) return;
-            previewPattern = null;
+            this.previewPattern = null;
             if (m.button == MouseEvent.MOUSE_BUTTON_1)
             {
                 if (selectBox == null)
                 {
-                    selectBox = new SelectRectangle();
-                    selectBox.clickedPoint = m.location;
+                    this.selectBox = new SelectRectangle();
+                    this.selectBox.clickedPoint = m.location;
                 }
                 else
                 {
                     int x = selectBox.clickedPoint.X;
                     int y = selectBox.clickedPoint.Y;
-                    selectBox.SetRectangle(new Rectangle(x, y, m.location.X - x, m.location.Y - y));
+                    this.selectBox.SetRectangle(new Rectangle(x, y, m.location.X - x, m.location.Y - y));
                 }
             }
             else if (m.button == MouseEvent.MOUSE_BUTTON_3)
             {
-                if (currentSelection != null)
+                if (this.currentSelection != null)
                 {
                     /*previewPattern = new CirclePattern(previewPatternClick,
                         currentSelection,
                         Math.Max(currentSelection.units.Count * 5, (int)Util.GetHypoteneuseLength(e.location, previewPatternClick)),
                         angle);*/
-                    Vector2 offset = Game1.GetInstance().drawOffset;
-                    Point location = new Point((int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
+                    Point offsettedMouseLocation = GetOffsettedMouseLocation(m);
                     // Point location = new Point((int)(m.location.X), (int)(m.location.Y));
-                    previewPattern = GetNewPreviewPattern(location, (int)Util.GetHypoteneuseAngleDegrees(location, previewPatternClick));
+                    this.previewPattern = GetNewPreviewPattern(
+                        previewPatternClick, 
+                        offsettedMouseLocation,
+                        (int)Util.GetHypoteneuseAngleDegrees(offsettedMouseLocation, previewPatternClick));
                     /*previewPattern = new RectanglePattern(previewPatternClick,
                         currentSelection, 5,
                         Math.Max((int)(Util.GetHypoteneuseLength(m.location, previewPatternClick) / 2.0), 30),
@@ -680,17 +683,35 @@ namespace PathfindingTest.Players
         }
 
         /// <summary>
+        /// Gets the offsetted mouse location.
+        /// </summary>
+        /// <param name="m">The mouse event.</param>
+        /// <returns>The point in map coordinates</returns>
+        public Point GetOffsettedMouseLocation(MouseEvent m)
+        {
+            Vector2 offset = Game1.GetInstance().drawOffset;
+            return new Point((int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
+        }
+
+        /// <summary>
         /// Gets the new current preview pattern (TEMPORARY FUNCTION)
         /// </summary>
-        /// <param name="location">The location</param>
+        /// <param name="offsettedMouseLocation">The location at which the mouse is at, with offset substracted</param>
         /// <param name="angle">The angle</param>
         /// <returns>A pattern</returns>
-        public UnitGroupPattern GetNewPreviewPattern(Point location, int angle)
+        public UnitGroupPattern GetNewPreviewPattern(Point patternCenterLocation, Point offsettedMouseLocation, int angle)
         {
-            return new RectanglePattern(previewPatternClick,
-                        currentSelection, (int)Math.Ceiling(Math.Sqrt(currentSelection.units.Count)),
-                        Math.Max((int)(Util.GetHypoteneuseLength(location, previewPatternClick) / 2.0), 30),
+            Vector2 offset = Game1.GetInstance().drawOffset;
+
+            return new CirclePattern(patternCenterLocation,
+                        currentSelection,
+                        Math.Max((int)(Util.GetHypoteneuseLength(offsettedMouseLocation, patternCenterLocation) / 2.0), 30),
                         angle);
+            /*
+            return new RectanglePattern(offsetClickLocation,
+                        currentSelection, (int)Math.Ceiling(Math.Sqrt(currentSelection.units.Count)),
+                        Math.Max((int)(Util.GetHypoteneuseLength(patternCenterLocation, offsetClickLocation) / 2.0), 30),
+                        angle);*/
         }
     }
 }

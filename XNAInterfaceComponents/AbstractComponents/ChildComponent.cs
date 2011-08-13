@@ -25,9 +25,8 @@ namespace XNAInterfaceComponents.AbstractComponents
         }
 
         public ChildComponent(ParentComponent parent, Rectangle bounds)
-            : base(bounds)
+            : base(parent, bounds)
         {
-            this.parent = parent;
             this.parent.AddChild(this);
             this.enabled = true;
             this.backgroundColor = Color.Red;
@@ -35,7 +34,7 @@ namespace XNAInterfaceComponents.AbstractComponents
             this.fontColor = DEFAULT_FONT_COLOR;
             this.padding = new Padding(5, 5, 5, 5);
 
-            this.z = this.parent.z - this.GetDrawDepthOffset();
+            // this.z = this.parent.z - 0.001f;
 
             this.text = "";
         }

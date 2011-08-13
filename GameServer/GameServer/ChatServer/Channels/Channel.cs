@@ -52,7 +52,7 @@ namespace GameServer.ChatServer.Channels
         /// <param name="toAdd">The user to add to this channel</param>
         public void AddUser(ServerUser toAdd)
         {
-            Console.Out.Write("User " + toAdd + " joins channel " + this.id);
+            Console.Out.WriteLine("User " + toAdd + " joins channel " + this.id);
             if (this.UserExists(toAdd))
             {
                 // toAdd.listener.client.messageLog.AddLast(new LogMes"TRIED TO ADD YOU TO A CHANNEL YOU'RE ALREADY IN");
@@ -139,7 +139,7 @@ namespace GameServer.ChatServer.Channels
         /// <param name="toRemove">The user to remove from this channel</param>
         public void UserLeft(ServerUser toRemove)
         {
-            Console.Out.Write("Removed user " + toRemove + " from channel " + this.id);
+            Console.Out.WriteLine("Removed user " + toRemove + " from channel " + this.id);
             users.Remove(toRemove);
             for (int i = 0; i < users.Count; i++)
             {

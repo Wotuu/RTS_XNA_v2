@@ -116,8 +116,16 @@ namespace GameServer.ChatServer
                         newPacket.AddInt(this.user.id);
                         this.client.SendPacket(newPacket);
 
-                        // Put the user in channel 1 (the main lobby)
-                        ChannelManager.GetInstance().GetChannelByID(1).AddUser(user);
+                        try
+                        {
+                            // Try to put the user in its own channel if his username consists of an ID only
+                            ChannelManager.GetInstance().GetChannelByID(Int32.Parse(this.user.username)).AddUser(user);
+                        }
+                        catch (Exception e)
+                        {
+                            // Put the user in channel 1 (the main lobby)
+                            ChannelManager.GetInstance().GetChannelByID(1).AddUser(user);
+                        }
 
                         break;
                     }
@@ -289,6 +297,57 @@ namespace GameServer.ChatServer
                     {
                         Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
                         c.SendChatPacketToAll(p);
+                        break;
+                    }
+                case Headers.LOADING_PROGRESS:
+                    {
+                        Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
+                        for (int i = 0; i < c.GetUserCount(); i++)
+                        {
+                            ServerUser serverUser = c.GetUserAt(i);
+                            if (serverUser != this.user)
+                            {
+                                // Notify everyone but the one who created the packet
+                                serverUser.chatListener.client.SendPacket(p);
+                            }
+                        }
+                        break;
+                    }
+                case Headers.LOADING_WHAT:
+                    {
+                        Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
+                        for (int i = 0; i < c.GetUserCount(); i++)
+                        {
+                            ServerUser serverUser = c.GetUserAt(i);
+                            if (serverUser != this.user)
+                            {
+                                // Notify everyone but the one who created the packet
+                                serverUser.chatListener.client.SendPacket(p);
+                            }
+                        }
+                        break;
+                    }
+                case Headers.PACKET_RECEIVED:
+                    {
+                        // Nothing
+                        break;
+                    }
+                case TestHeaders.STEADY_TEST:
+                    {
+                        // Just echo the packet
+                        this.user.chatListener.client.SendPacket(p);
+                        break;
+                    }
+                case TestHeaders.BURST_TEST:
+                    {
+                        // Just echo the packet
+                        this.user.chatListener.client.SendPacket(p);
+                        break;
+                    }
+                case TestHeaders.MALFORM_TEST:
+                    {
+                        // Just echo the packet
+                        this.user.chatListener.client.SendPacket(p);
                         break;
                     }
                 default:

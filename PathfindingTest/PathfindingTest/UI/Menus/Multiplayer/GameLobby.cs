@@ -39,13 +39,14 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             set
             {
                 this.startGameButton.visible = value != null;
+                this.mapPreviewPanel.selectMapButton.visible = value != null;
 
                 _multiplayerGame = value;
             }
         }
 
-        private XNAPanel gameOptionsPanel { get; set; }
-        private LinkedList<UserDisplayPanel> userDisplayPanels = new LinkedList<UserDisplayPanel>();
+        public XNAPanel gameOptionsPanel { get; set; }
+        public LinkedList<UserDisplayPanel> userDisplayPanels = new LinkedList<UserDisplayPanel>();
         public double creationTime { get; set; }
 
         public GameLobby()
