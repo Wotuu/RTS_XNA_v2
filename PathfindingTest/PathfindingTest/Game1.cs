@@ -195,6 +195,8 @@ namespace PathfindingTest
         protected override void UnloadContent()
         {
             // TODO: Unload any non ContentManager content here
+            SoundManager.GetInstance().Dispose();
+
             if (Game1.GetInstance().map != null)
                 Game1.GetInstance().map.Dispose();
         }
