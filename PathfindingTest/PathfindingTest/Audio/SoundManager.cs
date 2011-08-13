@@ -14,15 +14,16 @@ namespace PathfindingTest.Audio
         public float bgmVolume { get; set; }
 
         public Boolean bgmPlaying { get; set; }
+        public Boolean menuSoundPlaying { get; set; }
         public Boolean silencePlayed { get; set; }
 
         public LinkedList<SoundEffectInstance> arrowSounds { get; set; }
         public LinkedList<SoundEffectInstance> swordSounds { get; set; }
         public LinkedList<SoundEffectInstance> lanceSounds { get; set; }
 
-        public SoundEffectInstance menuSound { get; set; }
-        public SoundEffectInstance silence { get; set; }
-        public LinkedList<SoundEffectInstance> ingameSounds { get; set; }
+        public Song menuSound { get; set; }
+        public Song silence { get; set; }
+        public LinkedList<Song> ingameSounds { get; set; }
 
         public enum BGMType
         {
@@ -53,73 +54,68 @@ namespace PathfindingTest.Audio
             swordSounds = new LinkedList<SoundEffectInstance>();
             lanceSounds = new LinkedList<SoundEffectInstance>();
 
-            ingameSounds = new LinkedList<SoundEffectInstance>();
+            ingameSounds = new LinkedList<Song>();
 
             InitiateSound();
         }
 
         public void InitiateSound()
         {
-            menuSound = Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Menu1").CreateInstance();
+            menuSound = Game1.GetInstance().Content.Load<Song>("Sounds/Menu/Menu1");
 
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame1").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame2").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame3").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame4").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame5").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame6").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame7").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame8").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame9").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame10").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame11").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame12").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame13").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame14").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame15").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame16").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame17").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame18").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame19").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame20").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame21").CreateInstance());
-            ingameSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Ingame22").CreateInstance());
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame1"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame2"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame3"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame4"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame5"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame6"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame7"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame8"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame9"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame10"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame11"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame12"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame13"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame14"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame15"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame16"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame17"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame18"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame19"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame20"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame21"));
+            ingameSounds.AddLast(Game1.GetInstance().Content.Load<Song>("Sounds/Ingame/Ingame22"));
 
-            silence = Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Silence").CreateInstance();
+            silence = Game1.GetInstance().Content.Load<Song>("Sounds/Misc/Silence");
 
-            arrowSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Arrow1").CreateInstance());
-            arrowSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Arrow2").CreateInstance());
+            arrowSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Arrow/Arrow1").CreateInstance());
+            arrowSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Arrow/Arrow2").CreateInstance());
 
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword1").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword2").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword3").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword4").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword5").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword6").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword7").CreateInstance());
-            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword8").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword1").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword2").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword3").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword4").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword5").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword6").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword7").CreateInstance());
+            swordSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Sword/Sword8").CreateInstance());
 
-            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance1").CreateInstance());
-            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance2").CreateInstance());
-            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance3").CreateInstance());
-            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance4").CreateInstance());
-            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance5").CreateInstance());
+            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance/Lance1").CreateInstance());
+            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance/Lance2").CreateInstance());
+            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance/Lance3").CreateInstance());
+            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance/Lance4").CreateInstance());
+            lanceSounds.AddLast(Game1.GetInstance().Content.Load<SoundEffect>("Sounds/Lance/Lance5").CreateInstance());
         }
 
         public void Update()
         {
-            if (menuSound.State == SoundState.Stopped && silence.State == SoundState.Stopped)
+            if (MediaPlayer.State == MediaState.Stopped)
             {
                 bgmPlaying = false;
-
-                foreach (SoundEffectInstance sound in ingameSounds)
-                {
-                    if (sound.State == SoundState.Playing)
-                    {
-                        bgmPlaying = true;
-                        break;
-                    }
-                }
+            }
+            else if (MediaPlayer.State == MediaState.Playing)
+            {
+                bgmPlaying = true;
             }
         }
 
@@ -137,32 +133,36 @@ namespace PathfindingTest.Audio
                 case BGMType.Menu:
                     if (!bgmPlaying)
                     {
-                        menuSound.Volume = bgmVolume;
-                        menuSound.Play();
+                        MediaPlayer.Volume = bgmVolume;
+                        MediaPlayer.IsRepeating = false;
+                        MediaPlayer.Play(menuSound);
+                        menuSoundPlaying = true;
                         bgmPlaying = true;
                     }
                     break;
 
                 case BGMType.InGame:
-                    if (menuSound.State == SoundState.Playing)
+                    if (menuSoundPlaying)
                     {
-                        menuSound.Stop();
+                        MediaPlayer.Stop();
+                        menuSoundPlaying = false;
                         bgmPlaying = false;
                     }
                     if (!bgmPlaying)
                     {
                         if (!silencePlayed)
                         {
-                            silence.Volume = 0f;
-                            silence.Play();
+                            MediaPlayer.Volume = bgmVolume;
+                            MediaPlayer.IsRepeating = false;
+                            MediaPlayer.Play(silence);
                             silencePlayed = true;
                             bgmPlaying = true;
                         }
                         else
                         {
-                            SoundEffectInstance sound = ingameSounds.ElementAt(new Random().Next(ingameSounds.Count));
-                            sound.Volume = bgmVolume;
-                            sound.Play();
+                            MediaPlayer.Volume = bgmVolume;
+                            MediaPlayer.IsRepeating = false;
+                            MediaPlayer.Play(ingameSounds.ElementAt(new Random().Next(ingameSounds.Count)));
                             bgmPlaying = true;
                             silencePlayed = false;
                         }
@@ -172,6 +172,11 @@ namespace PathfindingTest.Audio
                 default:
                     break;
             }
+        }
+
+        public void Dispose()
+        {
+            MediaPlayer.Stop();
         }
     }
 }
