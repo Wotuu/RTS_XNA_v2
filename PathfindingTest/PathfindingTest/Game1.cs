@@ -123,8 +123,8 @@ namespace PathfindingTest
             drawOffset = Vector2.Zero;
         }
 
-
-
+        Texture2D testTexture { get; set; }
+        Texture2D[,] toMerge { get; set; }
         /// <summary>
         /// Allows the game to perform any initialization it needs to before starting to run.
         /// This is where it can query for any required services and load any non-graphic
@@ -134,25 +134,15 @@ namespace PathfindingTest
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
-            /*Texture2D[] texs = new Texture2D[] { 
-                Content.Load<Texture2D>("Test/background"), 
-            Content.Load<Texture2D>("Test/layer1"),
-            Content.Load<Texture2D>("Test/layer2")};
-            this.testTex = map.BlendTextures(texs, GameMap.BlendMode.PriorityBlend);
-
+            /*
             Texture2D red = Content.Load<Texture2D>("Test/red");
             Texture2D green = Content.Load<Texture2D>("Test/green");
             Texture2D blue = Content.Load<Texture2D>("Test/blue");
             Texture2D black = Content.Load<Texture2D>("Test/black");
 
-            texs = new Texture2D[] { red, green, blue, black };
-            Texture2D[] subResults = new Texture2D[4];
-            for (int i = 0; i < subResults.Length; i++)
-            {
-                subResults[i] = map.MergeTextures(texs);
-            }
-            this.testTex2 = map.MergeTextures(subResults);*/
+            toMerge = new Texture2D[,] { {red, green, red}, {blue, black, blue} };*/
+
+            //testTexture = new MiniMap().GetScaledInstance(testTexture, 0.75f);
 
             DrawUtil.lineTexture = this.Content.Load<Texture2D>("Misc/solid");
             font = Content.Load<SpriteFont>("Fonts/Arial");
@@ -462,6 +452,8 @@ namespace PathfindingTest
             {
 
             }
+            
+            // spriteBatch.Draw(testTexture, new Rectangle(100, 100, testTexture.Width, testTexture.Height), Color.White);
 
             /*
             spriteBatch.Draw(testTex, new Rectangle(20, 20, 100, 100), Color.White);

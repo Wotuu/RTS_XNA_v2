@@ -20,13 +20,14 @@ namespace PathfindingTest.Map
     public class GameMap
     {
 
+        public MiniMap miniMap { get; set; }
         public String mapName { get; set; }
         public Texture2D tileMap { get; set; }
         public Texture2D[,] mapTiles { get; set; }
         public RTSCollisionMap collisionMap { get; set; }
 
         public LinkedList<Rectangle> rectangleTiles = new LinkedList<Rectangle>();
-        public Texture2D[] tiles { get; set; }
+        public Texture2D[] individualTiles { get; set; }
 
         public static int TILE_WIDTH = 20, TILE_HEIGHT = 20;
 
@@ -58,7 +59,7 @@ namespace PathfindingTest.Map
 
             int xCount = 0;
             int yCount = 0;
-            this.tiles = Split(this.tileMap, TILE_WIDTH, TILE_HEIGHT, out xCount, out yCount);
+            this.individualTiles = Split(this.tileMap, TILE_WIDTH, TILE_HEIGHT, out xCount, out yCount);
 
             // For every texture in the collisionmap, minus the map preview texture
             Game1.GetInstance().maxLoadProgress +=
@@ -94,6 +95,15 @@ namespace PathfindingTest.Map
             Game1.GetInstance().loadingWhat = "Finished";
             // Just in case
             Game1.GetInstance().currentLoadProgress = Game1.GetInstance().maxLoadProgress;
+        }
+
+        /// <summary>
+        /// When the minimap reports that it has loaded a small bit.
+        /// </summary>
+        /// <param name="map">The map that's rendering</param>
+        private void OnMiniMapRenderTick(MiniMap map)
+        {
+            Game1.GetInstance().currentLoadProgress += 3;
         }
 
         /// <summary>
@@ -428,7 +438,7 @@ namespace PathfindingTest.Map
                     for (int k = 0; k < this.layers.Count; k++)
                     {
                         int data = this.layers.ElementAt(k).data[i, j];
-                        if (data != -1) preBlend.AddLast(this.tiles[data]);
+                        if (data != -1) preBlend.AddLast(this.individualTiles[data]);
                     }
                     mapTiles[i, j] = this.BlendTextures(preBlend.ToArray(), BlendMode.PriorityBlend);
 
@@ -494,7 +504,7 @@ namespace PathfindingTest.Map
         public void Dispose()
         {
             // tileMap.Dispose();
-            foreach (Texture2D tex in this.tiles)
+            foreach (Texture2D tex in this.individualTiles)
             {
                 tex.Dispose();
             }

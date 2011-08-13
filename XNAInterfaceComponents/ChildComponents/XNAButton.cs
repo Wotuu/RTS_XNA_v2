@@ -83,7 +83,7 @@ namespace XNAInterfaceComponents.AbstractComponents
 
         public void OnMouseClick(MouseEvent m_event)
         {
-            Console.Out.WriteLine("XNAButton clicked, focussed - > " + this.isFocussed);
+            // Console.Out.WriteLine("XNAButton clicked, focussed - > " + this.isFocussed);
             if (this.isFocussed && m_event.button == MouseEvent.MOUSE_BUTTON_1)
             {
                 Point screenLocation = parent.RequestScreenLocation(new Point(this.bounds.X, this.bounds.Y));

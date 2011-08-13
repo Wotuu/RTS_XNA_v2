@@ -27,6 +27,7 @@ namespace PathfindingTest.UI.Menus
             SinglePlayerMapSelectionMenu,
             SinglePlayerLoadMenu,
             OptionsMenu,
+            CreditsMenu,
 
             IngameMenu,
 
@@ -73,6 +74,10 @@ namespace PathfindingTest.UI.Menus
             else if (menu == Menu.OptionsMenu)
             {
 
+            }
+            else if (menu == Menu.CreditsMenu)
+            {
+                this.addedComponents.AddLast(new CreditsMenu());
             }
             else if (menu == Menu.IngameMenu)
             {

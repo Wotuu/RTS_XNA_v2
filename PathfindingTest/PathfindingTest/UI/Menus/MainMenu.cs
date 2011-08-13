@@ -19,7 +19,7 @@ namespace PathfindingTest.UI
     {
         private int buttonWidth = 250;
         private int buttonHeight = 50;
-        private int buttonSpacing = 40;
+        private int buttonSpacing = 25;
 
         public MainMenu()
             : base(null, new Rectangle(
@@ -45,9 +45,15 @@ namespace PathfindingTest.UI
             optionsButton.font = MenuManager.BUTTON_FONT;
             optionsButton.onClickListeners += this.OptionsClicked;
 
+            XNAButton creditsButton = new XNAButton(this,
+                new Rectangle((this.bounds.Width / 2) - (buttonWidth / 2),
+                    buttonSpacing * 4 + buttonHeight * 3, buttonWidth, buttonHeight), "Credits");
+            creditsButton.font = MenuManager.BUTTON_FONT;
+            creditsButton.onClickListeners += this.CreditsClicked;
+
             XNAButton exitButton = new XNAButton(this,
                 new Rectangle((this.bounds.Width / 2) - (buttonWidth / 2),
-                    buttonSpacing * 4 + buttonHeight * 3, buttonWidth, buttonHeight), "Exit Game");
+                    buttonSpacing * 5 + buttonHeight * 4, buttonWidth, buttonHeight), "Exit Game");
             exitButton.font = MenuManager.BUTTON_FONT;
             exitButton.onClickListeners += this.ExitClicked;
 
@@ -74,6 +80,11 @@ namespace PathfindingTest.UI
         public void OptionsClicked(XNAButton source)
         {
 
+        }
+
+        public void CreditsClicked(XNAButton source)
+        {
+            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.CreditsMenu);
         }
 
         public void ExitClicked(XNAButton source)

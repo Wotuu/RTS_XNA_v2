@@ -149,6 +149,9 @@ namespace PathfindingTest.State
                 //SaveManager.GetInstance().SaveNodes("C:\\Users\\Wouter\\Desktop\\test.xml");
             }
 
+            game.map.miniMap = new MiniMap(game.map);
+            game.map.miniMap.CreateMiniMap(true);
+
             MouseManager.GetInstance().mouseClickedListeners += ((MouseClickListener)game).OnMouseClick;
             MouseManager.GetInstance().mouseReleasedListeners += ((MouseClickListener)game).OnMouseRelease;
             MouseManager.GetInstance().mouseMotionListeners += ((MouseMotionListener)game).OnMouseMotion;
