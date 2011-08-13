@@ -101,7 +101,7 @@ namespace PathfindingTest.Buildings
                     }
                     else
                     {
-                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefineDrawRectangle());
+                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefineRectangle());
                     }
                     this.x = (ms.X - (texture.Width / 2)) + Game1.GetInstance().drawOffset.X;
                     this.y = (ms.Y - (texture.Height / 2)) + Game1.GetInstance().drawOffset.Y;
@@ -209,11 +209,11 @@ namespace PathfindingTest.Buildings
                 case State.Preview:
                     if (canPlace)
                     {
-                        sb.Draw(texture, this.GetDrawRectangle(), null, previewC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                        sb.Draw(texture, this.DefineDrawRectangle(), null, previewC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     }
                     if (!canPlace)
                     {
-                        sb.Draw(texture, this.GetDrawRectangle(), null, previewCantPlace, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+                        sb.Draw(texture, this.DefineDrawRectangle(), null, previewCantPlace, 0f, Vector2.Zero, SpriteEffects.None, this.z);
                     }
                     break;
 
@@ -389,7 +389,7 @@ namespace PathfindingTest.Buildings
         {
             return (int)(Util.GetHypoteneuseLength(
                 new Point((int)this.x, (int)this.y),
-                new Point(DefineDrawRectangle().Left, DefineDrawRectangle().Bottom)) / 2);
+                new Point(DefineRectangle().Left, DefineRectangle().Bottom)) / 2);
         }
 
         public void CreateUnit(Unit.Type type)
@@ -563,6 +563,11 @@ namespace PathfindingTest.Buildings
             return new Rectangle((int)this.x - (int)Game1.GetInstance().drawOffset.X, (int)this.y - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
         }
 
+        public Rectangle DefineAddedDrawRectangle()
+        {
+            return new Rectangle((int)this.x + (int)Game1.GetInstance().drawOffset.X, (int)this.y + (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
+        }
+
         public Rectangle DefineSelectedRectangle()
         {
             return new Rectangle((int)this.x - 3 - (int)Game1.GetInstance().drawOffset.X, (int)this.y - 3 - (int)Game1.GetInstance().drawOffset.Y, texture.Width + 6, texture.Height + 6);
@@ -578,9 +583,12 @@ namespace PathfindingTest.Buildings
             p.buildings.Remove(this);
             if (this.mesh != null) mesh.Reverse();
 
-            foreach (ResourceGather rg in p.buildings)
+            if (this is ResourceGather)
             {
-                rg.CalculateRPS();
+                foreach (ResourceGather rg in p.buildings)
+                {
+                    rg.CalculateRPS();
+                }
             }
         }
 

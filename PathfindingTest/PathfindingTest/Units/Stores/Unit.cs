@@ -416,9 +416,6 @@ namespace PathfindingTest.Units
         /// <returns>The list containing all the points that you should visit.</returns>
         public LinkedList<Point> CalculatePath(Point p)
         {
-            p.X = p.X + (int)Game1.GetInstance().drawOffset.X;
-            p.Y = p.Y + (int)Game1.GetInstance().drawOffset.Y;
-
             LinkedList<Point> result = new LinkedList<Point>();
             long ticks = DateTime.UtcNow.Ticks;
             if (Game1.GetInstance().map.collisionMap.IsCollisionBetween(new Point((int)this.x, (int)this.y), p))

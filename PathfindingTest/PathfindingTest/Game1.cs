@@ -435,11 +435,11 @@ namespace PathfindingTest
                 map.Draw(spriteBatch);
                 try
                 {
-                    LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
-                    foreach (Node node in list)
-                    {
-                        node.Draw(spriteBatch);
-                    }
+                    //LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
+                    //foreach (Node node in list)
+                    //{
+                    //    node.Draw(spriteBatch);
+                    //}
 
                     foreach (Player p in players)
                     {

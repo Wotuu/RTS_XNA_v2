@@ -418,7 +418,7 @@ namespace PathfindingTest.UI
                 {
                     if (b.state == Building.State.Preview &&
                         !this.DefineRectangle().Contains(new Rectangle(me.location.X, me.location.Y, 1, 1)) &&
-                        Game1.GetInstance().map.collisionMap.CanPlace(b.DefineDrawRectangle()))
+                        Game1.GetInstance().map.collisionMap.CanPlace(b.DefineRectangle()))
                     {
                         Engineer temp = null;
 
@@ -426,24 +426,41 @@ namespace PathfindingTest.UI
                         {
                             if (u.type == Unit.Type.Engineer)
                             {
-                                LinkedList<Point> path = u.CalculatePath(new Point(me.location.X, me.location.Y));
-                                // Get the last point of the pathfinding result
-                                Point lastPoint = path.ElementAt(path.Count - 1);
-                                // Remove that point
-                                path.RemoveLast();
+                                //Vector2 offset = Game1.GetInstance().drawOffset;
+                                //LinkedList<Point> path = u.CalculatePath(new Point(b.GetLocation().X + (b.texture.Width / 2), b.GetLocation().Y + (b.texture.Height / 2)));
+                                //// Get the last point of the pathfinding result
+                                //Point lastPoint = path.ElementAt(path.Count - 1);
+                                //// Remove that point
+                                //path.RemoveLast();
+                                //// Add a point that is on the circle near the building, not inside the building!
+                                //Point targetPoint = new Point(0, 0);
+                                //if (path.Count == 0) targetPoint = new Point((int)u.x, (int)u.y);
+                                //else targetPoint = path.ElementAt(path.Count - 1);
+                                //// Move to the point around the circle of the building, but increase the radius a bit
+                                //// so we're not standing on the exact top of the building
+                                //path.AddLast(
+                                //    Util.GetPointOnCircle(b.GetLocation(), b.GetCircleRadius() + u.texture.Width / 2,
+                                //    Util.GetHypoteneuseAngleDegrees(lastPoint, targetPoint)));
+                                //// Now that we know the point where we should move to
+                                //// Again calculate the path .. but now the proper way,
+                                //// we only needed to calculate the point.
+                                //u.MoveToQueue(path.Last.Value);
+
+
+
+                                Point p = new Point((int)(b.x + (b.texture.Width / 2)), (int)(b.y + (b.texture.Height / 2)));
+
                                 // Add a point that is on the circle near the building, not inside the building!
                                 Point targetPoint = new Point(0, 0);
-                                if (path.Count == 0) targetPoint = new Point((int)u.x, (int)u.y);
-                                else targetPoint = path.ElementAt(path.Count - 1);
+                                if (u.waypoints.Count == 0) targetPoint = new Point((int)u.x, (int)u.y);
+                                else targetPoint = u.waypoints.ElementAt(u.waypoints.Count - 1);
                                 // Move to the point around the circle of the building, but increase the radius a bit
                                 // so we're not standing on the exact top of the building
-                                path.AddLast(
-                                    Util.GetPointOnCircle(lastPoint, b.GetCircleRadius() + u.texture.Width / 2,
-                                    Util.GetHypoteneuseAngleDegrees(lastPoint, targetPoint)));
-                                // Now that we know the point where we should move to
-                                // Again calculate the path .. but now the proper way,
-                                // we only needed to calculate the point.
-                                u.MoveToQueue(path.Last.Value);
+                                u.MoveToQueue(
+                                    Util.GetPointOnCircle(p, b.GetCircleRadius() + u.texture.Width / 2,
+                                    Util.GetHypoteneuseAngleDegrees(p, targetPoint)));
+
+
 
                                 // Set the Engineer to link with the Building so construction won't start without an Engineer
                                 // Since only one Engineer is needed, break aftwards

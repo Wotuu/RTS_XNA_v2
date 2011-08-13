@@ -65,8 +65,8 @@ namespace PathfindingTest.UI
 
             if (DrawDetails() && !disabled)
             {
-                sb.Draw(details, this.DefineDetailsRectangle(), hudColor);
-                sb.DrawString(sf, detailString, new Vector2(5, 657), Color.White);
+                sb.Draw(details, this.DefineDetailsRectangle(), null, hudColor, 0f, Vector2.Zero, SpriteEffects.None, 0.0998f);
+                sb.DrawString(sf, detailString, new Vector2(5, 657), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0997f);
             }
         }
 
@@ -86,6 +86,18 @@ namespace PathfindingTest.UI
         {
             switch (this.type)
             {
+                case Type.Move:
+                    return "Move Unit";
+
+                case Type.Attack:
+                    return "Attack Unit";
+
+                case Type.Defend:
+                    return "Defend Unit";
+
+                case Type.Stop:
+                    return "Stop whatever this Unit is\r\ndoing";
+
                 case Type.Repair:
                     return "Repair Structure";
 

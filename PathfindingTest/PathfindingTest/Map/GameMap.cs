@@ -276,7 +276,7 @@ namespace PathfindingTest.Map
         /// <param name="sb">SpriteBatch to draw on.</param>
         public void Draw(SpriteBatch sb)
         {
-            this.collisionMap.DrawMap(sb);
+            //this.collisionMap.DrawMap(sb);
             Vector2 offset = Game1.GetInstance().drawOffset;
             int startY = Math.Abs((int)(Game1.GetInstance().drawOffset.Y / GameMap.TILE_HEIGHT));
             int startX = Math.Abs((int)(Game1.GetInstance().drawOffset.X / GameMap.TILE_WIDTH));

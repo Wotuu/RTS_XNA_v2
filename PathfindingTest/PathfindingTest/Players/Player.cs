@@ -453,7 +453,7 @@ namespace PathfindingTest.Players
                 }
                 else
                 {
-                    previewPatternClick = GetOffsettedMouseLocation(m);
+                    previewPatternClick = GetAddedOffsettedMouseLocation(m);
                 }
             }
 
@@ -604,7 +604,7 @@ namespace PathfindingTest.Players
                             else if( this.command == null || ( this.command != null && this.command.type != Command.Type.Repair && this.command.type != Command.Type.Defend && this.command.type != Command.Type.Attack ) )
                             {
                                 stopUnitSelection();
-                                Point offsettedMouseLocation = GetOffsettedMouseLocation(m);
+                                Point offsettedMouseLocation = GetAddedOffsettedMouseLocation(m);
                                 this.currentSelection.MoveTo(GetNewPreviewPattern(previewPatternClick, offsettedMouseLocation, 0));
                             }
                         }
@@ -668,7 +668,7 @@ namespace PathfindingTest.Players
                         currentSelection,
                         Math.Max(currentSelection.units.Count * 5, (int)Util.GetHypoteneuseLength(e.location, previewPatternClick)),
                         angle);*/
-                    Point offsettedMouseLocation = GetOffsettedMouseLocation(m);
+                    Point offsettedMouseLocation = GetAddedOffsettedMouseLocation(m);
                     // Point location = new Point((int)(m.location.X), (int)(m.location.Y));
                     this.previewPattern = GetNewPreviewPattern(
                         previewPatternClick, 
@@ -683,11 +683,22 @@ namespace PathfindingTest.Players
         }
 
         /// <summary>
-        /// Gets the offsetted mouse location.
+        /// Gets the mouse location with the offset added.
         /// </summary>
         /// <param name="m">The mouse event.</param>
         /// <returns>The point in map coordinates</returns>
-        public Point GetOffsettedMouseLocation(MouseEvent m)
+        public Point GetAddedOffsettedMouseLocation(MouseEvent m)
+        {
+            Vector2 offset = Game1.GetInstance().drawOffset;
+            return new Point((int)(m.location.X + offset.X), (int)(m.location.Y + offset.Y));
+        }
+
+        /// <summary>
+        /// Gets the mouse location with the offset substracted.
+        /// </summary>
+        /// <param name="m">The mouse event.</param>
+        /// <returns>The mouse location with the offset substracted</returns>
+        public Point GetSubstractedOffsettedMouseLocation(MouseEvent m)
         {
             Vector2 offset = Game1.GetInstance().drawOffset;
             return new Point((int)(m.location.X - offset.X), (int)(m.location.Y - offset.Y));
