@@ -32,18 +32,21 @@ using SocketLibrary.Multiplayer;
 using PathfindingTest.Multiplayer.Data;
 using PathfindingTest.Misc;
 using PathfindingTest.Audio;
+using PathfindingTest.Map;
+using PathfindingTest.UI.Menus;
+using SocketLibrary.Protocol;
+using PathfindingTest.Multiplayer.PreGame.SocketConnection;
 
 namespace PathfindingTest
 {
     /// <summary>
     /// This is the main type for your game
     /// </summary>
-    public class Game1 : Microsoft.Xna.Framework.Game, MouseClickListener, MouseMotionListener
+    public class Game1 : Microsoft.Xna.Framework.Game, MouseClickListener, MouseMotionListener, KeyboardListener
     {
 
         public GraphicsDeviceManager graphics { get; set; }
         SpriteBatch spriteBatch;
-        public RTSCollisionMap collision { get; set; }
         public SpriteFont font { get; set; }
         public QuadRoot quadTree { get; set; }
         //
@@ -64,6 +67,7 @@ namespace PathfindingTest
         public int exceptionsCount { get; set; }
 
         public int mapMoveSensitivity { get; set; }
+        public GameMap map { get; set; }
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -74,10 +78,14 @@ namespace PathfindingTest
             }
             set
             {
-                if (collision != null) collision.drawOffset = value;
+                if (map != null && map.collisionMap != null) map.collisionMap.drawOffset = value;
                 this._drawOffset = value;
             }
         }
+
+        public int maxLoadProgress { get; set; }
+        public int currentLoadProgress { get; set; }
+        public String loadingWhat { get; set; }
 
 
         private static Game1 instance { get; set; }
@@ -86,8 +94,6 @@ namespace PathfindingTest
         {
             return instance;
         }
-
-
 
 
         /// <summary>
@@ -108,6 +114,7 @@ namespace PathfindingTest
             graphics.ApplyChanges();
             this.InactiveSleepTime = new System.TimeSpan(0);
 
+
             drawOffset = Vector2.Zero;
         }
 
@@ -123,6 +130,25 @@ namespace PathfindingTest
         {
             // TODO: Add your initialization logic here
 
+            /*Texture2D[] texs = new Texture2D[] { 
+                Content.Load<Texture2D>("Test/background"), 
+            Content.Load<Texture2D>("Test/layer1"),
+            Content.Load<Texture2D>("Test/layer2")};
+            this.testTex = map.BlendTextures(texs, GameMap.BlendMode.PriorityBlend);
+
+            Texture2D red = Content.Load<Texture2D>("Test/red");
+            Texture2D green = Content.Load<Texture2D>("Test/green");
+            Texture2D blue = Content.Load<Texture2D>("Test/blue");
+            Texture2D black = Content.Load<Texture2D>("Test/black");
+
+            texs = new Texture2D[] { red, green, blue, black };
+            Texture2D[] subResults = new Texture2D[4];
+            for (int i = 0; i < subResults.Length; i++)
+            {
+                subResults[i] = map.MergeTextures(texs);
+            }
+            this.testTex2 = map.MergeTextures(subResults);*/
+
             DrawUtil.lineTexture = this.Content.Load<Texture2D>("Misc/solid");
             font = Content.Load<SpriteFont>("Fonts/Arial");
             ChildComponent.DEFAULT_FONT = font;
@@ -134,6 +160,10 @@ namespace PathfindingTest
             StateManager.GetInstance().gameState = StateManager.State.MainMenu;
 
             SoundManager.GetInstance();
+
+            KeyboardManager.GetInstance().keyPressedListeners += this.OnKeyPressed;
+            KeyboardManager.GetInstance().keyReleasedListeners += this.OnKeyReleased;
+            KeyboardManager.GetInstance().keyTypedListeners += this.OnKeyTyped;
 
             this.mapMoveSensitivity = 8;
 
@@ -174,8 +204,8 @@ namespace PathfindingTest
             // {
             GameTimeManager.GetInstance().OnStartUpdate();
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
-                this.Exit();
+            //if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            //    this.Exit();
             StateManager sm = StateManager.GetInstance();
 
             // Update input
@@ -194,6 +224,33 @@ namespace PathfindingTest
                     SoundManager.GetInstance().PlayBGM(SoundManager.BGMType.Menu);
                     break;
                 case StateManager.State.GameInit:
+                    break;
+                case StateManager.State.GameLoading:
+                    SPLoadScreen loadingscreen = ((SPLoadScreen)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+                    loadingscreen.progressBar.maxValue = maxLoadProgress;
+                    loadingscreen.progressBar.currentValue = currentLoadProgress;
+                    loadingscreen.loadingWhatLabel.text = loadingWhat;
+
+
+                    // Finished loading
+                    if (maxLoadProgress != 0 && currentLoadProgress == maxLoadProgress)
+                    {
+                        // Notify the rest that we're done with loading
+                        if (this.IsMultiplayerGame())
+                        {
+                            MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
+
+                            ComponentManager.GetInstance().UnloadAllPanels();
+
+                            Packet doneLoadingPacket = new Packet(Headers.DONE_LOADING);
+                            doneLoadingPacket.AddInt(Game1.CURRENT_PLAYER.multiplayerID);
+                            ChatServerConnectionManager.GetInstance().SendPacket(doneLoadingPacket);
+                        }
+                        else
+                        {
+                            StateManager.GetInstance().FinishedLoadingMap();
+                        }
+                    }
                     break;
                 case StateManager.State.GameRunning:
                     // TODO: Add your update logic here
@@ -240,11 +297,11 @@ namespace PathfindingTest
                             this.drawOffset = new Vector2(this.drawOffset.X - mapMoveSensitivity, this.drawOffset.Y);
                         }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Right) && drawOffset.X + 1024 < collision.mapWidth)
+                    if (keyboardState.IsKeyDown(Keys.Right) && drawOffset.X + 1024 < map.collisionMap.mapWidth)
                     {
-                        if (drawOffset.X + mapMoveSensitivity > collision.mapWidth)
+                        if (drawOffset.X + mapMoveSensitivity > map.collisionMap.mapWidth)
                         {
-                            this.drawOffset = new Vector2(collision.mapWidth, this.drawOffset.Y);
+                            this.drawOffset = new Vector2(map.collisionMap.mapWidth, this.drawOffset.Y);
                         }
                         else
                         {
@@ -262,11 +319,11 @@ namespace PathfindingTest
                             this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y - mapMoveSensitivity);
                         }
                     }
-                    if (keyboardState.IsKeyDown(Keys.Down) && drawOffset.Y + 768 < collision.mapHeight)
+                    if (keyboardState.IsKeyDown(Keys.Down) && drawOffset.Y + 768 < map.collisionMap.mapHeight)
                     {
-                        if (drawOffset.Y + mapMoveSensitivity > collision.mapHeight)
+                        if (drawOffset.Y + mapMoveSensitivity > map.collisionMap.mapHeight)
                         {
-                            this.drawOffset = new Vector2(this.drawOffset.X, collision.mapHeight);
+                            this.drawOffset = new Vector2(this.drawOffset.X, map.collisionMap.mapHeight);
                         }
                         else
                         {
@@ -340,11 +397,12 @@ namespace PathfindingTest
             {
 
             }
-            else if (sm.gameState == StateManager.State.GameRunning)
+            else if (sm.gameState == StateManager.State.GameRunning ||
+               sm.gameState == StateManager.State.GamePaused)
             {
                 //quadTree.Draw(spriteBatch);
-                collision.DrawMap(spriteBatch);
-
+                // map.collisionMap.DrawMap(spriteBatch);
+                map.Draw(spriteBatch);
                 try
                 {
                     LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
@@ -360,17 +418,15 @@ namespace PathfindingTest
                 }
                 catch (Exception e) { }
             }
-            else if (sm.gameState == StateManager.State.GamePaused)
-            {
-
-            }
             else if (sm.gameState == StateManager.State.GameShutdown)
             {
 
             }
 
-
-
+            /*
+            spriteBatch.Draw(testTex, new Rectangle(20, 20, 100, 100), Color.White);
+            spriteBatch.Draw(testTex2, new Rectangle(120, 20, 160, 160), Color.White);
+            */
 
             spriteBatch.End();
 
@@ -480,24 +536,15 @@ namespace PathfindingTest
             }
         }
 
-        private MouseEvent previousEvent { get; set; }
+        // private MouseEvent previousEvent { get; set; }
         void MouseMotionListener.OnMouseDrag(MouseEvent e)
         {
-            if (e.button == MouseEvent.MOUSE_BUTTON_3)
-            {
-                if (previousEvent != null)
-                {
-                    this.drawOffset = new Vector2(this.drawOffset.X - (e.location.X - previousEvent.location.X),
-                        this.drawOffset.Y - (e.location.Y - previousEvent.location.Y));
-                }
 
-                previousEvent = e;
-            }
         }
 
         void MouseMotionListener.OnMouseMotion(MouseEvent e)
         {
-            previousEvent = null;
+            // previousEvent = null;
             // Console.Out.WriteLine("Mouse moved!");
 
             ///if( e.location.X >= 10 && e.location.X <= graphics.PreferredBackBufferWidth - 10 &&
@@ -537,6 +584,33 @@ namespace PathfindingTest
         public Boolean IsOnScreen(Rectangle rect)
         {
             return rect.Intersects(new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+        }
+
+        public void OnKeyPressed(KeyEvent e)
+        {
+            if (e.key == Keys.Escape)
+            {
+                if (MenuManager.GetInstance().GetCurrentlyDisplayedMenu() == null)
+                {
+                    MenuManager.GetInstance().ShowMenu(MenuManager.Menu.IngameMenu);
+                    if (!this.IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.GamePaused;
+                }
+                else
+                {
+                    MenuManager.GetInstance().ShowMenu(MenuManager.Menu.NoMenu);
+                    if (!this.IsMultiplayerGame()) StateManager.GetInstance().gameState = StateManager.State.GameRunning;
+                }
+            }
+        }
+
+        public void OnKeyTyped(KeyEvent e)
+        {
+
+        }
+
+        public void OnKeyReleased(KeyEvent e)
+        {
+
         }
     }
 }

@@ -116,6 +116,12 @@ namespace XNAInterfaceComponents.ParentComponents
             }
         }
 
+        public override void Draw(SpriteBatch sb)
+        {
+            base.Draw(sb);
+            // Console.Out.WriteLine(this.z);
+        }
+
         /// <summary>
         /// Creates a new message dialog. Note that you have to add your button listeners to this pane for it to do something.
         /// </summary>
@@ -134,6 +140,7 @@ namespace XNAInterfaceComponents.ParentComponents
             this.buttonWidth = 100;
             this.buttonSpacing = 30;
 
+            this.backgroundColor = Color.Blue;
             this.DoLayout();
         }
     }

@@ -38,7 +38,7 @@ namespace XNAInterfaceComponents.ChildComponents
             this.text = text;
             this.textAlign = TextAlign.RIGHT;
             this.group = group;
-            group.RegisterMember(this);
+            this.group.RegisterMember(this);
 
             MouseManager.GetInstance().mouseClickedListeners += OnMouseClick;
             MouseManager.GetInstance().mouseReleasedListeners += OnMouseRelease;
@@ -111,19 +111,6 @@ namespace XNAInterfaceComponents.ChildComponents
                         drawRect.Y + (drawRect.Height / 2) - (this.font.MeasureString(this.text).Y / 2)),
                         this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, this.z - 0.01f);
             }
-        }
-
-        private void DrawCross(SpriteBatch sb, Rectangle checkBoxBounds)
-        {
-            ComponentUtil.DrawLine(sb,
-                new Point(checkBoxBounds.X + this.crossPadding, checkBoxBounds.Y + this.crossPadding),
-                new Point(checkBoxBounds.X + checkBoxBounds.Width - this.crossPadding,
-                    checkBoxBounds.Y + checkBoxBounds.Height - this.crossPadding),
-                    Color.Blue, 1, this.z - 0.02f);
-            ComponentUtil.DrawLine(sb,
-                new Point(checkBoxBounds.X + checkBoxBounds.Width - this.crossPadding, checkBoxBounds.Y + this.crossPadding),
-                new Point(checkBoxBounds.X + this.crossPadding, checkBoxBounds.Y + checkBoxBounds.Height - this.crossPadding),
-                Color.Blue, 1, this.z - 0.02f);
         }
 
         public override void Update()

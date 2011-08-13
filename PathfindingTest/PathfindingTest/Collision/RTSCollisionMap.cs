@@ -61,7 +61,7 @@ namespace PathfindingTest.Collision
 
             ticks = DateTime.UtcNow.Ticks;
             Node[] newNodes = new Node[4];
-            RTSCollisionMap map = Game1.GetInstance().collision;
+            RTSCollisionMap map = Game1.GetInstance().map.collisionMap;
             newNodes[0] = new Node(map, rect.Left - 1, rect.Top - 1, true);
             newNodes[1] = new Node(map, rect.Right + 1, rect.Top - 1, true);
             newNodes[2] = new Node(map, rect.Left - 1, rect.Bottom + 1, true);
@@ -127,8 +127,14 @@ namespace PathfindingTest.Collision
             LinkedList<Point> pointList = this.GetNodeLocationsAroundEdges();
             foreach (Point p in pointList)
             {
-                new Node(Game1.GetInstance().collision, p.X, p.Y);
+                new Node(Game1.GetInstance().map.collisionMap, p.X, p.Y);
             }
+        }
+
+        public RTSCollisionMap(GraphicsDevice device, int width, int height, int quadDepth)
+            : base(device, width, height, true, quadDepth)
+        {
+
         }
 
         public RTSCollisionMap(Game game, int width, int height, String collisionMapPath, String collisionMapName)

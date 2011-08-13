@@ -294,9 +294,6 @@ namespace PathfindingTest.Units
                     Synchronizer.GetInstance().QueueUnit(this);
                 }
             }
-
-            QuadRoot root = Game1.GetInstance().quadTree;
-            root.GetQuadByPoint(this.GetLocation()).highlighted = true;
         }
 
         /// <summary>
@@ -424,12 +421,12 @@ namespace PathfindingTest.Units
 
             LinkedList<Point> result = new LinkedList<Point>();
             long ticks = DateTime.UtcNow.Ticks;
-            if (Game1.GetInstance().collision.IsCollisionBetween(new Point((int)this.x, (int)this.y), p))
+            if (Game1.GetInstance().map.collisionMap.IsCollisionBetween(new Point((int)this.x, (int)this.y), p))
             {
                 Game1 game = Game1.GetInstance();
                 // Create temp nodes
-                Node start = new Node(game.collision, (int)this.x, (int)this.y, true);
-                Node end = new Node(game.collision, p.X, p.Y, true);
+                Node start = new Node(game.map.collisionMap, (int)this.x, (int)this.y, true);
+                Node end = new Node(game.map.collisionMap, p.X, p.Y, true);
                 LinkedList<PathfindingNode> nodes = new AStar(start, end).FindPath();
                 if (nodes != null)
                 {
@@ -489,12 +486,11 @@ namespace PathfindingTest.Units
             this.player = p;
             this.x = x;
             this.y = y;
-            this.z = 1f - this.player.units.Count * 0.0001f;
+            this.z = 1f - ( this.player.units.Count + 1) * 0.0001f;
             this.movementSpeed = movementSpeed;
             this.attackRange = attackRange;
             this.aggroRange = aggroRange;
             this.rateOfFire = rateOfFire;
-            (this.quad = Game1.GetInstance().quadTree.GetQuadByPoint(this.GetLocation())).highlighted = true;
 
             this.color = player.color;
             this.waypoints = new LinkedList<Point>();

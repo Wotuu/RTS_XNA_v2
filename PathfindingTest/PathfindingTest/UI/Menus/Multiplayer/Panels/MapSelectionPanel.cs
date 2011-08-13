@@ -37,15 +37,24 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
             foreach (String map in mapNames)
             {
                 this.panels.AddLast(new MapEntryPanel(this, map, index));
-                if (selectedMapName == map) this.panels.Last.Value.previewButton.selected = true; 
+                if (selectedMapName == map) this.panels.Last.Value.previewButton.selected = true;
                 index++;
             }
 
-            this.bounds = new Rectangle( ((CLIENT_WINDOW_WIDTH / 2) - 250), 
-                ((CLIENT_WINDOW_HEIGHT / 2) - ( this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70 / 2)), 
+            this.bounds = new Rectangle(((CLIENT_WINDOW_WIDTH / 2) - 250),
+                ((CLIENT_WINDOW_HEIGHT / 2) - (this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70 / 2)),
                 500,
-                (int)Math.Max( this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70, 200));
+                (int)Math.Max(this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70, 200));
             this.DoLayout();
+        }
+
+        /// <summary>
+        /// Override the XNADialog GetDepth() function to be a fraction lower.
+        /// </summary>
+        /// <returns>A high depth</returns>
+        public override int GetDepth()
+        {
+            return 15;
         }
 
         /// <summary>
@@ -64,22 +73,37 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         }
 
         /// <summary>
+        /// Gets the currently selected map.
+        /// </summary>
+        /// <returns>The selected map, or null if none was selected.</returns>
+        public String GetSelectedMap()
+        {
+            foreach (MapEntryPanel panel in this.panels)
+            {
+                if (panel.previewButton.selected)
+                {
+                    return panel.previewButton.text;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Called when the OK button was pressed.
         /// </summary>
         /// <param name="source">The XNA Button</param>
-        public void OnOKClick(XNAButton source)
+        public virtual void OnOKClick(XNAButton source)
         {
-            foreach( MapEntryPanel panel in this.panels ){
-                if( panel.previewButton.selected ){
-                    this.previewPanel.selectedMapLbl.text = panel.previewButton.text;
+            if (!Game1.GetInstance().IsMultiplayerGame()) return;
+            String map = this.GetSelectedMap();
+            if (map != null)
+            {
+                this.previewPanel.selectedMapLbl.text = map;
 
-                        Packet p = new Packet(Headers.GAME_MAP_CHANGED);
-                        p.AddInt(ChatServerConnectionManager.GetInstance().user.channelID);
-                        p.AddString(this.previewPanel.selectedMapLbl.text);
-                        ChatServerConnectionManager.GetInstance().SendPacket(p);
-
-                    break;
-                }
+                Packet p = new Packet(Headers.GAME_MAP_CHANGED);
+                p.AddInt(ChatServerConnectionManager.GetInstance().user.channelID);
+                p.AddString(this.previewPanel.selectedMapLbl.text);
+                ChatServerConnectionManager.GetInstance().SendPacket(p);
             }
         }
 
@@ -89,7 +113,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 (this.bounds.Width / 2) - (this.buttonWidth) - (this.buttonSpacing / 2),
                 this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 20,
                 this.buttonWidth, 40), "OK");
-            this.okBtn.onClickListeners += this.Dispose;
+            // this.okBtn.onClickListeners += this.Dispose;
             this.okBtn.onClickListeners += this.OnOKClick;
 
             this.cancelBtn = new XNAButton(this, new Rectangle(
@@ -97,6 +121,12 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 20,
                 this.buttonWidth, 40), "Cancel");
             this.cancelBtn.onClickListeners += this.Dispose;
+        }
+
+        public override void Unload()
+        {
+            base.Unload();
+            this.okBtn.onClickListeners -= this.OnOKClick;
         }
     }
 }

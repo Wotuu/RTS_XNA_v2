@@ -34,7 +34,7 @@ namespace PathfindingTest.Units
             this.unit = unit;
             this.type = Type.Unit;
 
-            this.z = this.unit.z - 0.1f;
+            this.z = this.unit.z - 0.01f;
         }
 
         public HealthBar(Building building)
@@ -43,7 +43,7 @@ namespace PathfindingTest.Units
             this.building = building;
             this.type = Type.Building;
 
-            this.z = this.building.z - 0.1f;
+            this.z = this.building.z - 0.01f;
         }
 
 

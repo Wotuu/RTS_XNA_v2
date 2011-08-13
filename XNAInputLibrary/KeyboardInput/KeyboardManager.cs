@@ -14,7 +14,7 @@ namespace XNAInputLibrary.KeyboardInput
 {
     public class KeyboardManager
     {
-        public static KeyboardManager instance = null;
+        private static KeyboardManager instance = null;
         public OnKeyPressed keyPressedListeners { get; set; }
         public OnKeyTyped keyTypedListeners { get; set; }
         public OnKeyReleased keyReleasedListeners { get; set; }

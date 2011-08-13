@@ -11,6 +11,7 @@ using System.IO;
 using System.Xml;
 
 public delegate void OnCollisionChanged(CollisionChangedEvent c_event);
+public delegate void OnMapTileLoad(CollisionMap source);
 
 namespace AStarCollisionMap.Collision
 {
@@ -24,6 +25,9 @@ namespace AStarCollisionMap.Collision
         public int collisionMapTextureScale = 1;
         private int dataLength { get; set; }
         public Rectangle windowSize { get; set; }
+
+        // Progress bars
+        public OnMapTileLoad onMapTileLoadListeners { get; set; }
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -416,7 +420,15 @@ namespace AStarCollisionMap.Collision
                 {
                     FileStream stream = new FileStream(path + "/" + mapname + "/" +
                         mapname + "_" + i + "_" + j +".png", FileMode.Open);
-                    this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
+                    if (stream.Length == 0)
+                    {
+                        this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture =
+                            new Texture2D(this.graphicsDevice, (int)this.tree.quadWidth, (int)this.tree.quadHeight);
+                    } else this.tree.GetQuadByIndex(new Point(i, j)).collisionTexture.texture = Texture2D.FromStream(this.graphicsDevice, stream);
+                    stream.Close();
+                    stream.Dispose();
+
+                    if (onMapTileLoadListeners != null) onMapTileLoadListeners(this);
                 }
             }
         }

@@ -40,24 +40,26 @@ namespace AStarCollisionMap.QuadTree
         {
             Quad[] quads = new Quad[4];
 
-            int newWidth = this.rectangle.Width / 2;
-            int newHeight = this.rectangle.Height / 2;
+            int leftWidth = this.rectangle.Width / 2;
+            int rightWidth = this.rectangle.Width - leftWidth;
+            int topHeight = this.rectangle.Height / 2;
+            int bottomHeight = this.rectangle.Height - topHeight;
             // [*][ ]
             // [ ][ ]
             quads[0] = new Quad(this.tree, this,
-                new Rectangle(this.rectangle.Left, this.rectangle.Top, newWidth, newHeight));
+                new Rectangle(this.rectangle.Left, this.rectangle.Top, leftWidth, topHeight));
             // [ ][*]
             // [ ][ ]
             quads[1] = new Quad(this.tree, this,
-                new Rectangle(this.rectangle.Left + newWidth, this.rectangle.Top, newWidth, newHeight));
+                new Rectangle(this.rectangle.Left + leftWidth, this.rectangle.Top, rightWidth, topHeight));
             // [ ][ ]
             // [*][ ]
             quads[2] = new Quad(this.tree, this,
-                new Rectangle(this.rectangle.Left, this.rectangle.Top + newHeight, newWidth, newHeight));
+                new Rectangle(this.rectangle.Left, this.rectangle.Top + topHeight, leftWidth, bottomHeight));
             // [ ][ ]
             // [ ][*]
             quads[3] = new Quad(this.tree, this,
-                new Rectangle(this.rectangle.Left + newWidth, this.rectangle.Top + newHeight, newWidth, newHeight));
+                new Rectangle(this.rectangle.Left + rightWidth, this.rectangle.Top + topHeight, rightWidth, bottomHeight));
 
             this.children = quads;
             return quads;
@@ -79,7 +81,7 @@ namespace AStarCollisionMap.QuadTree
             {
                 // Draw the texture
                 sb.Draw(this.collisionTexture.texture, this.GetDrawRectangle(), null, this.tree.drawColor, 0f, 
-                    Vector2.Zero, SpriteEffects.None, 1f);
+                    Vector2.Zero, SpriteEffects.None, 0.999999f);
                 // Draw the rectangle bounds
                 if( this.tree.drawGridLines ) 
                     DrawUtil.DrawClearRectangle(sb, this.GetDrawRectangle(), this.tree.borderWidth, this.tree.borderColor);
