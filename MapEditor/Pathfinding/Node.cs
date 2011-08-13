@@ -22,6 +22,7 @@ namespace MapEditor.Pathfinding
 
         GraphicsDevice graphicsDevice = null;
 
+        static Rectangle viewport;
         private Boolean _selected;
         public Boolean selected
         {
@@ -73,6 +74,7 @@ namespace MapEditor.Pathfinding
             : base(map)
         {
             this.graphicsDevice = adapter;
+            viewport = new Rectangle(0, 0, graphicsDevice.Viewport.Width, graphicsDevice.Viewport.Height);
             Init(x, y);
             PathfindingNodeProcessor.GetInstance().Push(this);
         }
@@ -83,14 +85,16 @@ namespace MapEditor.Pathfinding
         /// <param name="sb"></param>
         internal void Draw(SpriteBatch sb)
         {
-            sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, 0.01f);
-            // Draw some connections twice, but o well!
-
-            // if( Monitor.TryEnter(this.connections, 0) ){
-            foreach (PathfindingNodeConnection conn in this.connections)
-            {
-                new DrawableNodeConnection(conn).Draw(sb);
+            
+            if(viewport.Contains(this.GetDrawRectangle())){
+                sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, 0.01f);
+            
+                foreach (PathfindingNodeConnection conn in this.connections)
+                {
+                    new DrawableNodeConnection(conn).Draw(sb);
+                }
             }
+            
             
             // sb.DrawString(game.font, "" + score, new Vector2(drawX, drawY - 14), Color.Black);
             // sb.DrawString(game.font, "" + costToStart, new Vector2(drawX, drawY + texture.Height - 2), Color.Black);

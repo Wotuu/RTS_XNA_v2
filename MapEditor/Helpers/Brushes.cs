@@ -247,7 +247,7 @@ namespace MapEditor
                             rect.X + x * Engine.TileWidth,
                             rect.Y + y * Engine.TileHeight,
                             Engine.TileWidth,
-                            Engine.TileHeight), Color.Black);
+                            Engine.TileHeight), Color.FromNonPremultiplied(255,255,255,150));
 
                     }
 

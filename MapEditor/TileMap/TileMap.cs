@@ -171,6 +171,7 @@ namespace MapEditor.TileMap
             mapxml.Save(filename);
         }
 
+        
         public TileMap opentilemap(string filename)
         {
             
@@ -228,7 +229,8 @@ namespace MapEditor.TileMap
                     }
                 }
 
-                // nodes inladen
+               
+
                
             }
 

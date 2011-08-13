@@ -4,6 +4,9 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Xml;
+using MapEditor.Pathfinding;
+using System.Threading;
 
 namespace MapEditor.Helpers
 {
@@ -76,6 +79,31 @@ namespace MapEditor.Helpers
             Depth = Depth / 3;
 
             return (int)(Math.Min(Math.Ceiling(Depth),7));
+        }
+
+        /// <summary>
+        /// Loads collisionnodes from a file
+        /// </summary>
+        /// <param name="Path">Full path of the XML</param>
+        /// <param name="graphicsdevice">Graphics Device</param>
+        public static void LoadNodes(String filename, GraphicsDevice graphicsdevice)
+        {
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.Load(filename);
+
+            XmlNode declaration = xmldoc.FirstChild;
+            XmlNode rootNode = xmldoc.ChildNodes[1];
+            if (!rootNode.Name.Equals("GameMap"))
+            {
+                throw new Exception("XML document is not formatted correctly");
+            }
+            XmlNode Nodes = rootNode.ChildNodes[1];
+            for (int n = 0; n < Nodes.ChildNodes.Count; n++)
+            {
+                Thread.Sleep(10);
+                new Node(Form1.CollisionMap, int.Parse(Nodes.ChildNodes[n].Attributes["x"].Value), int.Parse(Nodes.ChildNodes[n].Attributes["y"].Value),graphicsdevice );
+                //new Node(Form1.CollisionMap, 5  * n, 5 * n, graphicsdevice);
+            }
         }
     }
 }

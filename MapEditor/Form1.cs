@@ -35,9 +35,9 @@ namespace MapEditor
         public Texture2D EraseTexture;
         public static Texture2D tilemaptexture;
         public static Texture2D linetexture;
+        
 
-
-        CollisionMap CollisionMap;
+        public static CollisionMap CollisionMap;
         int[] CollisionData;
 
         public static Camera camera = new Camera();
@@ -95,19 +95,21 @@ namespace MapEditor
             get { return tileMapDisplay1.GraphicsDevice; }
         }
 
+        
       
 #endregion
 
         #region Constructor
         public Form1()
         {
+            
             InitializeComponent();
             assembly = Assembly.GetExecutingAssembly();
             BtnShowGrid.CheckOnClick = true;
             tileMapDisplay1.OnInitialize += new EventHandler(tileDisplay1_OnInitialize);
             tileMapDisplay1.OnDraw += new EventHandler(tileDisplay1_OnDraw);
 
-          
+            
 
 
             tileMapDisplay1.MouseEnter +=
@@ -372,7 +374,7 @@ namespace MapEditor
             else
             {
                 spriteBatch.Draw(cursor,
-                    new Rectangle((int)position.X,(int)position.Y,
+                    new Rectangle((int)position.X - (int)camera.Position.X,(int)position.Y - (int)camera.Position.Y,
                         int.Parse(TBCollisionSize.Text),
                         int.Parse(TBCollisionSize.Text)),
                         Color.Red);
@@ -484,7 +486,9 @@ namespace MapEditor
 
                CollisionMap = new CollisionMap(GraphicsDevice, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight, true, Util.GetQuadDepth(tileMap.MapWidth));
                CollisionMap.LoadMap(openfile.FileName.Substring(0, openfile.FileName.LastIndexOf('\\')), openfile.FileName.Substring(openfile.FileName.LastIndexOf('\\')).Replace(".xml", ""));
-               CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
+               PathfindingNodeManager.GetInstance().nodeList.Clear();
+                Util.LoadNodes(openfile.FileName, GraphicsDevice);
+                CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
                currentLayer = tileMap.layers[0];
             }
 

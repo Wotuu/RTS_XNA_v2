@@ -8,6 +8,7 @@ using AStarCollisionMap.Collision;
 using AStarCollisionMap.Pathfinding;
 using AStarCollisionMap.QuadTree;
 using System.IO;
+using System.Xml;
 
 public delegate void OnCollisionChanged(CollisionChangedEvent c_event);
 
@@ -419,7 +420,7 @@ namespace AStarCollisionMap.Collision
                 }
             }
         }
-
+        
         /// <summary>
         /// Saves this collisionmap to a file.
         /// </summary>
