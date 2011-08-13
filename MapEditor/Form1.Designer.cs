@@ -59,6 +59,7 @@
             this.BtnAddNode = new System.Windows.Forms.ToolStripButton();
             this.BtnRemoveNode = new System.Windows.Forms.ToolStripButton();
             this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
+            this.miniMapDisplay1 = new MapEditor.Display.miniMapDisplay();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -332,11 +333,20 @@
             this.tileMapDisplay1.TabIndex = 0;
             this.tileMapDisplay1.Text = "tileMapDisplay1";
             // 
+            // miniMapDisplay1
+            // 
+            this.miniMapDisplay1.Location = new System.Drawing.Point(843, 398);
+            this.miniMapDisplay1.Name = "miniMapDisplay1";
+            this.miniMapDisplay1.Size = new System.Drawing.Size(400, 297);
+            this.miniMapDisplay1.TabIndex = 4;
+            this.miniMapDisplay1.Text = "miniMapDisplay1";
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1264, 710);
+            this.Controls.Add(this.miniMapDisplay1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.PnlPaletteContainer);
             this.Controls.Add(this.tileMapDisplay1);
@@ -384,6 +394,7 @@
         private System.Windows.Forms.ToolStripButton BtnDrawNodes;
         private System.Windows.Forms.ToolStripButton BtnAddNode;
         private System.Windows.Forms.ToolStripButton BtnRemoveNode;
+        private Display.miniMapDisplay miniMapDisplay1;
     }
 }
 

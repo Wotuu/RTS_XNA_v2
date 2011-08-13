@@ -106,6 +106,8 @@ namespace MapEditor
         }
         private void DoBrushLogic(object sender, MouseEventArgs e)
         {
+            
+
             switch (currentbrush)
             {
                 case Brush.Paint:
@@ -136,8 +138,11 @@ namespace MapEditor
                     RemoveNode(sender, e);
                     break;
                    
-
             }
+            //Invalidate minimap ? 
+           
+            
+            
         }
 
         private void Paint(object sender, MouseEventArgs e)
