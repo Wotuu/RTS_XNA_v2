@@ -146,6 +146,7 @@ namespace PathfindingTest.State
                 Player aiPlayer = new Player(greenAlliance, Color.Purple);
                 aiPlayer.SpawnStartUnits(new Point((int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2, 200));
 
+                StateManager.GetInstance().gameState = StateManager.State.GameRunning;
                 //SaveManager.GetInstance().SaveNodes("C:\\Users\\Wouter\\Desktop\\test.xml");
             }
 
@@ -156,7 +157,6 @@ namespace PathfindingTest.State
             MouseManager.GetInstance().mouseReleasedListeners += ((MouseClickListener)game).OnMouseRelease;
             MouseManager.GetInstance().mouseMotionListeners += ((MouseMotionListener)game).OnMouseMotion;
             MouseManager.GetInstance().mouseDragListeners += ((MouseMotionListener)game).OnMouseDrag;
-            StateManager.GetInstance().gameState = StateManager.State.GameRunning;
         }
 
         /// <summary>

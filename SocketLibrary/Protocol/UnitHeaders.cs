@@ -16,7 +16,7 @@ namespace SocketLibrary.Protocol
         /// <summary>
         /// Types to be used to request object IDs
         /// </summary>
-        public const int TYPE_BOWMAN = 10, TYPE_SWORDMAN = 11, TYPE_ENGINEER = 12;
+        public const int TYPE_BOWMAN = 10, TYPE_SWORDMAN = 11, TYPE_ENGINEER = 12, TYPE_HORSEMAN = 13;
 
         public const int DAMAGE_TYPE_FAST = 20, DAMAGE_TYPE_HEAVY_MELEE = 21, DAMAGE_TYPE_MELEE = 22, DAMAGE_TYPE_RANGED = 23;
 

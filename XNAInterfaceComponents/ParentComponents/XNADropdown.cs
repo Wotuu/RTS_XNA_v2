@@ -254,31 +254,31 @@ namespace XNAInterfaceComponents.ParentComponents
                         drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)),
                     new Point(drawLocation.Right - (dropdownLineSpace / 2) - (arrowSize / 2),
                         drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)), this.border.color, 2,
-                        this.z + 0.01f);
+                        this.z - 0.01f);
 
                 ComponentUtil.DrawLine(sb,
                     new Point(drawLocation.Right - (dropdownLineSpace / 2),
                         drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)),
                     new Point(drawLocation.Right - (dropdownLineSpace / 2) + (arrowSize / 2),
                         drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)), this.border.color, 2,
-                        this.z + 0.01f);
+                        this.z - 0.01f);
             }
             else
             {
                 ComponentUtil.DrawLine(sb,
-                    new Point(drawLocation.Right - (dropdownLineSpace / 2),
+                    new Point(drawLocation.Right - (dropdownLineSpace / 2) + 1,
                         drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)),
 
-                    new Point(drawLocation.Right - (dropdownLineSpace / 2) - (arrowSize / 2),
+                    new Point(drawLocation.Right - (dropdownLineSpace / 2) - (arrowSize / 2) + 1,
                         drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)), this.border.color, 2,
-                        this.z + 0.01f);
+                        this.z - 0.01f);
 
                 ComponentUtil.DrawLine(sb,
-                    new Point(drawLocation.Right - (dropdownLineSpace / 2),
+                    new Point(drawLocation.Right - (dropdownLineSpace / 2) - 1,
                         drawLocation.Top + (this.optionHeight / 2) + (arrowSize / 2)),
-                    new Point(drawLocation.Right - (dropdownLineSpace / 2) + (arrowSize / 2),
+                    new Point(drawLocation.Right - (dropdownLineSpace / 2) + (arrowSize / 2) - 1,
                         drawLocation.Top + (this.optionHeight / 2) - (arrowSize / 2)), this.border.color, 2,
-                        this.z + 0.01f);
+                        this.z - 0.01f);
             }
         }
 

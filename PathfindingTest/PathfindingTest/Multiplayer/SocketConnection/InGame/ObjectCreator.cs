@@ -54,6 +54,12 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                             Game1.GetInstance().GetPlayerByMultiplayerID(playerID).meleeStore.getUnit(Unit.Type.Melee, 0, 0);
                         break;
                     }
+                case UnitHeaders.TYPE_HORSEMAN:
+                    {
+                        unit =
+                            Game1.GetInstance().GetPlayerByMultiplayerID(playerID).meleeStore.getUnit(Unit.Type.Fast, 0, 0);
+                        break;
+                    }
             }
             if( unit != null ) unit.multiplayerData.serverID = serverID;
         }

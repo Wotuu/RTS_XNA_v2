@@ -71,7 +71,6 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                     }
                 case UnitHeaders.GAME_NEW_UNIT:
                     {
-
                         int playerID = PacketUtil.DecodePacketInt(p, 0);
                         int serverID = PacketUtil.DecodePacketInt(p, 4);
                         int type = PacketUtil.DecodePacketInt(p, 8);

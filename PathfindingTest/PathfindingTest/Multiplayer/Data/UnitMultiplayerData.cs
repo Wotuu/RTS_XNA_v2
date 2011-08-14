@@ -6,6 +6,7 @@ using PathfindingTest.Units;
 using Microsoft.Xna.Framework;
 using SocketLibrary.Protocol;
 using PathfindingTest.Units.Melee;
+using PathfindingTest.Units.Fast;
 
 namespace PathfindingTest.Multiplayer.Data
 {
@@ -38,6 +39,7 @@ namespace PathfindingTest.Multiplayer.Data
             if (this.unit is Bowman) return UnitHeaders.TYPE_BOWMAN;
             else if (this.unit is Swordman) return UnitHeaders.TYPE_SWORDMAN;
             else if (this.unit is Engineer) return UnitHeaders.TYPE_ENGINEER;
+            else if (this.unit is Horseman) return UnitHeaders.TYPE_HORSEMAN;
             else return Int32.MaxValue;
         }
     }

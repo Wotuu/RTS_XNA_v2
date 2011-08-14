@@ -168,7 +168,7 @@ namespace GameServer.GameServer
                         // I own data that someone else wants
                         // Find the user to send data to
                         int targetUserID = PacketUtil.DecodePacketInt(p, 0);
-                        ServerUser targetUser = ChannelManager.GetInstance().GetChannelByID(this.user.channelID).GetUserAt(targetUserID);
+                        ServerUser targetUser = ChannelManager.GetInstance().GetChannelByID(this.user.channelID).GetUserByID(targetUserID);
                         targetUser.gameListener.client.SendPacket(p);
 
                         break;

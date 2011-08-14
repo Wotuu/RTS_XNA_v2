@@ -58,7 +58,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             XNAPanel messagesPanel = new XNAPanel(this, new Rectangle(5, 340, 790, 210));
             messagesPanel.border = new Border(messagesPanel, 1, Color.Blue);
 
-            messagesTextField = new XNATextField(messagesPanel, new Rectangle(5, 5, 780, 170), Int32.MaxValue);
+            messagesTextField = new XNATextField(messagesPanel, new Rectangle(5, 5, 780, 170), 12);
             messagesTextField.border = new Border(messagesTextField, 1, Color.Black);
             messagesTextField.font = MenuManager.SMALL_TEXTFIELD_FONT;
             messagesTextField.isEditable = false;

@@ -20,13 +20,55 @@ namespace XNAInterfaceComponents.ChildComponents
         public Caret caret { get; set; }
         private Rectangle scrollbarBounds { get; set; }
         private Rectangle scrollbarButtonBounds { get; set; }
-        private Boolean drawScrollbar { get; set; }
+
         public int scrollbarIndex { get; set; }
         public String hiddenCharacters { get; set; }
         public int rows { get; set; }
         public int maxLength { get; set; }
         public Boolean isEditable { get; set; }
         public OnTextFieldKeyPressed onTextFieldKeyPressedListeners { get; set; }
+
+        private String _text = "";
+        public new String text
+        {
+            get
+            {
+                return _text;
+            }
+            set
+            {
+                _text = value;
+                if (_text != null)
+                {
+                    this.verticalTextDisplayOffset = Math.Max((_text.Split('\n').Length - this.rows), 0);
+                }
+            }
+        }
+        
+        public MouseEvent previousMouseEvent { get; set; }
+
+        private int _verticalTextDisplayOffet { get; set; }
+        public int verticalTextDisplayOffset
+        {
+            get
+            {
+                return _verticalTextDisplayOffet;
+            }
+            set {
+                String[] split = this.text.Split('\n');
+                value = (int)MathHelper.Clamp( (float)value, 0, (float)split.Length - (float)this.rows);
+                double rowPixels = this.GetPixelsPerScrollBarTick();
+                Console.Out.WriteLine(rowPixels);
+
+                this.scrollbarButtonBounds = new Rectangle(
+                    this.scrollbarButtonBounds.X,
+                    (int)(this.scrollbarBounds.Top + (value * rowPixels)),
+                    this.scrollbarButtonBounds.Width,
+                    this.scrollbarButtonBounds.Height);
+
+                _verticalTextDisplayOffet = value;
+            }
+        }
 
         public XNATextField(ParentComponent parent, Rectangle bounds, int rows)
             : base(parent, bounds)
@@ -35,8 +77,9 @@ namespace XNAInterfaceComponents.ChildComponents
             this.rows = rows;
             this.isEditable = true;
             Rectangle drawRect = this.GetScreenBounds();
-            this.scrollbarBounds = new Rectangle(drawRect.Left, drawRect.Bottom, drawRect.Width, 10);
-            this.scrollbarButtonBounds = new Rectangle(drawRect.Left, drawRect.Bottom, drawRect.Width, 8);
+            this.scrollbarBounds = new Rectangle(drawRect.Right - 15, drawRect.Top, 15, drawRect.Height);
+            this.scrollbarButtonBounds = new Rectangle(drawRect.Right - 15, drawRect.Top + 1, 14, 0);
+
             KeyboardManager.GetInstance().keyPressedListeners += this.OnKeyPressed;
             KeyboardManager.GetInstance().keyTypedListeners += this.OnKeyTyped;
             KeyboardManager.GetInstance().keyReleasedListeners += this.OnKeyReleased;
@@ -72,11 +115,29 @@ namespace XNAInterfaceComponents.ChildComponents
             Char[] array = this.text.ToArray();
 
             float currentStringWidth = 0;
+
             float textWidth = this.font.MeasureString(this.text).X;
             float viewportX = this.bounds.Width - this.padding.left - this.padding.right;
 
             if (viewportX > textWidth)
             {
+                if (this.text != null)
+                {
+                    String[] split = this.text.Split('\n');
+
+                    if (split.Length > this.rows)
+                    {
+                        String endResult = "";
+                        for (int i = this.verticalTextDisplayOffset; 
+                            i < this.verticalTextDisplayOffset + this.rows; i++)
+                        {
+                            endResult += split[i] + "\n";
+                        }
+                        this.previousDisplayText = endResult;
+                        return endResult;
+                    }
+                }
+
                 this.previousDisplayText = this.text;
                 return this.text;
             }
@@ -126,7 +187,10 @@ namespace XNAInterfaceComponents.ChildComponents
             array = result.ToCharArray();
             Array.Reverse(array);
             this.previousDisplayText = new string(array);
-            return new string(array);
+
+
+
+            return this.previousDisplayText;
             // return result;
         }
 
@@ -162,11 +226,45 @@ namespace XNAInterfaceComponents.ChildComponents
                     drawY), this.fontColor);
 
             // Draw scrollbar
-            if (drawScrollbar)
+            if (this.ShouldDrawVerticalScrollBar())
             {
-                ComponentUtil.DrawClearRectangle(sb, this.scrollbarBounds, 1, Color.Pink, this.z - 0.002f);
-                sb.Draw(this.clearTexture, this.scrollbarButtonBounds, Color.Blue);
+                this.scrollbarButtonBounds = new Rectangle(this.scrollbarButtonBounds.X, this.scrollbarButtonBounds.Y,
+                    this.scrollbarButtonBounds.Width, this.CalculateVerticalScrollBarHeight());
+                ComponentUtil.DrawClearRectangle(sb, this.scrollbarBounds, 1, Color.Black, this.z - 0.002f);
+                sb.Draw(this.clearTexture, this.scrollbarButtonBounds, null, Color.Blue, 0f,
+                    Vector2.Zero, SpriteEffects.None, this.z - 0.003f);
             }
+        }
+
+        /// <summary>
+        /// Gets the amount of pixels the scrollbar needs to scroll before a row up or down is shown.
+        /// </summary>
+        /// <returns>The pixel amount</returns>
+        public double GetPixelsPerScrollBarTick()
+        {
+            String[] split = this.text.Split('\n');
+            return (((1.0 - (this.rows / (float)split.Length)) * (float)this.scrollbarBounds.Height) /
+                     (float)(split.Length - this.rows));
+        }
+
+        /// <summary>
+        /// Checks whether we should draw the scrollbar
+        /// </summary>
+        /// <returns>The boolean</returns>
+        public Boolean ShouldDrawVerticalScrollBar()
+        {
+            if (this.rows < this.text.Split('\n').Length) return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Calculates the vertical scrollbar height.
+        /// </summary>
+        /// <returns></returns>
+        public int CalculateVerticalScrollBarHeight()
+        {
+            double visiblePercentage = (this.rows / (float)(this.text.Split('\n').Length) * 100.0);
+            return (int)((this.scrollbarBounds.Height / 100.0) * visiblePercentage);
         }
 
         public override void Update()
@@ -579,6 +677,26 @@ namespace XNAInterfaceComponents.ChildComponents
                 }
             }
             previousMouseEvent = e;*/
+            if (this.previousMouseEvent != null)
+            {
+                int diff = this.previousMouseEvent.location.Y - e.location.Y;
+                double pixelsPerRow = this.GetPixelsPerScrollBarTick();
+                if (this.scrollbarButtonBounds.Contains(e.location) &&
+                    Math.Abs(diff) > pixelsPerRow)
+                {
+                    this.scrollbarButtonBounds = new Rectangle(this.scrollbarButtonBounds.X,
+                        (int)MathHelper.Clamp((float)this.scrollbarButtonBounds.Y - diff,
+                            (float)this.scrollbarBounds.Top,
+                            (float)(this.scrollbarBounds.Top + (this.scrollbarBounds.Height - this.scrollbarButtonBounds.Height))),
+                        this.scrollbarButtonBounds.Width,
+                        this.scrollbarButtonBounds.Height);
+
+                    this.verticalTextDisplayOffset = 
+                        (int)((this.scrollbarButtonBounds.Top - this.scrollbarBounds.Top) / (float)pixelsPerRow);
+
+                    this.previousMouseEvent = e;
+                }
+            } else  this.previousMouseEvent = e;
         }
 
         public void OnMouseClick(MouseEvent e)
@@ -599,9 +717,9 @@ namespace XNAInterfaceComponents.ChildComponents
                 }
             }*/
 
-            Rectangle drawLocation = this.GetScreenBounds();
+            Rectangle drawBounds = this.GetScreenBounds();
 
-            if (drawLocation.Contains(e.location))
+            if (drawBounds.Contains(e.location))
             {
                 // Get the index the cursor is at.
                 float currentWidth = 0;
@@ -612,17 +730,18 @@ namespace XNAInterfaceComponents.ChildComponents
                     for (int i = 0; i < array.Length; i++)
                     {
                         currentWidth += this.font.MeasureString(array[i] + "").X;
-                        if (currentWidth < e.location.X - drawLocation.X - this.padding.left) currentIndex++;
+                        if (currentWidth < e.location.X - drawBounds.X - this.padding.left) currentIndex++;
                         else break;
                     }
                 }
                 // Console.Out.WriteLine(currentIndex);
                 this.caret.index = currentIndex;
                 this.caret.row = (int)Math.Min(
-                    ((e.location.Y - drawLocation.Y) / this.font.MeasureString("I").Y),
+                    ((e.location.Y - drawBounds.Y) / this.font.MeasureString("I").Y),
                     this.text.Split(new char[] { '\n' }).Length - 1);
                 // Console.Out.WriteLine(((e.location.Y - drawLocation.Y) + " / " + this.font.MeasureString("I").Y));
                 // Console.Out.WriteLine("New row: " + this.caret.row);
+
             }
 
             // previousMouseEvent = e;
@@ -630,6 +749,7 @@ namespace XNAInterfaceComponents.ChildComponents
 
         public void OnMouseRelease(MouseEvent e)
         {
+            this.previousMouseEvent = null;
             // throw new NotImplementedException();
         }
 

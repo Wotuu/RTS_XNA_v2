@@ -308,6 +308,21 @@ namespace GameServer.ChatServer.Channels
         }
 
         /// <summary>
+        /// Gets a user by ID.
+        /// </summary>
+        /// <param name="id">The ID.</param>
+        /// <returns>The user</returns>
+        public ServerUser GetUserByID(int id)
+        {
+            for (int i = 0; i < this.users.Count; i++)
+            {
+                ServerUser user = this.users.ElementAt(i);
+                if (user.id == id) return user;
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Gets a user at a certain index in the list.
         /// </summary>
         /// <param name="index">The index.</param>

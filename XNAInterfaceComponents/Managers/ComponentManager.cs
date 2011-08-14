@@ -113,7 +113,7 @@ namespace XNAInterfaceComponents.Managers
             for (int i = this.componentList.Count - 1; i >= 0; i--)
             {
                 ParentComponent pc = this.componentList.ElementAt(i);
-                if (pc is XNAMessageDialog)
+                if (pc is XNADialog)
                 {
                     if( pc.RequestFocusAt(m_event.location) ) return;
                 }

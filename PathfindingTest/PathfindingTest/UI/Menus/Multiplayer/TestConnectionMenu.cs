@@ -127,7 +127,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             ChatServerConnectionManager.GetInstance().ConnectToServer();
             this.statusLbl.text = "Connecting..";
 
-            Thread.Sleep(50);
+            Thread.Sleep(2000);
 
             if (ChatServerConnectionManager.GetInstance().connection == null)
             {

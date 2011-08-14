@@ -534,6 +534,12 @@ namespace PathfindingTest.Units
                 {
                     this.multiplayerData.RequestServerID();
                 }
+
+                if (this.multiplayerData != null)
+                {
+                    // Make sure everyone knows of this unit
+                    Synchronizer.GetInstance().QueueUnit(this);
+                }
             }
         }
 
