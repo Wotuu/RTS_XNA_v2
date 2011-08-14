@@ -110,10 +110,13 @@ namespace MapEditor.Helpers
             XmlDocument xmldoc = new XmlDocument();
             xmldoc.Load(filename);
 
-            XmlNode Players = xmldoc.GetElementsByTagName("Players")[0];
-            for (int n = 0; n < Players.ChildNodes.Count; n++)
+            XmlNodeList Players = xmldoc.GetElementsByTagName("Players");
+            if (Players == null || Players.Count == 0) return;
+            XmlNode PlayerNodes = Players[0];
+            for (int n = 0; n < PlayerNodes.ChildNodes.Count; n++)
             {
-                Form1.Players.Add(new Player(int.Parse(Players.ChildNodes[n].Attributes["x"].Value),int.Parse(Players.ChildNodes[n].Attributes["x"].Value)));
+                Form1.Players.Add(new Player(int.Parse(PlayerNodes.ChildNodes[n].Attributes["x"].Value), 
+                    int.Parse(PlayerNodes.ChildNodes[n].Attributes["x"].Value)));
                 //new Node(Form1.CollisionMap, int.Parse(Nodes.ChildNodes[n].Attributes["x"].Value), int.Parse(Nodes.ChildNodes[n].Attributes["y"].Value), graphicsdevice);
                 //new Node(Form1.CollisionMap, 5  * n, 5 * n, graphicsdevice);
             }

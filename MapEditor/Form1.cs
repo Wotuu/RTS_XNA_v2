@@ -159,6 +159,8 @@ namespace MapEditor
 
             FileStream streamnode = new FileStream("./Content/node.png", FileMode.Open);
             nodetext = Texture2D.FromStream(GraphicsDevice, streamnode);
+            streamnode.Close();
+            streamnode.Dispose();
 
             EraseTexture = Util.GetCustomTexture2D(spriteBatch, Color.Black);
             loadtileset();
