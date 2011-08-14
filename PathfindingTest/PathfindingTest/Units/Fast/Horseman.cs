@@ -20,7 +20,7 @@ namespace PathfindingTest.Units.Fast
         {
             this.baseDamage = (int)Unit.Damage.Horseman;
             this.type = Type.Fast;
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/horseman");
+            this.texture = TextureManager.GetInstance().GetTexture(this.type);
 
             this.collisionRadius = texture.Width / 2;
             this.halfTextureWidth = this.texture.Width / 2;

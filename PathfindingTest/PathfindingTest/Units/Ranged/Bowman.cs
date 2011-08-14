@@ -26,7 +26,7 @@ namespace PathfindingTest.Units
 
             this.type = Type.Ranged;
 
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/bowman");
+            this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.halfTextureWidth = this.texture.Width / 2;
             this.halfTextureHeight = this.texture.Height / 2;
             // Console.Out.WriteLine("Constructed a bowman @ " + this.GetLocation() + " (" + x + ", " + y + ")");

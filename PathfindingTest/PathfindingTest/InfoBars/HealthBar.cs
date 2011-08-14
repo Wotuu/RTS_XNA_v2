@@ -37,7 +37,7 @@ namespace PathfindingTest.Units
 
         public HealthBar(Unit unit)
         {
-            texture = Game1.GetInstance().Content.Load<Texture2D>("Misc/solid");
+            texture = TextureManager.GetInstance().GetSolidTexture();
             this.unit = unit;
             this.type = Type.Unit;
 
@@ -50,7 +50,7 @@ namespace PathfindingTest.Units
 
         public HealthBar(Building building)
         {
-            texture = Game1.GetInstance().Content.Load<Texture2D>("Misc/solid");
+            texture = TextureManager.GetInstance().GetSolidTexture();
             this.building = building;
             this.type = Type.Building;
 

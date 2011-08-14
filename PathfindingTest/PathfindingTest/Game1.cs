@@ -152,8 +152,9 @@ namespace PathfindingTest
             toMerge = new Texture2D[,] { {red, green, red}, {blue, black, blue} };*/
 
             //testTexture = new MiniMap().GetScaledInstance(testTexture, 0.75f);
+            TextureManager.GetInstance();
 
-            DrawUtil.lineTexture = this.Content.Load<Texture2D>("Misc/solid");
+            DrawUtil.lineTexture = TextureManager.GetInstance().GetSolidTexture();
             font = Content.Load<SpriteFont>("Fonts/Arial");
             ChildComponent.DEFAULT_FONT = font;
 

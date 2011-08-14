@@ -42,7 +42,7 @@ namespace PathfindingTest.Buildings
             this.maxHealth = 1000f;
             this.currentHealth = 0f;
 
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Buildings/Resources");
+            this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.animationFont = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/ResourceFont");
 
             this.resourceRange = new Circle(100, this, c);
@@ -55,9 +55,13 @@ namespace PathfindingTest.Buildings
             this.drawAnimation = false;
             this.animationCounter = 0;
 
-            foreach (ResourceGather rg in p.buildings)
+            foreach (Building b in p.buildings)
             {
-                rg.drawRange = true;
+                if (b is ResourceGather)
+                {
+                    ResourceGather rg = (ResourceGather)b;
+                    rg.drawRange = true;
+                }
             }
         }
 
@@ -93,7 +97,9 @@ namespace PathfindingTest.Buildings
             {
                 float newAlpha = 256 - ((animationCounter / 76f) * 255);
                 Vector2 fontVector = animationFont.MeasureString("+" + resources);
-                sb.DrawString(animationFont, "+" + resources, new Vector2(x + (texture.Width / 2) - (fontVector.X / 2), y + (texture.Height / 2) - (fontVector.Y) - (animationCounter / 2)), new Color(255, 255, 255, newAlpha));
+                sb.DrawString(animationFont, "+" + resources, new Vector2(x + (texture.Width / 2) - (fontVector.X / 2) - Game1.GetInstance().drawOffset.X,
+                                                                          y + (texture.Height / 2) - (fontVector.Y) - (animationCounter / 2) - Game1.GetInstance().drawOffset.Y),
+                              new Color(255, 255, 255, newAlpha), 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0997f);
             }
         }
 
@@ -103,8 +109,6 @@ namespace PathfindingTest.Buildings
             this.constructedBy = e;
             e.constructing = this;
             this.mesh = Game1.GetInstance().map.collisionMap.PlaceBuilding(this.DefineRectangle());
-            this.originWaypoint = new Point((int)this.x + (this.texture.Width / 2), (int)this.y + this.texture.Height + 20);
-            this.waypoint = new Point((int)this.x + (this.texture.Width / 2), (int)this.y + this.texture.Height + 20);
             Game1.GetInstance().IsMouseVisible = true;
 
             if (Game1.GetInstance().IsMultiplayerGame() &&
@@ -116,9 +120,13 @@ namespace PathfindingTest.Buildings
             p.resources -= Building.GetCost(this.type);
             resources = CalculateRPS();
 
-            foreach (ResourceGather rg in p.buildings)
+            foreach (Building b in p.buildings)
             {
-                rg.drawRange = false;
+                if (b is ResourceGather)
+                {
+                    ResourceGather rg = (ResourceGather)b;
+                    rg.drawRange = false;
+                }
             }
         }
 
@@ -128,12 +136,17 @@ namespace PathfindingTest.Buildings
 
             double rs = 50;
 
-            foreach (ResourceGather rg in p.buildings)
+            foreach (Building b in p.buildings)
             {
-                if (rg != this)
+                if (b is ResourceGather)
                 {
-                    double overlap = 1 - resourceRange.CalculateOverlap(rg.resourceRange);
-                    rs = overlap * rs;
+                    ResourceGather rg = (ResourceGather)b;
+
+                    if (rg != this)
+                    {
+                        double overlap = 1 - resourceRange.CalculateOverlap(rg.resourceRange);
+                        rs = overlap * rs;
+                    }
                 }
             }
 

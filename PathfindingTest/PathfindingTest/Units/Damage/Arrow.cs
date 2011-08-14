@@ -17,8 +17,8 @@ namespace PathfindingTest.Units.Projectiles
         public Arrow(Unit parent, Damageable target)
             : base(parent, target, DamageEvent.DamageType.Ranged, 4.0f, 300, 15)
         {
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/Projectiles/wooden_arrow_scale");
-            this.collisionPointTex = Game1.GetInstance().Content.Load<Texture2D>("Misc/solid");
+            this.texture = TextureManager.GetInstance().GetArrowTexture();
+            this.collisionPointTex = TextureManager.GetInstance().GetSolidTexture();
         }
 
         internal override void Draw(SpriteBatch sb)

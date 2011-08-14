@@ -26,7 +26,7 @@ namespace PathfindingTest.Units.Melee
             this.y = y;
             this.type = Type.Melee;
 
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/melee");
+            this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.halfTextureWidth = this.texture.Width / 2;
             this.halfTextureHeight = this.texture.Height / 2;
         }

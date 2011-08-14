@@ -619,7 +619,10 @@ namespace PathfindingTest.Players
             {
                 foreach (Building b in buildingSelection.buildings)
                 {
-                    b.waypoint = m.location;
+                    if (b.type != Building.Type.Resources)
+                    {
+                        b.waypoint = m.location;
+                    }
                 }
             }
         }

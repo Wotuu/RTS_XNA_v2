@@ -36,7 +36,7 @@ namespace PathfindingTest.Units
         {
             this.baseDamage = (int)Unit.Damage.Engineer;
             this.type = Type.Engineer;
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Units/Engineer");
+            this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.collisionRadiusTexture = Game1.GetInstance().Content.Load<Texture2D>("Misc/patternPreview");
 
             // Console.Out.WriteLine("Constructed an engineer @ " + this.GetLocation() + " (" + x + ", " + y + ")");

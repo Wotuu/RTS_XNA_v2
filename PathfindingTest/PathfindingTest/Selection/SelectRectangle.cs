@@ -23,7 +23,7 @@ namespace PathfindingTest.Selection
         private void init()
         {
             Game1 game = Game1.GetInstance();
-            texture = game.Content.Load<Texture2D>("Misc/solid");
+            texture = TextureManager.GetInstance().GetSolidTexture();
             borderWidth = 2;
         }
 

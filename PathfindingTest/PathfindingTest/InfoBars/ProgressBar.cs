@@ -22,7 +22,7 @@ namespace PathfindingTest.Buildings
 
         public ProgressBar(Building building)
         {
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Misc/solid");
+            this.texture = TextureManager.GetInstance().GetSolidTexture();
             this.building = building;
 
             this.z = this.building.z - 0.1f;

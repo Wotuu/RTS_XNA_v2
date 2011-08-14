@@ -26,7 +26,7 @@ namespace PathfindingTest.Buildings
             this.maxHealth = 2000f;
             this.currentHealth = 0f;
 
-            this.texture = Game1.GetInstance().Content.Load<Texture2D>("Buildings/Barracks");
+            this.texture = TextureManager.GetInstance().GetTexture(this.type);
         }
 
         public override void Update(KeyboardState ks, MouseState ms)
