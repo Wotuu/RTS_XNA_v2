@@ -30,11 +30,14 @@ namespace MapEditor
         public static TileMap.TileMap tileMap = null;
         public SpriteBatch spriteBatch;
         public SpriteBatch spriteBatchMiniMap;
+        public static List<Player> Players = new List<Player>();
+
 
         public Texture2D cursor;
         public Texture2D EraseTexture;
         public static Texture2D tilemaptexture;
         public static Texture2D linetexture;
+        public Texture2D nodetext;
         
 
         public static CollisionMap CollisionMap;
@@ -76,7 +79,9 @@ namespace MapEditor
             CollisionPaint = 6,
             EraseCollision = 7,
             AddNode = 8,
-            RemoveNode = 9
+            RemoveNode = 9,
+            AddPlayer = 10,
+            RemovePlayer = 11
         }
         public struct MarqueeData
         {
@@ -135,9 +140,6 @@ namespace MapEditor
         }
         #endregion
 
-
-
-
         #region Display
         void tileDisplay1_OnInitialize(object sender, EventArgs e)
         {
@@ -154,6 +156,9 @@ namespace MapEditor
             linetexture = Texture2D.FromStream(GraphicsDevice, stream2);
             stream2.Close();
             stream2.Dispose();
+
+            FileStream streamnode = new FileStream("./Content/node.png", FileMode.Open);
+            nodetext = Texture2D.FromStream(GraphicsDevice, streamnode);
 
             EraseTexture = Util.GetCustomTexture2D(spriteBatch, Color.Black);
             loadtileset();
@@ -202,31 +207,46 @@ namespace MapEditor
                 KeyboardState ks = Keyboard.GetState();
                 if (ks.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Left))
                 {
-
+                    //Form1.camera.Position.X = (rectposx * (Form1.tileMap.MapWidth * Engine.TileWidth)) / this.Width;
+                    //Form1.camera.Position.Y = (rectposy * (Form1.tileMap.MapHeight * Engine.TileHeight)) / this.Height;
                     camera.Position.X = MathHelper.Clamp(camera.Position.X - 8, 0, (tileMap.MapWidth - (tileMapDisplay1.Width / Engine.TileWidth)) * Engine.TileWidth);
+                   moveminimaprect();
                 }
 
                 if (ks.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Right))
                 {
 
                     camera.Position.X = MathHelper.Clamp(camera.Position.X + 8, 0, (tileMap.MapWidth - (tileMapDisplay1.Width / Engine.TileWidth)) * Engine.TileWidth);
+                    moveminimaprect();
                 }
 
                 if (ks.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Up))
                 {
 
                     camera.Position.Y = MathHelper.Clamp(camera.Position.Y - 8, 0, (tileMap.MapHeight - (tileMapDisplay1.Height / Engine.TileHeight)) * Engine.TileHeight);
+                    moveminimaprect();
                 }
 
                 if (ks.IsKeyDown(Microsoft.Xna.Framework.Input.Keys.Down))
                 {
 
                     camera.Position.Y = MathHelper.Clamp(camera.Position.Y + 8, 0, (tileMap.MapHeight - (tileMapDisplay1.Height / Engine.TileHeight)) * Engine.TileHeight);
+                    moveminimaprect();
                 }
 
-       
+               
+
+                
 
             }
+        }
+
+        private void moveminimaprect()
+        {
+            miniMapDisplay1.rectposy = ((int)camera.Position.Y * (miniMapDisplay1.Height)) / (tileMap.MapHeight * Engine.TileHeight);
+            miniMapDisplay1.rectposx = ((int)camera.Position.X * (miniMapDisplay1.Width)) / (tileMap.MapWidth * Engine.TileWidth);
+            miniMapDisplay1.onlyupdaterect = true;
+            miniMapDisplay1.Invalidate();
         }
 
         private void Render()
@@ -252,7 +272,16 @@ namespace MapEditor
                 DrawDisplay();
                 //CollisionmapDrawn
 
-                
+                //Players drawen
+
+                foreach (Player p in Players)
+                {
+                    if (p.x > camera.Position.X && p.x < (camera.Position.X + tileMapDisplay1.Width) && p.y > camera.Position.Y && p.y < (camera.Position.Y + tileMapDisplay1.Height))
+                    {
+                        spriteBatch.Draw(nodetext, new Rectangle(p.x - (int)camera.Position.X, p.y - (int)camera.Position.Y, nodetext.Width * 2, nodetext.Height * 2), Color.Yellow);
+                    }
+                    
+                }
                
                 //spriteBatch.Draw(CollisionMap, new Rectangle(0, 0, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight), Color.White);
              
@@ -442,6 +471,7 @@ namespace MapEditor
             CollisionMap = new CollisionMap(GraphicsDevice, mapform.MapWidth * Engine.TileWidth, mapform.MapHeight * Engine.TileHeight,true,Util.GetQuadDepth(mapform.MapWidth));
             //CollisionData  = new int[(mapform.MapWidth * Engine.TileWidth) * (mapform.MapHeight * Engine.TileHeight)];
             currentLayer = tileMap.layers[0];
+            Players.Clear();
             PathfindingNodeManager.GetInstance().nodeList.Clear();
         }
 
@@ -470,6 +500,35 @@ namespace MapEditor
                 CollisionMap.collisionMapName = savefile.FileName.Substring(savefile.FileName.LastIndexOf('\\')).Replace(".xml", "");
 
                 CollisionMap.SaveToPng();
+
+                //Minimap Preview saven
+
+                if (miniMapDisplay1.MiniMapText != null)
+                {
+                    FileStream savestream = new FileStream(savefile.FileName.Substring(0, savefile.FileName.LastIndexOf('\\')) + savefile.FileName.Substring(savefile.FileName.LastIndexOf('\\')).Replace(".xml", "") + savefile.FileName.Substring(savefile.FileName.LastIndexOf('\\')).Replace(".xml", "") + "_preview.png",FileMode.OpenOrCreate);
+                    
+                    //miniMapDisplay1.MiniMapText.SaveAsPng(savestream, miniMapDisplay1.Width, miniMapDisplay1.Height);
+
+                    Texture2D FinalMapText = new Texture2D(GraphicsDevice,miniMapDisplay1.Width,miniMapDisplay1.Height);
+                    int[] finalmapar = new int[miniMapDisplay1.Width * miniMapDisplay1.Height];
+                    int[] oldmapar = new int[miniMapDisplay1.MiniMapText.Width * miniMapDisplay1.MiniMapText.Height];
+                    miniMapDisplay1.MiniMapText.GetData(oldmapar);
+                    int count = 0;
+                    for(int i = 0; i < (miniMapDisplay1.Width * miniMapDisplay1.Height); i++){
+
+                        if (i % miniMapDisplay1.Width == 0 && i != 0)
+                        {
+                            count += miniMapDisplay1.MiniMapText.Width - miniMapDisplay1.Width;
+                        }
+                        finalmapar[i] = oldmapar[count];
+                        count++;
+                    }
+                    FinalMapText.SetData(finalmapar);
+                    //int(
+                    FinalMapText.SaveAsPng(savestream, miniMapDisplay1.Width, miniMapDisplay1.Height);
+                    savestream.Close();
+                    savestream.Dispose();
+                }
             }
         }
 
@@ -484,6 +543,7 @@ namespace MapEditor
             
             if (openfile.ShowDialog() == DialogResult.OK)
             {
+                Players.Clear();
                 tileMap = new TileMap.TileMap(1, 1);
 
                tileMap = tileMap.opentilemap(openfile.FileName);
@@ -494,6 +554,7 @@ namespace MapEditor
                CollisionMap.LoadMap(openfile.FileName.Substring(0, openfile.FileName.LastIndexOf('\\')), openfile.FileName.Substring(openfile.FileName.LastIndexOf('\\')).Replace(".xml", ""));
                PathfindingNodeManager.GetInstance().nodeList.Clear();
                 Util.LoadNodes(openfile.FileName, GraphicsDevice);
+                Util.LoadPlayers(openfile.FileName);
                 CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
                currentLayer = tileMap.layers[0];
                
@@ -578,7 +639,11 @@ namespace MapEditor
                 isLeftMouseDown = false;
                 //MarqueeSelection.InitialLocation = new System.Drawing.Point() ;
                 drawingdone = true;
-                DoBrushLogic(sender, e);
+                if (currentbrush != Brush.AddNode && currentbrush != Brush.AddPlayer)
+                {
+
+                    DoBrushLogic(sender, e);
+                }
                 MarqueeSelection.Show = false;
                 MarqueeSelection.FinalLocation = MarqueeSelection.InitialLocation;
 
@@ -722,6 +787,9 @@ namespace MapEditor
             }
 
         }
+
+
+      
 
     }
 }

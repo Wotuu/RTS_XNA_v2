@@ -442,10 +442,13 @@ namespace AStarCollisionMap.Collision
                     this.collisionMapName + "/");
             foreach (Quad quad in this.tree.leafList)
             {
-                Texture2D tex = quad.collisionTexture.texture;
-                tex.SaveAsPng(new FileStream(this.collisionMapPath + "/" +
+                FileStream save = new FileStream(this.collisionMapPath + "/" +
                     this.collisionMapName + "/" + this.collisionMapName + "_" + quad.imageX + "_" + quad.imageY + ".png", 
-                FileMode.OpenOrCreate), tex.Width, tex.Height);
+                FileMode.OpenOrCreate);
+                Texture2D tex = quad.collisionTexture.texture;
+                tex.SaveAsPng(save, tex.Width, tex.Height);
+                save.Close();
+                save.Dispose();
             }
         }
 

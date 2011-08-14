@@ -71,6 +71,20 @@ namespace MapEditor
             CheckButton(BtnRemoveNode);
         }
 
+        private void Addplayer_Click(object sender, EventArgs e)
+        {
+            currentbrush = Brush.AddPlayer;
+            CheckButton(Addplayer);
+        }
+
+        private void Removeplayer_Click(object sender, EventArgs e)
+        {
+            currentbrush = Brush.RemovePlayer;
+            CheckButton(Removeplayer);
+        }
+
+
+
 
         private void CheckButton(ToolStripButton btn)
         {
@@ -83,6 +97,8 @@ namespace MapEditor
             BtnEraseCollision.Checked = false;
             BtnAddNode.Checked = false;
             BtnRemoveNode.Checked = false;
+            Addplayer.Checked = false;
+            Removeplayer.Checked = false;
             btn.Checked = true;
         }
         private void TBCollisionSize_KeyPress(object sender, KeyPressEventArgs e)
@@ -136,6 +152,12 @@ namespace MapEditor
                     break;
                 case Brush.RemoveNode:
                     RemoveNode(sender, e);
+                    break;
+                case Brush.AddPlayer:
+                    AddPlayer(sender, e);
+                    break;
+                case Brush.RemovePlayer:
+                    RemovePlayer(sender, e);
                     break;
                    
             }
@@ -323,6 +345,28 @@ namespace MapEditor
                     break;
                 }
             }
+        }
+
+        private void AddPlayer(object sender, MouseEventArgs e)
+        {
+            Players.Add(new Helpers.Player(e.X + (int)camera.Position.X,e.Y + (int) camera.Position.Y));
+        }
+
+        private void RemovePlayer(object sender, MouseEventArgs e)
+        {
+            Rectangle mouserect = new Rectangle(e.X - nodetext.Width, e.Y - nodetext.Height, nodetext.Width * 2, nodetext.Height * 2);
+            List<Helpers.Player> removelist = new List<Helpers.Player>();
+            foreach (Helpers.Player p in Players)
+            {
+                if(p.x > (mouserect.X + (int)camera.Position.X)  && p.x < ((mouserect.X + (int)camera.Position.X) + mouserect.Width) && p.y > (mouserect.Y + (int)camera.Position.Y)  && p.y < ((mouserect.Y + (int)camera.Position.Y) + mouserect.Height)){
+                    removelist.Add(p);
+                }
+            }
+            foreach (Helpers.Player p in removelist)
+            {
+                Players.Remove(p);
+            }
+
         }
 
         /// <summary>

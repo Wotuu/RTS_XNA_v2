@@ -58,8 +58,11 @@
             this.BtnDrawNodes = new System.Windows.Forms.ToolStripButton();
             this.BtnAddNode = new System.Windows.Forms.ToolStripButton();
             this.BtnRemoveNode = new System.Windows.Forms.ToolStripButton();
-            this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
+            this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
+            this.Addplayer = new System.Windows.Forms.ToolStripButton();
+            this.Removeplayer = new System.Windows.Forms.ToolStripButton();
             this.miniMapDisplay1 = new MapEditor.Display.miniMapDisplay();
+            this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -70,7 +73,7 @@
             this.fIleToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(1264, 24);
+            this.menuStrip1.Size = new System.Drawing.Size(1295, 24);
             this.menuStrip1.TabIndex = 1;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -117,7 +120,7 @@
             // 
             this.PnlPaletteContainer.Location = new System.Drawing.Point(843, 55);
             this.PnlPaletteContainer.Name = "PnlPaletteContainer";
-            this.PnlPaletteContainer.Size = new System.Drawing.Size(400, 298);
+            this.PnlPaletteContainer.Size = new System.Drawing.Size(400, 383);
             this.PnlPaletteContainer.TabIndex = 2;
             // 
             // toolStrip1
@@ -142,10 +145,13 @@
             this.TBCollisionSize,
             this.BtnDrawNodes,
             this.BtnAddNode,
-            this.BtnRemoveNode});
+            this.BtnRemoveNode,
+            this.toolStripSeparator4,
+            this.Addplayer,
+            this.Removeplayer});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1264, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1295, 25);
             this.toolStrip1.TabIndex = 3;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -325,27 +331,52 @@
             this.BtnRemoveNode.Text = "Remove a node";
             this.BtnRemoveNode.Click += new System.EventHandler(this.BtnRemoveNode_Click);
             // 
+            // toolStripSeparator4
+            // 
+            this.toolStripSeparator4.Name = "toolStripSeparator4";
+            this.toolStripSeparator4.Size = new System.Drawing.Size(6, 25);
+            // 
+            // Addplayer
+            // 
+            this.Addplayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.Addplayer.Image = ((System.Drawing.Image)(resources.GetObject("Addplayer.Image")));
+            this.Addplayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Addplayer.Name = "Addplayer";
+            this.Addplayer.Size = new System.Drawing.Size(23, 22);
+            this.Addplayer.Text = "toolStripButton1";
+            this.Addplayer.Click += new System.EventHandler(this.Addplayer_Click);
+            // 
+            // Removeplayer
+            // 
+            this.Removeplayer.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.Removeplayer.Image = ((System.Drawing.Image)(resources.GetObject("Removeplayer.Image")));
+            this.Removeplayer.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.Removeplayer.Name = "Removeplayer";
+            this.Removeplayer.Size = new System.Drawing.Size(23, 22);
+            this.Removeplayer.Text = "toolStripButton2";
+            this.Removeplayer.Click += new System.EventHandler(this.Removeplayer_Click);
+            // 
+            // miniMapDisplay1
+            // 
+            this.miniMapDisplay1.Location = new System.Drawing.Point(843, 455);
+            this.miniMapDisplay1.Name = "miniMapDisplay1";
+            this.miniMapDisplay1.Size = new System.Drawing.Size(400, 400);
+            this.miniMapDisplay1.TabIndex = 4;
+            this.miniMapDisplay1.Text = "miniMapDisplay1";
+            // 
             // tileMapDisplay1
             // 
             this.tileMapDisplay1.Location = new System.Drawing.Point(12, 55);
             this.tileMapDisplay1.Name = "tileMapDisplay1";
-            this.tileMapDisplay1.Size = new System.Drawing.Size(800, 640);
+            this.tileMapDisplay1.Size = new System.Drawing.Size(800, 800);
             this.tileMapDisplay1.TabIndex = 0;
             this.tileMapDisplay1.Text = "tileMapDisplay1";
-            // 
-            // miniMapDisplay1
-            // 
-            this.miniMapDisplay1.Location = new System.Drawing.Point(843, 398);
-            this.miniMapDisplay1.Name = "miniMapDisplay1";
-            this.miniMapDisplay1.Size = new System.Drawing.Size(400, 297);
-            this.miniMapDisplay1.TabIndex = 4;
-            this.miniMapDisplay1.Text = "miniMapDisplay1";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1264, 710);
+            this.ClientSize = new System.Drawing.Size(1295, 858);
             this.Controls.Add(this.miniMapDisplay1);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.PnlPaletteContainer);
@@ -395,6 +426,9 @@
         private System.Windows.Forms.ToolStripButton BtnAddNode;
         private System.Windows.Forms.ToolStripButton BtnRemoveNode;
         private Display.miniMapDisplay miniMapDisplay1;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
+        private System.Windows.Forms.ToolStripButton Addplayer;
+        private System.Windows.Forms.ToolStripButton Removeplayer;
     }
 }
 

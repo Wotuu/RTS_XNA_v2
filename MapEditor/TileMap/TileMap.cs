@@ -168,6 +168,18 @@ namespace MapEditor.TileMap
                 NodeElement.SetAttribute("y", node.y.ToString());
                 Nodes.AppendChild(NodeElement);
             }
+
+
+            //Players
+            XmlElement PlayersElement = mapxml.CreateElement("Players");
+            rootNode.AppendChild(PlayersElement);
+            foreach (Helpers.Player p in Form1.Players)
+            {
+                XmlElement NodeElement = mapxml.CreateElement("Player");
+                NodeElement.SetAttribute("x", p.x.ToString());
+                NodeElement.SetAttribute("y", p.y.ToString());
+                PlayersElement.AppendChild(NodeElement);
+            }
             mapxml.Save(filename);
         }
 
