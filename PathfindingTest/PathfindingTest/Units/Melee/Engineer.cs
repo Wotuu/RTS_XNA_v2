@@ -34,9 +34,11 @@ namespace PathfindingTest.Units
         public Engineer(Player p, int x, int y)
             : base(p, x, y, 1f, 1f, 1f, 1f)
         {
-            this.baseDamage = (int)Unit.Damage.Engineer;
+            this.baseDamage = (int) Unit.Damage.Engineer;
             this.type = Type.Engineer;
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
+            this.visionRange = (float) VisionRange.Engineer;
+            
             this.collisionRadiusTexture = Game1.GetInstance().Content.Load<Texture2D>("Misc/patternPreview");
 
             // Console.Out.WriteLine("Constructed an engineer @ " + this.GetLocation() + " (" + x + ", " + y + ")");

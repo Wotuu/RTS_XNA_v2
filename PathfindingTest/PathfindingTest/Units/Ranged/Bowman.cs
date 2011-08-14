@@ -25,6 +25,7 @@ namespace PathfindingTest.Units
             this.baseDamage = baseDamage;
 
             this.type = Type.Ranged;
+            this.visionRange = (float) VisionRange.Bowman;
 
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.halfTextureWidth = this.texture.Width / 2;
@@ -36,18 +37,21 @@ namespace PathfindingTest.Units
         {
             UpdateMovement();
             AttemptReload();
-            if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+            if (this.job != Unit.Job.Moving)
             {
-                UpdateAttack();
-            }
-            else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
-            {
-                UpdateDefense();
-            }
+                if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+                {
+                    UpdateAttack();
+                }
+                else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
+                {
+                    UpdateDefense();
+                }
 
-            if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
-            {
-                TryToSwing();
+                if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
+                {
+                    TryToSwing();
+                }
             }
         }
 

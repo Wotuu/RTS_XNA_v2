@@ -70,6 +70,12 @@ namespace PathfindingTest
         public int mapMoveSensitivity { get; set; }
         public GameMap map { get; set; }
 
+        public Boolean isFoggy = false;
+
+        public RenderTarget2D lightTarget;
+        public RenderTarget2D mainTarget;
+        public Effect basicFogOfWarEffect;
+
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
         {
@@ -158,6 +164,11 @@ namespace PathfindingTest
             font = Content.Load<SpriteFont>("Fonts/Arial");
             ChildComponent.DEFAULT_FONT = font;
 
+            basicFogOfWarEffect = Content.Load<Effect>("Fog/BasicFogOfWar");
+
+            mainTarget = CreateRenderTarget();
+            lightTarget = CreateRenderTarget();
+
             XNAMessageDialog.CLIENT_WINDOW_WIDTH = graphics.PreferredBackBufferWidth;
             XNAMessageDialog.CLIENT_WINDOW_HEIGHT = graphics.PreferredBackBufferHeight;
             graphics.PreferMultiSampling = true;
@@ -200,6 +211,12 @@ namespace PathfindingTest
             if (Game1.GetInstance().map != null)
                 Game1.GetInstance().map.Dispose();
         }
+
+        private RenderTarget2D CreateRenderTarget()
+        {
+            return new RenderTarget2D(GraphicsDevice, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+        }
+
         #endregion
 
         /// <summary>
@@ -440,6 +457,11 @@ namespace PathfindingTest
             else if (sm.gameState == StateManager.State.GameRunning ||
                sm.gameState == StateManager.State.GamePaused)
             {
+                if (isFoggy)
+                {
+                    GraphicsDevice.SetRenderTarget(mainTarget);
+                    GraphicsDevice.Clear(Color.Black);
+                }
                 //quadTree.Draw(spriteBatch);
                 // map.collisionMap.DrawMap(spriteBatch);
                 map.Draw(spriteBatch);
@@ -455,8 +477,67 @@ namespace PathfindingTest
                     {
                         p.Draw(this.spriteBatch);
                     }
+
+                    spriteBatch.End();
                 }
                 catch (Exception e) { }
+
+                try
+                {
+                    foreach (Player p in players)
+                    {
+                        if (p == CURRENT_PLAYER && isFoggy)
+                        {
+                            GraphicsDevice.SetRenderTarget(lightTarget);
+                            GraphicsDevice.Clear(Color.Black);
+
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+                            CURRENT_PLAYER.DrawLights(gameTime, spriteBatch);
+
+                            spriteBatch.End();
+
+                            GraphicsDevice.SetRenderTarget(null);
+
+                            Texture2D mainTex = mainTarget;
+                            Texture2D lightTex = lightTarget;
+
+                            basicFogOfWarEffect.Parameters["LightsTexture"].SetValue(lightTex);
+
+                            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+                            foreach (EffectPass effect in basicFogOfWarEffect.CurrentTechnique.Passes)
+                            {
+                                effect.Apply();
+                            }
+
+                            spriteBatch.Draw(
+                                mainTex,
+                                new Rectangle(0, 0, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight),
+                                Color.White
+                            );
+
+                            spriteBatch.End();
+                        }
+                    }
+                }
+                catch (Exception e) { }
+
+                GraphicsDevice.SetRenderTarget(null);
+
+
+                spriteBatch.Begin(SpriteSortMode.BackToFront, null);
+
+                try
+                {
+
+                    foreach (Player p in players)
+                    {
+                        p.DrawHud(this.spriteBatch);
+                    }
+                }
+                catch (Exception e) { }
+
             }
             else if (sm.gameState == StateManager.State.GameShutdown)
             {

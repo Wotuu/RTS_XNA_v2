@@ -85,7 +85,7 @@ namespace PathfindingTest.Units.Projectiles
 
 
         /// <summary>
-        /// Updates the movement of this unit.
+        /// Updates the movement of this projectile.
         /// </summary>
         protected void UpdateMovement()
         {
@@ -94,13 +94,14 @@ namespace PathfindingTest.Units.Projectiles
         }
 
         /// <summary>
-        /// Set the point this Engineer has to move to.
+        /// Set the point this Projectile has to move to.
         /// direction != direction is used for checking NaNExceptions.
         /// </summary>
         /// <param name="x"></param>
         /// <param name="y"></param>
         private void SetMoveToTarget(int x, int y)
         {
+            // Console.WriteLine("Projectile Movetarget Updated");
             double a = Math.Abs(this.x - x);
             double b = Math.Abs(this.y - y);
             direction = (float)Math.Atan(a / b);
@@ -113,12 +114,11 @@ namespace PathfindingTest.Units.Projectiles
         }
 
         /// <summary>
-        /// Updates the drawing position of this Engineer.
+        /// Updates the drawing position of this Projectile.
         /// </summary>
         private void Move()
         {
             if (!hasToMove) return;
-            // lkllllllllthis.SetMoveToTarget((int)this.target.x, (int)this.target.y);
 
             float xSpeedDirection = movementSpeed * (float)Math.Sin(direction);
             float ySpeedDirection = movementSpeed * (float)Math.Cos(direction);
@@ -161,16 +161,13 @@ namespace PathfindingTest.Units.Projectiles
             }
 
             // Commented = code that makes the arrow die on impact with collision
-            if (/*Game1.GetInstance().collision.CollisionAt(
-                Util.GetPointOnCircle(this.GetLocation(), this.texture.Height / 2,
-                        (float)(Util.GetHypoteneuseAngleDegrees(this.GetLocation(), this.waypoint)))) ||*/
-                Math.Abs(x - waypoint.X) < movementSpeed && Math.Abs(y - waypoint.Y) < movementSpeed)
+            if (Math.Abs(x - waypoint.X) < movementSpeed && Math.Abs(y - waypoint.Y) < movementSpeed)
             {
-                //Console.Out.WriteLine("Projectile gotten to waypoint.");
+                
                 if (target is Unit && !((Unit)target).isDead)
                 {
                     this.waypoint = new Point((int)((Unit)target).x, (int)((Unit)target).y);
-                    SetMoveToTarget((int)((Unit)target).x, (int)((Unit)target).y);
+                    SetMoveToTarget(waypoint.X, waypoint.Y);
                 }
                 else if (target is Building && !((Building)target).isDestroyed)
                 {
@@ -182,11 +179,11 @@ namespace PathfindingTest.Units.Projectiles
                     Console.WriteLine("target of unknown type, or dead");
                     this.Dispose();
                 }
+                //Console.Out.WriteLine("Projectile gotten to waypoint.");
             }
-            else
-            {
-                CheckCollision();
-            }
+
+            CheckCollision();
+
         }
 
         private void CheckCollision()
@@ -207,9 +204,8 @@ namespace PathfindingTest.Units.Projectiles
                         foreach (Unit unit in player.units)
                         {
                             // Check if the units are close enough
-                            if (unit.DefineRectangle().Contains(
-                                // Front of projectile!
-                                collisionLocation))
+                            if (unit.DefineRectangle().Contains(collisionLocation))
+                            // Front of projectile!
                             {
                                 Hit();
                             }
@@ -219,9 +215,8 @@ namespace PathfindingTest.Units.Projectiles
                     {
                         foreach (Building building in player.buildings)
                         {
-                            if (building.DefineDrawRectangle().Contains(
-                                // Front of projectile!
-                                collisionLocation))
+                            if (building.DefineRectangle().Contains(collisionLocation))
+                            // Front of projectile!
                             {
                                 Hit();
                             }

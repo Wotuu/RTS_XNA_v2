@@ -58,6 +58,7 @@ namespace PathfindingTest.Units
         public float aggroRange { get; set; }
         public float fireCooldown { get; set; }
         public float rateOfFire { get; set; }
+        public float visionRange { get; set; }
 
         public UnitMultiplayerData multiplayerData { get; set; }
 
@@ -93,6 +94,14 @@ namespace PathfindingTest.Units
             Bowman = 15,
             Swordman = 35,
             Horseman = 15
+        }
+
+        public enum VisionRange
+        {
+            Engineer = 100,
+            Bowman = 140,
+            Swordman = 120,
+            Horseman = 135
         }
 
         public abstract void Update(KeyboardState ks, MouseState ms);
@@ -170,7 +179,7 @@ namespace PathfindingTest.Units
         {
             if (this.waypoints.Count == 0)
             {
-                this.job = Unit.Job.Idle;
+                SetJob(Job.Idle);
                 return;
             }
             // Point target = this.waypoints.ElementAt(0);
@@ -178,7 +187,20 @@ namespace PathfindingTest.Units
         }
 
         /// <summary>
-        /// Set the point this Engineer has to move to.
+        /// Set's the new Job for the unit
+        /// </summary>
+        /// <param name="newJob"></param>
+        public void SetJob(Unit.Job newJob)
+        {
+            if (this.job != newJob)
+            {
+                Console.WriteLine("Unit's Job updated to + " + newJob);
+                this.job = newJob;
+            }
+        }
+
+        /// <summary>
+        /// Set the point this Unit has to move to.
         /// direction != direction is used for checking NaNExceptions.
         /// </summary>
         /// <param name="x"></param>
@@ -531,12 +553,24 @@ namespace PathfindingTest.Units
 
         /// <summary>
         /// Defines the rectangle/hitbox for the Unit.
+        /// With draw offset
+        /// </summary>
+        /// <returns></returns>
+        public Rectangle DefineDrawRectangle()
+        {
+            return new Rectangle((int)x - (texture.Width / 2) - (int)Game1.GetInstance().drawOffset.X, (int)y - (texture.Height / 2) - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
+        }
+
+        /// <summary>
+        /// Defines the rectangle/hitbox for the Unit.
+        /// without draw offset
         /// </summary>
         /// <returns></returns>
         public Rectangle DefineRectangle()
         {
-            return new Rectangle((int)x - (texture.Width / 2) - (int)Game1.GetInstance().drawOffset.X, (int)y - (texture.Height / 2) - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
+            return new Rectangle((int)x - (texture.Width / 2), (int)y - (texture.Height / 2), texture.Width, texture.Height);
         }
+        
 
         public abstract void OnAggroRecieved(AggroEvent e);
 

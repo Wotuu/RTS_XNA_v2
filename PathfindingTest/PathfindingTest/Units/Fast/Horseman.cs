@@ -18,8 +18,9 @@ namespace PathfindingTest.Units.Fast
         public Horseman(Player p, int x, int y)
             : base(p, x, y, 2f, 20f, 100f, 80)
         {
-            this.baseDamage = (int)Unit.Damage.Horseman;
+            this.baseDamage = (int) Damage.Horseman;
             this.type = Type.Fast;
+            this.visionRange = (float) VisionRange.Horseman;
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
 
             this.collisionRadius = texture.Width / 2;

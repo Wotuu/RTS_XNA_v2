@@ -54,6 +54,8 @@ namespace PathfindingTest.Buildings
         public HealthBar healthBar { get; set; }
         public ProgressBar progressBar { get; set; }
 
+        public float visionRange { get; set; }
+
         public LinkedList<Unit> constructionQueue { get; set; }
         public Point originWaypoint { get; set; }
         public Point waypoint { get; set; }
@@ -72,7 +74,8 @@ namespace PathfindingTest.Buildings
             Resources,
             Barracks,
             Factory,
-            Fortress
+            Fortress,
+            Sentry
         }
 
         public enum State
@@ -84,6 +87,15 @@ namespace PathfindingTest.Buildings
             Repairing,
             Producing,
             MultiplayerWaitingForLocation
+        }
+
+        public enum VisionRange
+        {
+            Barracks = 150,
+            Facory = 150,
+            Fortress = 175,
+            ResourceGatherer = 150,
+            Sentry = 225
         }
 
         public abstract void Update(KeyboardState ks, MouseState ms);
@@ -562,6 +574,8 @@ namespace PathfindingTest.Buildings
         {
             return new Rectangle((int)this.x - (int)Game1.GetInstance().drawOffset.X, (int)this.y - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
         }
+
+
 
         public Rectangle DefineAddedDrawRectangle()
         {

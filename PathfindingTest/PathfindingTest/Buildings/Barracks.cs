@@ -22,6 +22,7 @@ namespace PathfindingTest.Buildings
             this.constructC = new Color(this.c.R, this.c.G, this.c.B, 0);
             this.type = Type.Barracks;
             this.constructDuration = 5;
+            this.visionRange = (float) VisionRange.Barracks;
 
             this.maxHealth = 2000f;
             this.currentHealth = 0f;

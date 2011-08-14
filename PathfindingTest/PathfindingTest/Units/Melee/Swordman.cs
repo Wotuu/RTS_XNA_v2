@@ -20,7 +20,8 @@ namespace PathfindingTest.Units.Melee
         public Swordman(Player p, int x, int y)
             : base(p, x, y, 1.25f, 20f, 100f, 120)
         {
-            this.baseDamage = (int)Unit.Damage.Swordman;
+            this.baseDamage = (int) Damage.Swordman;
+            this.visionRange = (float) VisionRange.Swordman;
             this.player = p;
             this.x = x;
             this.y = y;

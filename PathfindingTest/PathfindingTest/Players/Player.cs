@@ -51,6 +51,10 @@ namespace PathfindingTest.Players
         public UnitStore rangedStore;
         public UnitStore fastStore;
 
+        public Texture2D lightTexture;
+
+        public GraphicsDevice device;
+
         /// <summary>
         /// And ID used to identify this player in multiplayer games.
         /// </summary>
@@ -67,6 +71,7 @@ namespace PathfindingTest.Players
         public Player(Alliance alliance, Color color)
         {
             Game1.GetInstance().players.AddLast(this);
+            this.device = Game1.GetInstance().GraphicsDevice;
             this.alliance = alliance;
             if (!this.alliance.members.Contains(this)) this.alliance.members.AddLast(this);
             this.color = color;
@@ -84,6 +89,8 @@ namespace PathfindingTest.Players
             fastStore = new FastStore(this);
 
             arrowManager = new ArrowManager();
+
+            lightTexture = Game1.GetInstance().Content.Load<Texture2D>("Fog/Light");
 
             MouseManager.GetInstance().mouseClickedListeners += ((MouseClickListener)this).OnMouseClick;
             MouseManager.GetInstance().mouseReleasedListeners += ((MouseClickListener)this).OnMouseRelease;
@@ -271,12 +278,16 @@ namespace PathfindingTest.Players
                 }
             }
 
+
             try
             {
                 for (int i = 0; i < this.units.Count; i++)
                 {
-                    units.ElementAt(i).Draw(sb);
+                    Unit unit = units.ElementAt(i);
+
+                    unit.Draw(sb);
                 }
+
             }
             catch (Exception e) { }
 
@@ -302,7 +313,10 @@ namespace PathfindingTest.Players
             {
                 b.Draw(sb);
             }
+        }
 
+        public void DrawHud(SpriteBatch sb)
+        {
             if (command != null)
             {
                 command.Draw(sb);
@@ -313,6 +327,41 @@ namespace PathfindingTest.Players
                 hud.Draw(sb);
             }
         }
+
+        public void DrawLights(GameTime gameTime, SpriteBatch spriteBatch)
+        {
+            foreach (Unit unit in this.units)
+            {
+                spriteBatch.Draw(
+                    lightTexture,
+                    new Vector2(unit.x, unit.y),
+                    null,
+                    Color.White,
+                    0f,
+                    new Vector2(16, 16),
+                    (unit.visionRange / lightTexture.Width * 4),
+                    SpriteEffects.None,
+                    1.0f);
+            }
+
+            foreach (Building building in this.buildings)
+            {
+                if (building.state != Building.State.Preview)
+                {
+                    spriteBatch.Draw(
+                        lightTexture,
+                        new Vector2(building.x, building.y),
+                        null,
+                        Color.White,
+                        0f,
+                        new Vector2(16, 16),
+                        (building.visionRange / lightTexture.Width * 4),
+                        SpriteEffects.None,
+                        1.0f);
+                }
+            }
+        }
+
 
         /// <summary>
         /// Whether the player is currently previewing a building
@@ -601,7 +650,7 @@ namespace PathfindingTest.Players
                                 this.currentSelection.MoveTo(previewPattern);
                             }
                             // If we're suppose to move in the first place
-                            else if( this.command == null || ( this.command != null && this.command.type != Command.Type.Repair && this.command.type != Command.Type.Defend && this.command.type != Command.Type.Attack ) )
+                            else if (this.command == null || (this.command != null && this.command.type != Command.Type.Repair && this.command.type != Command.Type.Defend && this.command.type != Command.Type.Attack))
                             {
                                 stopUnitSelection();
                                 Point offsettedMouseLocation = GetAddedOffsettedMouseLocation(m);
@@ -676,7 +725,7 @@ namespace PathfindingTest.Players
                     Point offsettedMouseLocation = GetAddedOffsettedMouseLocation(m);
                     // Point location = new Point((int)(m.location.X), (int)(m.location.Y));
                     this.previewPattern = GetNewPreviewPattern(
-                        previewPatternClick, 
+                        previewPatternClick,
                         offsettedMouseLocation,
                         (int)Util.GetHypoteneuseAngleDegrees(offsettedMouseLocation, previewPatternClick));
                     /*previewPattern = new RectanglePattern(previewPatternClick,
@@ -728,6 +777,28 @@ namespace PathfindingTest.Players
                         currentSelection, (int)Math.Ceiling(Math.Sqrt(currentSelection.units.Count)),
                         Math.Max((int)(Util.GetHypoteneuseLength(patternCenterLocation, offsetClickLocation) / 2.0), 30),
                         angle);*/
+        }
+
+        public void DrawLights(GameTime gameTime, SpriteBatch spriteBatch, Texture2D lightTexture)
+        {
+            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+            foreach (Unit unit in this.units)
+            {
+
+                spriteBatch.Draw(
+                    lightTexture,
+                    new Vector2(unit.x, unit.y),
+                    null,
+                    Color.White,
+                    0f,
+                    new Vector2(16, 16),
+                    Vector2.One * 15,
+                    SpriteEffects.None,
+                    1.0f);
+            }
+
+            spriteBatch.End();
         }
     }
 }

@@ -411,7 +411,7 @@ namespace PathfindingTest.UI
                                             u.unitToDefend = null;
                                             u.unitToStalk = null;
                                             u.waypoints.Clear();
-                                            u.job = Unit.Job.Idle;
+                                            u.SetJob(Unit.Job.Idle);
                                             u.hasToMove = false;
                                             u.buildingToDestroy = null;
                                         }

@@ -22,6 +22,8 @@ namespace PathfindingTest.Buildings
             this.type = Type.Factory;
             this.constructDuration = 8;
 
+            this.visionRange = (float) VisionRange.Facory;
+
             this.maxHealth = 3000f;
             this.currentHealth = 0f;
 

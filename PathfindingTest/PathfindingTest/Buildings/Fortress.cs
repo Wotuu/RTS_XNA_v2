@@ -22,6 +22,8 @@ namespace PathfindingTest.Buildings
             this.type = Type.Fortress;
             this.constructDuration = 15;
 
+            this.visionRange = (float)VisionRange.Fortress;
+
             this.maxHealth = 5000f;
             this.currentHealth = 0f;
 

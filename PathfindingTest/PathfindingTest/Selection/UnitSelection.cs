@@ -72,6 +72,7 @@ namespace PathfindingTest.Selection
             int count = 0;
             foreach (Unit unit in units)
             {
+                unit.SetJob(Unit.Job.Moving);
                 // This part is used for checking whether an Engineer should stop constructing or not.
                 if (unit.type == Unit.Type.Engineer)
                 {
