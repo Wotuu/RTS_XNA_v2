@@ -180,6 +180,15 @@ namespace MapEditor.TileMap
                 NodeElement.SetAttribute("y", p.y.ToString());
                 PlayersElement.AppendChild(NodeElement);
             }
+
+            // Map data
+            XmlElement DataElement = mapxml.CreateElement("Data");
+            DataElement.SetAttribute("width", this.MapWidth + "");
+            DataElement.SetAttribute("height", this.MapHeight + "");
+            DataElement.SetAttribute("tileWidth", Engine.TileWidth + "");
+            DataElement.SetAttribute("tileHeight", Engine.TileHeight + "");
+            rootNode.AppendChild(DataElement);
+
             mapxml.Save(filename);
         }
 

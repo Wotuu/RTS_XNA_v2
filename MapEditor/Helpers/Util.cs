@@ -116,7 +116,7 @@ namespace MapEditor.Helpers
             for (int n = 0; n < PlayerNodes.ChildNodes.Count; n++)
             {
                 Form1.Players.Add(new Player(int.Parse(PlayerNodes.ChildNodes[n].Attributes["x"].Value), 
-                    int.Parse(PlayerNodes.ChildNodes[n].Attributes["x"].Value)));
+                    int.Parse(PlayerNodes.ChildNodes[n].Attributes["y"].Value)));
                 //new Node(Form1.CollisionMap, int.Parse(Nodes.ChildNodes[n].Attributes["x"].Value), int.Parse(Nodes.ChildNodes[n].Attributes["y"].Value), graphicsdevice);
                 //new Node(Form1.CollisionMap, 5  * n, 5 * n, graphicsdevice);
             }

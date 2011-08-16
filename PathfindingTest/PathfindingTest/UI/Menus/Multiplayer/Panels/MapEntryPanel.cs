@@ -8,6 +8,7 @@ using XNAInterfaceComponents.ChildComponents;
 using XNAInterfaceComponents.Components;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
+using System.Xml;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
@@ -18,6 +19,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         public int padding = 10;
         public XNARadioButton previewButton { get; set; }
         public Texture2D previewTexture { get; set; }
+
+        public int selectedMapWidth { get; set; }
+        public int selectedMapHeight { get; set; }
+
+        public LinkedList<Point> mapPlayerLocations = new LinkedList<Point>();
 
         public MapEntryPanel(MapSelectionPanel parent, String mapname, int index) :
             base( parent, new Rectangle() )
@@ -34,6 +40,32 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                    stream);
             stream.Close();
             stream.Dispose();
+
+
+            XmlDocument xmldoc = new XmlDocument();
+            xmldoc.Load(Game1.MAPS_FOLDER_LOCATION + "/" + mapname + ".xml");
+
+            foreach (XmlNode rootChild in xmldoc.ChildNodes[1].ChildNodes)
+            {
+                if (rootChild.Name == "Players")
+                {
+                    this.mapPlayerLocations.Clear();
+                    foreach (XmlNode playerNode in rootChild.ChildNodes)
+                    {
+                        this.mapPlayerLocations.AddLast(
+                            new Point(
+                            Int32.Parse(playerNode.Attributes["x"].Value), Int32.Parse(playerNode.Attributes["y"].Value)
+                            ));
+                    }
+                }
+                else if (rootChild.Name == "Data")
+                {
+                    this.selectedMapWidth = Int32.Parse(rootChild.Attributes["width"].Value) *
+                        Int32.Parse(rootChild.Attributes["tileWidth"].Value);
+                    this.selectedMapHeight = Int32.Parse(rootChild.Attributes["height"].Value) *
+                        Int32.Parse(rootChild.Attributes["tileHeight"].Value);
+                }
+            }
         }
 
         /// <summary>
