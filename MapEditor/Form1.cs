@@ -557,7 +557,6 @@ namespace MapEditor
                 Util.LoadPlayers(openfile.FileName);
                 CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
                currentLayer = tileMap.layers[0];
-               
             }
 
             
