@@ -31,6 +31,7 @@ namespace PathfindingTest.UI
             Barracks,
             Factory,
             Fortress,
+            Sentry,
             Engineer,
             Melee,
             Heavy,
@@ -98,6 +99,9 @@ namespace PathfindingTest.UI
                 case Type.Fortress:
                     return "Fortress:\r\nMain Structure.\r\nConstructs Engineers";
 
+                case Type.Sentry:
+                    return "Sentry:\r\nProvides large field of\r\nvision.";
+
                 case Type.Engineer:
                     return "Engineer:\r\nAble to Construct and\r\nRepair Structures";
 
@@ -133,6 +137,9 @@ namespace PathfindingTest.UI
 
                 case Type.Fortress:
                     return Building.GetCost(Building.Type.Fortress).ToString();
+
+                case Type.Sentry:
+                    return Building.GetCost(Building.Type.Sentry).ToString();
 
                 case Type.Engineer:
                     return Unit.GetCost(Unit.Type.Engineer).ToString();

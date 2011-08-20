@@ -9,6 +9,7 @@ using XNAInterfaceComponents.Components;
 using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using System.Xml;
+using PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
@@ -20,10 +21,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         public XNARadioButton previewButton { get; set; }
         public Texture2D previewTexture { get; set; }
 
-        public int selectedMapWidth { get; set; }
-        public int selectedMapHeight { get; set; }
-
-        public LinkedList<Point> mapPlayerLocations = new LinkedList<Point>();
+        public MapPlayerLocationGroup mapPlayerLocationGroup { get; set; }
 
         public MapEntryPanel(MapSelectionPanel parent, String mapname, int index) :
             base( parent, new Rectangle() )
@@ -34,38 +32,15 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 new Rectangle(10, 5, 20, 20), parent.group, mapname);
             this.previewButton.onClickListeners += OnRadioButtonClick;
 
+            this.mapPlayerLocationGroup = new MapPlayerLocationGroup(parent,
+                new Point(MapEntryPanel.ENTRY_WIDTH + 20, 10), mapname);
+
             Stream stream = new FileStream(Game1.MAPS_FOLDER_LOCATION + "/" + mapname + "/" +
                         mapname + "_preview.png", FileMode.Open);
             this.previewTexture = Texture2D.FromStream(Game1.GetInstance().GraphicsDevice, 
                    stream);
             stream.Close();
             stream.Dispose();
-
-
-            XmlDocument xmldoc = new XmlDocument();
-            xmldoc.Load(Game1.MAPS_FOLDER_LOCATION + "/" + mapname + ".xml");
-
-            foreach (XmlNode rootChild in xmldoc.ChildNodes[1].ChildNodes)
-            {
-                if (rootChild.Name == "Players")
-                {
-                    this.mapPlayerLocations.Clear();
-                    foreach (XmlNode playerNode in rootChild.ChildNodes)
-                    {
-                        this.mapPlayerLocations.AddLast(
-                            new Point(
-                            Int32.Parse(playerNode.Attributes["x"].Value), Int32.Parse(playerNode.Attributes["y"].Value)
-                            ));
-                    }
-                }
-                else if (rootChild.Name == "Data")
-                {
-                    this.selectedMapWidth = Int32.Parse(rootChild.Attributes["width"].Value) *
-                        Int32.Parse(rootChild.Attributes["tileWidth"].Value);
-                    this.selectedMapHeight = Int32.Parse(rootChild.Attributes["height"].Value) *
-                        Int32.Parse(rootChild.Attributes["tileHeight"].Value);
-                }
-            }
         }
 
         /// <summary>
@@ -75,6 +50,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         public void OnRadioButtonClick(XNARadioButton source)
         {
             ((MapSelectionPanel)this.parent).OnMapSelectionChanged(this);
+            this.mapPlayerLocationGroup.OnMapSelectionChanged(true);
         }
     }
 }

@@ -98,6 +98,11 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         building = new ResourceGather(p, p.color);
                         break;
                     }
+                case BuildingHeaders.TYPE_SENTRY:
+                    {
+                        building = new Sentry(p, p.color);
+                        break;
+                    }
             }
             building.constructedBy = engineer;
             building.multiplayerData.serverID = serverID;

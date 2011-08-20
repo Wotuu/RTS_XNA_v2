@@ -172,7 +172,11 @@ namespace SocketLibrary.Protocol
         /// </summary>
         public const byte LOADING_WHAT = 0x27;
 
-
+        /// <summary>
+        /// Client notifies the server that he / she has changed starting position
+        /// [Header] [Int32 userID] [Int32 positionIndex]
+        /// </summary>
+        public const byte MAP_POSITION_CHANGED = 0x28;
 
 
         // 48 - 255 Yours to take

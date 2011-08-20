@@ -16,11 +16,14 @@ namespace PathfindingTest
         public Texture2D barracksTex { get; set; }
         public Texture2D factoryTex { get; set; }
         public Texture2D fortressTex { get; set; }
+        public Texture2D sentryTex { get; set; }
 
         public Texture2D engineerTex { get; set; }
         public Texture2D swordsmanTex { get; set; }
         public Texture2D bowmanTex { get; set; }
         public Texture2D horsemanTex { get; set; }
+
+        public Texture2D swordsmanHitTex { get; set; }
 
         public Texture2D hudMoveTex { get; set; }
         public Texture2D hudAttackTex { get; set; }
@@ -32,6 +35,7 @@ namespace PathfindingTest
         public Texture2D hudBarracksTex { get; set; }
         public Texture2D hudFactoryTex { get; set; }
         public Texture2D hudFortressTex { get; set; }
+        public Texture2D hudSentryTex { get; set; }
         public Texture2D hudEngineerTex { get; set; }
         public Texture2D hudSwordsmanTex { get; set; }
         public Texture2D hudBowmanTex { get; set; }
@@ -60,11 +64,14 @@ namespace PathfindingTest
             barracksTex = content.Load<Texture2D>("Buildings/Barracks");
             factoryTex = content.Load<Texture2D>("Buildings/Factory");
             fortressTex = content.Load<Texture2D>("Buildings/Fortress");
+            sentryTex = content.Load<Texture2D>("Buildings/Sentry");
 
             engineerTex = content.Load<Texture2D>("Units/Engineer");
             swordsmanTex = content.Load<Texture2D>("Units/melee");
             bowmanTex = content.Load<Texture2D>("Units/bowman");
             horsemanTex = content.Load<Texture2D>("Units/horseman");
+
+            swordsmanHitTex = content.Load<Texture2D>("Units/meleeHit");
 
             hudMoveTex = content.Load<Texture2D>("HUD/Commands/HUDMove");
             hudAttackTex = content.Load<Texture2D>("HUD/Commands/HUDAttack");
@@ -76,6 +83,7 @@ namespace PathfindingTest
             hudBarracksTex = content.Load<Texture2D>("HUD/HUDBarracks");
             hudFactoryTex = content.Load<Texture2D>("HUD/HUDFactory");
             hudFortressTex = content.Load<Texture2D>("HUD/HUDFortress");
+            hudSentryTex = content.Load<Texture2D>("HUD/HUDSentry");
             hudEngineerTex = content.Load<Texture2D>("HUD/HUDEngineer");
             hudSwordsmanTex = content.Load<Texture2D>("HUD/HUDMelee");
             hudBowmanTex = content.Load<Texture2D>("HUD/HUDRanged");
@@ -107,6 +115,18 @@ namespace PathfindingTest
             }
         }
 
+        public Texture2D GetHitTexture(Unit.Type type)
+        {
+            switch (type)
+            {
+                case Unit.Type.Melee:
+                    return swordsmanHitTex;
+
+                default:
+                    return null;
+            }
+        }
+
         public Texture2D GetTexture(Building.Type type)
         {
             switch (type)
@@ -122,6 +142,9 @@ namespace PathfindingTest
 
                 case Building.Type.Resources:
                     return resourceTex;
+
+                case Building.Type.Sentry:
+                    return sentryTex;
 
                 default:
                     return null;
@@ -155,6 +178,9 @@ namespace PathfindingTest
 
                 case HUDObject.Type.Resources:
                     return hudResourceTex;
+
+                case HUDObject.Type.Sentry:
+                    return hudSentryTex;
 
                 default:
                     return null;

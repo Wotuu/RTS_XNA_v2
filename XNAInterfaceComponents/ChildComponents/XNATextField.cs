@@ -37,7 +37,12 @@ namespace XNAInterfaceComponents.ChildComponents
             }
             set
             {
-                _text = value;
+                String result = "";
+                foreach (Char c in value.ToCharArray())
+                {
+                    if (this.font.Characters.Contains(c) || c == '\n') result += c;
+                }
+                _text = result;
                 if (_text != null)
                 {
                     this.verticalTextDisplayOffset = Math.Max((_text.Split('\n').Length - this.rows), 0);
@@ -58,7 +63,7 @@ namespace XNAInterfaceComponents.ChildComponents
                 String[] split = this.text.Split('\n');
                 value = (int)MathHelper.Clamp( (float)value, 0, (float)split.Length - (float)this.rows);
                 double rowPixels = this.GetPixelsPerScrollBarTick();
-                Console.Out.WriteLine(rowPixels);
+                // Console.Out.WriteLine(rowPixels);
 
                 this.scrollbarButtonBounds = new Rectangle(
                     this.scrollbarButtonBounds.X,

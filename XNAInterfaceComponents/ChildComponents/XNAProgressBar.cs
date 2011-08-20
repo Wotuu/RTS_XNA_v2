@@ -6,6 +6,7 @@ using XNAInterfaceComponents.AbstractComponents;
 using Microsoft.Xna.Framework;
 using XNAInterfaceComponents.ChildComponents;
 using Microsoft.Xna.Framework.Graphics;
+using System.Globalization;
 
 
 public delegate void OnProgressChange(XNAProgressBar source);
@@ -81,11 +82,11 @@ namespace XNAInterfaceComponents.ChildComponents
                 innerWidth, drawRect.Height - 2), null, this.innerColor, 0f, Vector2.Zero, SpriteEffects.None, z - 0.0002f);
 
             String percentage = this.GetPercentageCompleted() + "";
-            String[] split = percentage.Split('.');
+            String[] split = percentage.Split(NumberFormatInfo.CurrentInfo.NumberDecimalSeparator.ToArray());
             if (split.Length == 2)
             {
                 for (int i = 0; i < 2 - split[1].Length; i++) percentage += "0";
-            } else percentage += ".00";
+            } else percentage += NumberFormatInfo.CurrentInfo.NumberDecimalSeparator + "00";
             this.progressDisplayLabel.text = percentage + "%";
             /*Vector2 measure = this.font.MeasureString(target);
             

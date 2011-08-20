@@ -152,6 +152,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <param name="colorIndex">The index of the color to select.</param>
         public void SelectColor(int colorIndex)
         {
+            if (colorIndex < 0 || colorIndex >= this.colors.Length) return;
             // Start at 1, because the first one is the display button.
             for (int i = 1; i < colorDropdown.ChildCount(); i++)
             {

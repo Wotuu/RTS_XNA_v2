@@ -61,6 +61,8 @@
             this.toolStripSeparator4 = new System.Windows.Forms.ToolStripSeparator();
             this.Addplayer = new System.Windows.Forms.ToolStripButton();
             this.Removeplayer = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.AutoEdges = new System.Windows.Forms.ToolStripButton();
             this.miniMapDisplay1 = new MapEditor.Display.miniMapDisplay();
             this.tileMapDisplay1 = new MapEditor.Display.TileMapDisplay(this.components);
             this.menuStrip1.SuspendLayout();
@@ -148,7 +150,9 @@
             this.BtnRemoveNode,
             this.toolStripSeparator4,
             this.Addplayer,
-            this.Removeplayer});
+            this.Removeplayer,
+            this.toolStripSeparator5,
+            this.AutoEdges});
             this.toolStrip1.Location = new System.Drawing.Point(0, 24);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(1295, 25);
@@ -274,7 +278,7 @@
             this.BtnDrawCollision.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.BtnDrawCollision.Name = "BtnDrawCollision";
             this.BtnDrawCollision.Size = new System.Drawing.Size(23, 22);
-            this.BtnDrawCollision.Text = "toolStripButton1";
+            this.BtnDrawCollision.Text = "Paint Collision";
             this.BtnDrawCollision.ToolTipText = "Draw Collision";
             this.BtnDrawCollision.Click += new System.EventHandler(this.BtnDrawCollision_Click);
             // 
@@ -308,7 +312,7 @@
             this.BtnDrawNodes.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.BtnDrawNodes.Name = "BtnDrawNodes";
             this.BtnDrawNodes.Size = new System.Drawing.Size(23, 22);
-            this.BtnDrawNodes.Text = "toolStripButton1";
+            this.BtnDrawNodes.Text = "Automatic node creation";
             this.BtnDrawNodes.Click += new System.EventHandler(this.BtnDrawNodes_Click);
             // 
             // BtnAddNode
@@ -343,7 +347,7 @@
             this.Addplayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Addplayer.Name = "Addplayer";
             this.Addplayer.Size = new System.Drawing.Size(23, 22);
-            this.Addplayer.Text = "toolStripButton1";
+            this.Addplayer.Text = "Add player spawn";
             this.Addplayer.Click += new System.EventHandler(this.Addplayer_Click);
             // 
             // Removeplayer
@@ -353,8 +357,23 @@
             this.Removeplayer.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.Removeplayer.Name = "Removeplayer";
             this.Removeplayer.Size = new System.Drawing.Size(23, 22);
-            this.Removeplayer.Text = "toolStripButton2";
+            this.Removeplayer.Text = "Remove player spawn";
             this.Removeplayer.Click += new System.EventHandler(this.Removeplayer_Click);
+            // 
+            // toolStripSeparator5
+            // 
+            this.toolStripSeparator5.Name = "toolStripSeparator5";
+            this.toolStripSeparator5.Size = new System.Drawing.Size(6, 25);
+            // 
+            // AutoEdges
+            // 
+            this.AutoEdges.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this.AutoEdges.Image = ((System.Drawing.Image)(resources.GetObject("AutoEdges.Image")));
+            this.AutoEdges.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.AutoEdges.Name = "AutoEdges";
+            this.AutoEdges.Size = new System.Drawing.Size(23, 22);
+            this.AutoEdges.Text = "Auto edges on water";
+            this.AutoEdges.Click += new System.EventHandler(this.AutoEdges_Click);
             // 
             // miniMapDisplay1
             // 
@@ -429,6 +448,8 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
         private System.Windows.Forms.ToolStripButton Addplayer;
         private System.Windows.Forms.ToolStripButton Removeplayer;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripButton AutoEdges;
     }
 }
 

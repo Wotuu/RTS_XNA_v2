@@ -118,39 +118,18 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         {
 
                             case UnitHeaders.TYPE_BOWMAN:
-                                {
-                                    ObjectCreator.GetInstance().CreateUnit(playerID, serverID, type);
-                                    break;
-                                }
                             case UnitHeaders.TYPE_ENGINEER:
-                                {
-                                    ObjectCreator.GetInstance().CreateUnit(playerID, serverID, type);
-                                    break;
-                                }
                             case UnitHeaders.TYPE_SWORDMAN:
+                            case UnitHeaders.TYPE_HORSEMAN:
                                 {
                                     ObjectCreator.GetInstance().CreateUnit(playerID, serverID, type);
                                     break;
                                 }
                             case BuildingHeaders.TYPE_BARRACKS:
-                                {
-                                    ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, type,
-                                        PacketUtil.DecodePacketInt(p, 16));
-                                    break;
-                                }
                             case BuildingHeaders.TYPE_FACTORY:
-                                {
-                                    ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, type,
-                                        PacketUtil.DecodePacketInt(p, 16));
-                                    break;
-                                }
                             case BuildingHeaders.TYPE_FORTRESS:
-                                {
-                                    ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, type,
-                                        PacketUtil.DecodePacketInt(p, 16));
-                                    break;
-                                }
                             case BuildingHeaders.TYPE_RESOURCES_GATHER:
+                            case BuildingHeaders.TYPE_SENTRY:
                                 {
                                     ObjectCreator.GetInstance().CreateBuilding(playerID, serverID, type,
                                         PacketUtil.DecodePacketInt(p, 16));

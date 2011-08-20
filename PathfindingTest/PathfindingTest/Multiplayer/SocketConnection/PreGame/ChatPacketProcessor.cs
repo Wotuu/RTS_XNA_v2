@@ -83,6 +83,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                             GameLobby lobby = ((GameLobby)menu);
                             lobby.mapPreviewPanel.ChangeMap(mapName);
                         }
+                        Console.Out.WriteLine("Received GAME_MAP_CHANGED packet");
                         break;
                     }
                 case Headers.CLIENT_CHANNEL:

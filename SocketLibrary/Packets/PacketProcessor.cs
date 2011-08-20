@@ -19,7 +19,7 @@ namespace SocketLibrary.Packets
         public Boolean isRunning { get; set; }
         public OnPacketProcessListener onProcessPacket { get; set; }
 
-        private const int packetResendTimeoutMS = 100;
+        private const int packetResendTimeoutMS = 1000;
 
 
         public PacketProcessor()
@@ -144,6 +144,7 @@ namespace SocketLibrary.Packets
                         //{
                             // Process the packet
                             Packet receivedPacket = this.ConstructPacket(receivedPackets.First.Value.packet);
+                            Console.Out.WriteLine("Processing packet " + receivedPacket.GetHeader());
                             onProcessPacket(receivedPacket);
 
                             if (receivedPacket.GetHeader() != Headers.PACKET_RECEIVED)
@@ -188,7 +189,8 @@ namespace SocketLibrary.Packets
                         double now = (new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds);
                         if (now - pair.packet.timeSent > packetResendTimeoutMS)
                         {
-                            //Console.Out.WriteLine("Resending packet with ID " + pair.packet.GetPacketID() /* +
+                            Console.Out.WriteLine("Resending packet with ID " + pair.packet.GetPacketID() + " and header " + 
+                                ((int)pair.packet.GetHeader()).ToString("x") /* +
                             //   ".. ( " + now + " - " + pair.packet.timeSent + " )"*/);
                             this.sentPackets.Remove(pair);
                             pair.client.SendPacket(pair.packet);

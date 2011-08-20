@@ -59,6 +59,11 @@ namespace PathfindingTest.Audio
             InitiateSound();
         }
 
+        ~SoundManager()
+        {
+            this.Dispose();
+        }
+
         public void InitiateSound()
         {
             menuSound = Game1.GetInstance().Content.Load<Song>("Sounds/Menu/Menu1");
@@ -176,7 +181,11 @@ namespace PathfindingTest.Audio
 
         public void Dispose()
         {
-            MediaPlayer.Stop();
+            try
+            {
+                MediaPlayer.Stop();
+            }
+            catch (Exception e) { }
         }
     }
 }

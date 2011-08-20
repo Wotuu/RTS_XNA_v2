@@ -181,7 +181,7 @@ namespace GameServer.ChatServer
                     {
                         // Tell everyone in the lobby that a game map name change has occured
                         ChannelManager.GetInstance().GetChannelByID(1).SendChatPacketToAll(p);
-
+                        Console.Out.WriteLine("Received GAME_MAP_CHANGED packet");
                         // Tell everyone in the game itsself that a game map name change has occured
                         MultiplayerGame game = MultiplayerGameManager.GetInstance().GetGameByHost(this.user);
                         ChannelManager.GetInstance().GetChannelByID(game.id).SendChatPacketToAll(p);
@@ -314,6 +314,20 @@ namespace GameServer.ChatServer
                         break;
                     }
                 case Headers.LOADING_WHAT:
+                    {
+                        Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
+                        for (int i = 0; i < c.GetUserCount(); i++)
+                        {
+                            ServerUser serverUser = c.GetUserAt(i);
+                            if (serverUser != this.user)
+                            {
+                                // Notify everyone but the one who created the packet
+                                serverUser.chatListener.client.SendPacket(p);
+                            }
+                        }
+                        break;
+                    }
+                case Headers.MAP_POSITION_CHANGED:
                     {
                         Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
                         for (int i = 0; i < c.GetUserCount(); i++)

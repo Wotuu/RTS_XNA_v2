@@ -45,7 +45,7 @@ namespace PathfindingTest.Buildings
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.animationFont = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/ResourceFont");
 
-            this.visionRange = (float)VisionRange.ResourceGatherer;
+            this.visionRange = 50f;
 
             this.resourceRange = new Circle(100, this, c);
             this.generationBarrier = 12;
@@ -112,6 +112,21 @@ namespace PathfindingTest.Buildings
             e.constructing = this;
             this.mesh = Game1.GetInstance().map.collisionMap.PlaceBuilding(this.DefineRectangle());
             Game1.GetInstance().IsMouseVisible = true;
+
+            foreach (Building b in p.buildings)
+            {
+                if (b != this)
+                {
+                    if (b.type != Type.Resources && b.type != Type.Sentry)
+                    {
+                        if (b.waypoints.Count > 0)
+                        {
+                            Point point = b.waypoints.Last.Value;
+                            PathfindingProcessor.GetInstance().Push(b, point);
+                        }
+                    }
+                }
+            }
 
             if (Game1.GetInstance().IsMultiplayerGame() &&
                      this.p == Game1.CURRENT_PLAYER)

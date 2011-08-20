@@ -465,22 +465,22 @@ namespace PathfindingTest
                 //quadTree.Draw(spriteBatch);
                 // map.collisionMap.DrawMap(spriteBatch);
                 map.Draw(spriteBatch);
-                try
+                //try
+                //{
+                //LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
+                //foreach (Node node in list)
+                //{
+                //    node.Draw(spriteBatch);
+                //}
+
+                foreach (Player p in players)
                 {
-                    //LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
-                    //foreach (Node node in list)
-                    //{
-                    //    node.Draw(spriteBatch);
-                    //}
-
-                    foreach (Player p in players)
-                    {
-                        p.Draw(this.spriteBatch);
-                    }
-
-                    spriteBatch.End();
+                    p.Draw(this.spriteBatch);
                 }
-                catch (Exception e) { }
+
+                spriteBatch.End();
+                //}
+                //catch (Exception e) { }
 
                 try
                 {
@@ -524,7 +524,6 @@ namespace PathfindingTest
                 catch (Exception e) { }
 
                 GraphicsDevice.SetRenderTarget(null);
-
 
                 spriteBatch.Begin(SpriteSortMode.BackToFront, null);
 
