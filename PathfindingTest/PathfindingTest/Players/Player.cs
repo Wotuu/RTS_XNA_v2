@@ -36,6 +36,8 @@ namespace PathfindingTest.Players
         public BuildingSelection buildingSelection { get; set; }
         public ArrowManager arrowManager;
 
+        public Point startLocation { get; set; }
+
         public Command command { get; set; }
 
         public HUD hud { get; set; }
@@ -68,11 +70,12 @@ namespace PathfindingTest.Players
         /// Player constructor.
         /// </summary>
         /// <param name="color"></param>
-        public Player(Alliance alliance, Color color)
+        public Player(Alliance alliance, Color color, Point startLocation)
         {
             Game1.GetInstance().players.AddLast(this);
             this.device = Game1.GetInstance().GraphicsDevice;
             this.alliance = alliance;
+            this.startLocation = startLocation;
             if (!this.alliance.members.Contains(this)) this.alliance.members.AddLast(this);
             this.color = color;
 
@@ -101,8 +104,7 @@ namespace PathfindingTest.Players
         /// <summary>
         /// Spawns the starting units of this player.
         /// </summary>
-        /// <param name="location">The location to spawn them at.</param>
-        public void SpawnStartUnits(Point location)
+        public void SpawnStartUnits()
         {
             if (Game1.GetInstance().IsMultiplayerGame() &&
                 Game1.CURRENT_PLAYER != this) return;
@@ -122,7 +124,7 @@ namespace PathfindingTest.Players
                 }
 
                 UnitSelection selection = new UnitSelection(temp_units);
-                UnitGroupPattern pattern = new CirclePattern(location, selection, 90, 0);
+                UnitGroupPattern pattern = new CirclePattern(startLocation, selection, 90, 0);
                 LinkedList<Point> points = pattern.ApplyPattern();
 
                 for (int i = 0; i < unitCount; i++)
@@ -143,7 +145,7 @@ namespace PathfindingTest.Players
                 }
             }
 
-            meleeStore.getUnit(Unit.Type.Engineer, location.X, location.Y);
+            meleeStore.getUnit(Unit.Type.Engineer, startLocation.X, startLocation.Y);
 
         }
 

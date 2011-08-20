@@ -19,10 +19,6 @@ namespace PathfindingTest.UI.Menus
             foreach (MapEntryPanel panel in this.panels)
             {
                 int count = 0;
-                foreach (MapPlayerLocationButton button in panel.mapPlayerLocationGroup.buttons)
-                {
-                    button.text = (count++) + "";
-                }
             }
         }
 

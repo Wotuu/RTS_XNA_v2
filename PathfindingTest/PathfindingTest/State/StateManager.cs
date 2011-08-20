@@ -24,6 +24,8 @@ namespace PathfindingTest.State
     {
         private String mapToLoad { get; set; }
 
+        private Point[] tempPlayerLocations { get; set; }
+
         private State _gameState { get; set; }
         public State gameState
         {
@@ -50,10 +52,12 @@ namespace PathfindingTest.State
                     }
                     else
                     {
-                        mapname = ((SPMapSelectionPanel)MenuManager.GetInstance().GetCurrentlyDisplayedMenu()).GetSelectedMap();
+                        SPMapSelectionPanel panel = ((SPMapSelectionPanel)MenuManager.GetInstance().GetCurrentlyDisplayedMenu());
+                        mapname = panel.GetSelectedMap();
+                        tempPlayerLocations = new Point[] { panel.GetSelectedMapEntry().mapPlayerLocationGroup.GetMapLocationByButtonTextNumber(1) };
                     }
                     this.mapToLoad = mapname;
-                    if (!mapToLoad.EndsWith(".xml")) this.mapToLoad += ".xml"; 
+                    if (!mapToLoad.EndsWith(".xml")) this.mapToLoad += ".xml";
                     new Thread(this.LoadMap).Start();
                 }
                 else if (value == State.GameLoading)
@@ -136,15 +140,15 @@ namespace PathfindingTest.State
             else
             {
                 Alliance redAlliance = new Alliance();
-                Player humanPlayer = new Player(redAlliance, Color.Blue);
+                Player humanPlayer = new Player(redAlliance, Color.Blue, this.tempPlayerLocations[0]);
                 Game1.CURRENT_PLAYER = humanPlayer;
-                humanPlayer.SpawnStartUnits(new Point((int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2,
-                    (int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2));
+                humanPlayer.SpawnStartUnits();
 
 
                 Alliance greenAlliance = new Alliance();
-                Player aiPlayer = new Player(greenAlliance, Color.Purple);
-                aiPlayer.SpawnStartUnits(new Point((int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2, 200));
+                Player aiPlayer = new Player(greenAlliance, Color.Purple,
+                    new Point((int)Game1.GetInstance().graphics.PreferredBackBufferWidth / 2, 200));
+                aiPlayer.SpawnStartUnits();
 
                 StateManager.GetInstance().gameState = StateManager.State.GameRunning;
                 //SaveManager.GetInstance().SaveNodes("C:\\Users\\Wouter\\Desktop\\test.xml");
@@ -186,7 +190,8 @@ namespace PathfindingTest.State
             {
                 UserDisplayPanel panel = lobby.GetDisplayPanel(i);
                 Alliance alli = alliances[Int32.Parse(panel.teamDropdown.GetSelectedOption()) - 1];
-                Player player = new Player(alli, panel.GetSelectedColor());
+                Player player = new Player(alli, panel.GetSelectedColor(),
+                    lobby.mapPreviewPanel.playerLocationGroup.GetMapLocationByButtonTextNumber(i + 1));
                 player.multiplayerID = panel.user.id;
                 if (panel.user.id == ChatServerConnectionManager.GetInstance().user.id)
                 {

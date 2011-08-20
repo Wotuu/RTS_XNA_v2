@@ -144,7 +144,7 @@ namespace SocketLibrary.Packets
                         //{
                             // Process the packet
                             Packet receivedPacket = this.ConstructPacket(receivedPackets.First.Value.packet);
-                            Console.Out.WriteLine("Processing packet " + receivedPacket.GetHeader());
+                            // Console.Out.WriteLine("Processing packet " + receivedPacket.GetHeader());
                             onProcessPacket(receivedPacket);
 
                             if (receivedPacket.GetHeader() != Headers.PACKET_RECEIVED)

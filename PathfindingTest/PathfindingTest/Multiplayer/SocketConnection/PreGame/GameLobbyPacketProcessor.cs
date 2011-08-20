@@ -283,7 +283,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         int count = 0;
                         foreach (Player player in Game1.GetInstance().players)
                         {
-                            player.SpawnStartUnits(new Point(200 * (count + 1), 200 * (count + 1)));
+                            player.SpawnStartUnits();
                             count++;
                         }
                         break;

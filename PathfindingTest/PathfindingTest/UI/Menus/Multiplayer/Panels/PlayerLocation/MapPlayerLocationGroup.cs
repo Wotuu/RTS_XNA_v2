@@ -194,5 +194,19 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
                 button.Unload();
             }
         }
+
+        /// <summary>
+        /// Gets the map location by button text number ( 1, 2, 3 etc.)
+        /// </summary>
+        /// <param name="number">The number</param>
+        /// <returns>The point to place the player on</returns>
+        public Point GetMapLocationByButtonTextNumber(int number)
+        {
+            foreach (MapPlayerLocationButton button in this.buttons)
+            {
+                if (Int32.Parse("0" + button.text) == number) return button.mapLocation;
+            }
+            return new Point(-1, -1);
+        }
     }
 }
