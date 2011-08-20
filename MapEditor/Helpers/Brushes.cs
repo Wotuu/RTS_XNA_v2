@@ -422,7 +422,7 @@ namespace MapEditor
         enum TileLegend
         {
             Grass = 117,
-            Dirt = 87,
+            Dirt = 43,
             Ice = 145,
             Water = 58,
             GrassWaterTop = 262,
@@ -993,7 +993,7 @@ namespace MapEditor
                                 else if (belowleft == (int)TileLegend.Dirt || grastype)
                                 {
                                     bottomleftland = true;
-                                    toplefttype = tiletype.dirt;
+                                    bottomlefttype = tiletype.dirt;
                                 }
 
                             }
@@ -1064,7 +1064,7 @@ namespace MapEditor
                                     currentLayer.SetTile(x - 1, y + 1, (int)TileLegend.DirtWaterSmallBottomLeft);
                                     break;
                                 case tiletype.ice:
-                                    currentLayer.SetTile(x - 1, y + 1, (int)TileLegend.GrassWaterSmallBottomLeft);
+                                    currentLayer.SetTile(x - 1, y + 1, (int)TileLegend.IceWaterSmallBottomLeft);
                                     break;
                             }
                             
