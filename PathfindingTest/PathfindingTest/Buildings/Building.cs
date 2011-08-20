@@ -17,6 +17,7 @@ using PathfindingTest.Multiplayer.Data;
 using SocketLibrary.Protocol;
 using PathfindingTest.Combat;
 using PathfindingTest.Interfaces;
+using AStarCollisionMap.Pathfinding;
 
 namespace PathfindingTest.Buildings
 {
@@ -58,7 +59,7 @@ namespace PathfindingTest.Buildings
 
         public LinkedList<Unit> constructionQueue { get; set; }
         public Point originWaypoint { get; set; }
-        public Point waypoint { get; set; }
+        public LinkedList<Point> waypoints { get; set; }
 
         public BuildingMultiplayerData multiplayerData { get; set; }
 
@@ -233,27 +234,27 @@ namespace PathfindingTest.Buildings
 
                 case State.Constructing:
                     sb.Draw(texture, this.GetDrawRectangle(), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-                    DrawQueuedStats(sb);
+                    DrawWaypointLine(sb);
                     break;
 
                 case State.Interrupted:
                     sb.Draw(texture, this.GetDrawRectangle(), null, constructC, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-                    DrawQueuedStats(sb);
+                    DrawWaypointLine(sb);
                     break;
 
                 case State.Finished:
                     sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-                    DrawQueuedStats(sb);
+                    DrawWaypointLine(sb);
                     break;
 
                 case State.Repairing:
                     sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-                    DrawQueuedStats(sb);
+                    DrawWaypointLine(sb);
                     break;
 
                 case State.Producing:
                     sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-                    DrawQueuedStats(sb);
+                    DrawWaypointLine(sb);
                     break;
 
                 default:
@@ -294,15 +295,16 @@ namespace PathfindingTest.Buildings
 
         internal void DrawQueuedStats(SpriteBatch sb)
         {
+            this.CountUnitsInQueue();
             if (selected)
             {
                 if (engineerInQueue > 0)
                 {
                     Vector2 stringPos = p.hud.sf.MeasureString(engineerInQueue.ToString());
                     sb.DrawString(p.hud.sf, engineerInQueue.ToString(), 
-                                  new Vector2(p.hud.engineerObject.x + (p.hud.engineerObject.texture.Width / 2) - (stringPos.X / 2), 
+                                  new Vector2(p.hud.engineerObject.x + (p.hud.engineerObject.texture.Width / 2) - (stringPos.X / 2),
                                               p.hud.engineerObject.y + (p.hud.engineerObject.texture.Height / 2) - (stringPos.Y / 2)), 
-                                  Color.White);
+                                  Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
                 }
                 if (meleeInQueue > 0)
                 {
@@ -310,7 +312,7 @@ namespace PathfindingTest.Buildings
                     sb.DrawString(p.hud.sf, meleeInQueue.ToString(),
                                   new Vector2(p.hud.meleeObject.x + (p.hud.meleeObject.texture.Width / 2) - (stringPos.X / 2),
                                               p.hud.meleeObject.y + (p.hud.meleeObject.texture.Height / 2) - (stringPos.Y / 2)),
-                                  Color.White);
+                                  Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
                 }
                 if (rangedInQueue > 0)
                 {
@@ -318,7 +320,7 @@ namespace PathfindingTest.Buildings
                     sb.DrawString(p.hud.sf, rangedInQueue.ToString(),
                                   new Vector2(p.hud.rangedObject.x + (p.hud.rangedObject.texture.Width / 2) - (stringPos.X / 2),
                                               p.hud.rangedObject.y + (p.hud.rangedObject.texture.Height / 2) - (stringPos.Y / 2)),
-                                  Color.White);
+                                  Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
                 }
                 if (fastInQueue > 0)
                 {
@@ -326,7 +328,7 @@ namespace PathfindingTest.Buildings
                     sb.DrawString(p.hud.sf, fastInQueue.ToString(),
                                   new Vector2(p.hud.fastObject.x + (p.hud.fastObject.texture.Width / 2) - (stringPos.X / 2),
                                               p.hud.fastObject.y + (p.hud.fastObject.texture.Height / 2) - (stringPos.Y / 2)),
-                                  Color.White);
+                                  Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
                 }
                 if (heavyMeleeInQueue > 0)
                 {
@@ -334,7 +336,7 @@ namespace PathfindingTest.Buildings
                     sb.DrawString(p.hud.sf, heavyMeleeInQueue.ToString(),
                                   new Vector2(p.hud.heavyMeleeObject.x + (p.hud.heavyMeleeObject.texture.Width / 2) - (stringPos.X / 2),
                                               p.hud.heavyMeleeObject.y + (p.hud.heavyMeleeObject.texture.Height / 2) - (stringPos.Y / 2)),
-                                  Color.White);
+                                  Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
                 }
                 if (heavyRangedInQueue > 0)
                 {
@@ -342,7 +344,34 @@ namespace PathfindingTest.Buildings
                     sb.DrawString(p.hud.sf, heavyRangedInQueue.ToString(),
                                   new Vector2(p.hud.heavyRangedObject.x + (p.hud.heavyRangedObject.texture.Width / 2) - (stringPos.X / 2),
                                               p.hud.heavyRangedObject.y + (p.hud.heavyRangedObject.texture.Height / 2) - (stringPos.Y / 2)),
-                                  Color.White);
+                                  Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
+                }
+            }
+        }
+
+        internal void DrawWaypointLine(SpriteBatch sb)
+        {
+            if (selected && this.type != Type.Resources && this.type != Type.Sentry)
+            {
+                Vector2 offset = Game1.GetInstance().drawOffset;
+
+                DrawUtil.DrawLine(sb, new Point((int)x + (this.texture.Width / 2) - (int)offset.X, 
+                                                (int)y + (this.texture.Height / 2) - (int)offset.Y), 
+                                  new Point((int)this.originWaypoint.X - (int)offset.X,
+                                            (int)this.originWaypoint.Y - (int)offset.Y), 
+                                  Color.DarkCyan, 2, this.z + 0.00001f);
+
+                if (this.waypoints != null)
+                {
+                    if (this.waypoints.Count > 0)
+                    {
+                        Point pp = originWaypoint;
+                        foreach (Point p in this.waypoints)
+                        {
+                            DrawUtil.DrawLine(sb, new Point(pp.X - (int)offset.X, pp.Y - (int)offset.Y), new Point(p.X - (int)offset.X, p.Y - (int)offset.Y), Color.DarkCyan, 2, this.z + 0.00001f);
+                            pp = p;
+                        }
+                    }
                 }
             }
         }
@@ -531,9 +560,10 @@ namespace PathfindingTest.Buildings
 
                 if (newUnit != null)
                 {
-                    if (originWaypoint != waypoint)
+                    if (waypoints.Count > 0)
                     {
-                        newUnit.MoveToQueue(waypoint);
+                        newUnit.MoveToQueue(waypoints.Last.Value);
+                        newUnit.hasToMove = true;
                     }
                     productionQueue.RemoveFirst();
                 }
@@ -599,11 +629,15 @@ namespace PathfindingTest.Buildings
             p.buildings.Remove(this);
             if (this.mesh != null) mesh.Reverse();
 
-            if (this is ResourceGather)
+            if (this is ResourceGather && this.state != State.Preview)
             {
-                foreach (ResourceGather rg in p.buildings)
+                foreach (Building b in p.buildings)
                 {
-                    rg.CalculateRPS();
+                    if (b is ResourceGather)
+                    {
+                        ResourceGather rg = (ResourceGather)b;
+                        rg.CalculateRPS();
+                    }
                 }
             }
         }
@@ -701,6 +735,45 @@ namespace PathfindingTest.Buildings
             {
                 this.state = State.Preview;
             }
+        }
+
+        /// <summary>
+        /// Calculates a path between the current originWaypoint and the point.
+        /// </summary>
+        /// <param name="p">The point to calculate to.</param>
+        /// <returns>The list containing all the points that you should visit.</returns>
+        public LinkedList<Point> CalculatePath(Point p)
+        {
+            Vector2 offset = Game1.GetInstance().drawOffset;
+            LinkedList<Point> result = new LinkedList<Point>();
+            long ticks = DateTime.UtcNow.Ticks;
+            if (Game1.GetInstance().map.collisionMap.IsCollisionBetween(this.originWaypoint, p))
+            {
+                Game1 game = Game1.GetInstance();
+                // Create temp nodes
+                Node start = new Node(game.map.collisionMap, (int)this.originWaypoint.X, (int)this.originWaypoint.Y, true);
+                Node end = new Node(game.map.collisionMap, p.X, p.Y, true);
+                LinkedList<PathfindingNode> nodes = new AStar(start, end).FindPath();
+                if (nodes != null)
+                {
+                    // Remove the first node, because that's the node we're currently on ..
+                    nodes.RemoveFirst();
+                    // Clear our current waypoints
+                    this.waypoints.Clear();
+                    foreach (Node n in nodes)
+                    {
+                        result.AddLast(n.GetLocation());
+                    }
+                }
+                // Nodes can no longer be used
+                start.Destroy();
+                end.Destroy();
+            }
+            else
+            {
+                result.AddLast(p);
+            }
+            return result;
         }
 
         public void OnDamage(DamageEvent e)

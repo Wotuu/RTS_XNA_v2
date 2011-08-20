@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Input;
 using SocketLibrary.Protocol;
 using PathfindingTest.Multiplayer.Data;
+using PathfindingTest.Pathfinding;
 
 namespace PathfindingTest.Buildings
 {
@@ -47,8 +48,23 @@ namespace PathfindingTest.Buildings
             e.constructing = this;
             this.mesh = Game1.GetInstance().map.collisionMap.PlaceBuilding(this.DefineRectangle());
             this.originWaypoint = new Point((int)this.x + (this.texture.Width / 2), (int)this.y + this.texture.Height + 20);
-            this.waypoint = new Point((int)this.x + (this.texture.Width / 2), (int)this.y + this.texture.Height + 20);
-            Game1.GetInstance().IsMouseVisible = true; 
+            this.waypoints = new LinkedList<Point>();
+            Game1.GetInstance().IsMouseVisible = true;
+
+            foreach (Building b in p.buildings)
+            {
+                if (b != this)
+                {
+                    if (b.type != Type.Resources && b.type != Type.Sentry)
+                    {
+                        if (b.waypoints.Count > 0)
+                        {
+                            Point point = b.waypoints.Last.Value;
+                            PathfindingProcessor.GetInstance().Push(b, point);
+                        }
+                    }
+                }
+            }
             
             if (Game1.GetInstance().IsMultiplayerGame() &&
                      this.p == Game1.CURRENT_PLAYER)

@@ -260,9 +260,20 @@ namespace PathfindingTest.UI
             {
                 sb.Draw(hudTex, new Rectangle(0, 652, 1024, 116), null, color, 0f, Vector2.Zero, SpriteEffects.None, 0.1f);
                 String resS = player.resources.ToString();
-                sb.DrawString(sf, resS, new Vector2(198, 654), Color.White);
+                sb.DrawString(sf, resS, new Vector2(198, 654), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0999f);
             }
             else return;
+
+            if (player.buildingSelection != null)
+            {
+                foreach (Building b in player.buildingSelection.buildings)
+                {
+                    if (b.state != Building.State.Preview)
+                    {
+                        b.DrawQueuedStats(sb);
+                    }
+                }
+            }
 
             foreach (HUDObject o in objects)
             {

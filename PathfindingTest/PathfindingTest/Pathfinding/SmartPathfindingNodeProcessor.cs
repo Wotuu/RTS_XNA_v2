@@ -38,5 +38,10 @@ namespace PathfindingTest.Pathfinding
             }
             while (GameTimeManager.GetInstance().UpdateMSLeftThisFrame() > timeTaken);
         }
+
+        public int GetCount()
+        {
+            return this.toProcess.Count;
+        }
     }
 }

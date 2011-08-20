@@ -113,6 +113,21 @@ namespace PathfindingTest.Buildings
             this.mesh = Game1.GetInstance().map.collisionMap.PlaceBuilding(this.DefineRectangle());
             Game1.GetInstance().IsMouseVisible = true;
 
+            foreach (Building b in p.buildings)
+            {
+                if (b != this)
+                {
+                    if (b.type != Type.Resources && b.type != Type.Sentry)
+                    {
+                        if (b.waypoints.Count > 0)
+                        {
+                            Point point = b.waypoints.Last.Value;
+                            PathfindingProcessor.GetInstance().Push(b, point);
+                        }
+                    }
+                }
+            }
+
             if (Game1.GetInstance().IsMultiplayerGame() &&
                      this.p == Game1.CURRENT_PLAYER)
             {

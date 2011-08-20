@@ -334,8 +334,8 @@ namespace PathfindingTest.Players
             {
                 spriteBatch.Draw(
                     lightTexture,
-                    new Vector2(unit.x + (unit.texture.Width / 2) - Game1.GetInstance().drawOffset.X,
-                                unit.y + (unit.texture.Height / 2) - Game1.GetInstance().drawOffset.Y),
+                    new Vector2(unit.x - Game1.GetInstance().drawOffset.X,
+                                unit.y - Game1.GetInstance().drawOffset.Y),
                     null,
                     Color.White,
                     0f,
@@ -672,7 +672,8 @@ namespace PathfindingTest.Players
                 {
                     if (b.type != Building.Type.Resources && b.type != Building.Type.Sentry)
                     {
-                        b.waypoint = m.location;
+                        Point p = new Point(m.location.X + (int)Game1.GetInstance().drawOffset.X, m.location.Y + (int)Game1.GetInstance().drawOffset.Y);
+                        PathfindingProcessor.GetInstance().Push(b, p);
                     }
                 }
             }

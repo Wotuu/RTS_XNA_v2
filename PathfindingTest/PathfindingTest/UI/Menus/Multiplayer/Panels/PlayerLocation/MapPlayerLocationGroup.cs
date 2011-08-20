@@ -39,11 +39,13 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
                     {
                         Point mapLocation = new Point(
                             Int32.Parse(playerNode.Attributes["x"].Value), Int32.Parse(playerNode.Attributes["y"].Value));
-                        this.buttons.AddLast(new MapPlayerLocationButton(
+                        Point minimapLocation = this.MapToMiniMap(mapLocation);
+                        MapPlayerLocationButton button = new MapPlayerLocationButton(
                             this,
                             parent,
                             mapLocation,
-                            this.MapToMiniMap(mapLocation)));
+                            minimapLocation);
+                        this.buttons.AddLast(button);
                     }
                     if (parent is MapSelectionPanel) this.OnMapSelectionChanged(false);
                     else if (parent is MapPreviewPanel) this.OnMapSelectionChanged(true);
