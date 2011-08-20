@@ -321,7 +321,8 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         int mapIndex = PacketUtil.DecodePacketInt(p, 4);
 
                         GameLobby lobby = (GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
-                        lobby.mapPreviewPanel.playerLocationGroup.OnPlayerIndexChangedMP(userID, mapIndex);
+                        lobby.mapPreviewPanel.playerLocationGroup.OnPlayerIndexChangedMP(
+                            userID, mapIndex);
 
                         break;
                     }

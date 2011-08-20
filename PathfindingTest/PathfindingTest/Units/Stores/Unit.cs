@@ -484,13 +484,14 @@ namespace PathfindingTest.Units
             {
                 return;
             }
-
             if (Game1.GetInstance().IsMultiplayerGame())
             {
+
                 PathfindingProcessor.GetInstance().Remove(this);
+
                 this.multiplayerData.moveTarget = p;
                 this.multiplayerData.receivedPathRequest = false;
-                if (Game1.CURRENT_PLAYER == this.player)
+                if ( Game1.CURRENT_PLAYER == this.player)
                 {
                     // Console.Out.WriteLine("Queueing unit now: " + p);
                     Synchronizer.GetInstance().QueueUnit(this);

@@ -64,9 +64,15 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <param name="mapname">The mapname to change to.</param>
         public void ChangeMap(String mapname)
         {
+            if (this.selectedMapLbl.text == mapname)
+            {
+                Console.Out.WriteLine("Not changing map; mapname is the same.");
+                return;
+            }
+
             this.selectedMapLbl.text = mapname;
             int tries = 0;
-            int maxTries = 10;
+            int maxTries = 100;
 
             while (tries < maxTries)
             {
@@ -82,11 +88,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 catch (IOException ioe)
                 {
                     Console.Error.WriteLine("Error opening " + Game1.MAPS_FOLDER_LOCATION + "/" + mapname + ".xml (try " + tries + ") (MapPreviewPanel)");
+                    Thread.Sleep(10);
                 }
-                Thread.Sleep(100);
                 tries++;
             }
-
+            if (this.playerLocationGroup != null) this.playerLocationGroup.Unload();
             this.playerLocationGroup = new MapPlayerLocationGroup(this, new Point( 10, 10 ), mapname);
         }
     }

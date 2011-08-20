@@ -126,12 +126,13 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
             String map = this.GetSelectedMap();
             if (map != null)
             {
-                this.previewPanel.selectedMapLbl.text = map;
+                // this.previewPanel.selectedMapLbl.text = map;
 
                 Packet p = new Packet(Headers.GAME_MAP_CHANGED);
                 p.AddInt(ChatServerConnectionManager.GetInstance().user.channelID);
-                p.AddString(this.previewPanel.selectedMapLbl.text);
+                p.AddString(map);
                 ChatServerConnectionManager.GetInstance().SendPacket(p);
+                Console.Out.WriteLine("Sent GAME_MAP_CHANGED packet");
             }
             this.Dispose();
         }

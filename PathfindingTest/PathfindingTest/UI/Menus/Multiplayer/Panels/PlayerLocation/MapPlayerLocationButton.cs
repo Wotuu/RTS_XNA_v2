@@ -89,8 +89,14 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
                 GameLobby lobby = (GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
                 int userID = ChatServerConnectionManager.GetInstance().user.id;
 
-                this.group.OnPlayerIndexChangedMP(userID, lobby.GetDisplayPanelIndexByUserID(userID));
+                this.group.OnPlayerIndexChangedMP(userID, this.group.GetIndexOfButton(this));
             }
+        }
+
+        public override void Unload()
+        {
+            base.Unload();
+            this.onClickListeners -= this.OnClick;
         }
     }
 }

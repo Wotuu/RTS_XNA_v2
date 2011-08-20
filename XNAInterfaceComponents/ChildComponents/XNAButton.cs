@@ -84,6 +84,10 @@ namespace XNAInterfaceComponents.AbstractComponents
         public void OnMouseClick(MouseEvent m_event)
         {
             // Console.Out.WriteLine("XNAButton clicked, focussed - > " + this.isFocussed);
+        }
+
+        public void OnMouseRelease(MouseEvent m_event)
+        {
             if (this.isFocussed && m_event.button == MouseEvent.MOUSE_BUTTON_1)
             {
                 Point screenLocation = parent.RequestScreenLocation(new Point(this.bounds.X, this.bounds.Y));
@@ -93,11 +97,6 @@ namespace XNAInterfaceComponents.AbstractComponents
                     if (this.onClickListeners != null) onClickListeners(this);
                 }
             }
-        }
-
-        public void OnMouseRelease(MouseEvent m_event)
-        {
-
         }
 
         public override void OnMouseEnter(MouseEvent m_event)

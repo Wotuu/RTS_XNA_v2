@@ -23,6 +23,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
 
         public MapPlayerLocationGroup(XNAPanel parent, Point offset, String mapname)
         {
+
             this.parent = parent;
             this.offset = offset;
 
@@ -55,6 +56,8 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
                         Int32.Parse(rootChild.Attributes["tileHeight"].Value);
                 }
             }
+
+            // Console.WriteLine("StackTrace: '{0}'", Environment.StackTrace);
         }
 
         /// <summary>
@@ -131,35 +134,62 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
 
             Console.Out.WriteLine("Changing mp player index " + userID + ", " + buttonIndex);
             GameLobby lobby = (GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
+
             this.OnPlayerIndexChanged(
                 lobby.mapPreviewPanel.playerLocationGroup.buttons.ElementAt(buttonIndex),
-                lobby.GetDisplayPanelIndexByUserID(userID) + 1);
+                userID);
         }
 
         /// <summary>
         /// When a user clicks on an empty MapPlayerLocationButton, a number needs to appear.
         /// </summary>
-        /// <param name="index">Index to display on the map</param>
-        public void OnPlayerIndexChanged(MapPlayerLocationButton clickedButton, int index)
+        /// <param name="number">Number to display on the map</param>
+        public void OnPlayerIndexChanged(MapPlayerLocationButton clickedButton, int number)
         {
             int result = 0;
-            if (Int32.TryParse(clickedButton.text, out result) && result == index)
+
+            // If user clicked on a button that already contained this number
+            if (Int32.TryParse(clickedButton.text, out result) && result == number)
             {
                 clickedButton.text = "";
             }
             else
             {
+                // Clear all buttons which have the number text
+                foreach (MapPlayerLocationButton button in this.buttons)
+                {
+                    if (Int32.TryParse(button.text, out result) && result == number) button.text = "";
+                }
+                // Reapply on the correct one
                 if (clickedButton.text == "")
                 {
-                    clickedButton.text = index + "";
+                    clickedButton.text = number + "";
                 }
-                else
-                {
-                    foreach (MapPlayerLocationButton button in this.buttons)
-                    {
-                        if (Int32.TryParse(button.text, out result) && result == index) button.text = "";
-                    }
-                }
+            }
+        }
+
+        /// <summary>
+        /// Gets the index of a button.
+        /// </summary>
+        /// <param name="button">The button to search for</param>
+        /// <returns>The integer value</returns>
+        public int GetIndexOfButton(MapPlayerLocationButton button)
+        {
+            for (int i = 0; i < this.buttons.Count; i++)
+            {
+                if (this.buttons.ElementAt(i) == button) return i;
+            }
+            return -1;
+        }
+
+        /// <summary>
+        /// Unloads the group.
+        /// </summary>
+        public void Unload()
+        {
+            foreach (MapPlayerLocationButton button in this.buttons)
+            {
+                button.Unload();
             }
         }
     }

@@ -187,24 +187,66 @@ namespace PathfindingTest.Multiplayer.Data
             return -1;
         }
 
+        #region Already in Queue
+        public Boolean AlreadyInQueue(Unit unit)
+        {
+            for (int i = 0; i < this.unitList.Count; i++)
+            {
+                Unit currentUnit = this.unitList.ElementAt(i);
+                if (currentUnit == unit) return true;
+            }
+            return false;
+        }
+
+        public Boolean AlreadyInQueue(Building building)
+        {
+            for (int i = 0; i < this.buildingList.Count; i++)
+            {
+                Building currentBuilding = this.buildingList.ElementAt(i);
+                if (currentBuilding == building) return true;
+            }
+            return false;
+        }
+
+        public Boolean AlreadyInQueue(DamageEvent e)
+        {
+            for (int i = 0; i < this.eventList.Count; i++)
+            {
+                DamageEvent currentEvent = this.eventList.ElementAt(i);
+                if (currentEvent == e) return true;
+            }
+            return false;
+        }
+
+        public Boolean AlreadyInQueue(Projectile projectile)
+        {
+            for (int i = 0; i < this.projectileList.Count; i++)
+            {
+                Projectile currentProjectile = this.projectileList.ElementAt(i);
+                if (currentProjectile == projectile) return true;
+            }
+            return false;
+        }
+        #endregion
+
         public void QueueUnit(Unit unit)
         {
-            this.unitList.AddLast(unit);
+            if( !this.AlreadyInQueue(unit) ) this.unitList.AddLast(unit);
         }
 
         public void QueueBuilding(Building building)
         {
-            this.buildingList.AddLast(building);
+            if (!this.AlreadyInQueue(building)) this.buildingList.AddLast(building);
         }
 
         public void QueueDamageEvent(DamageEvent e)
         {
-            this.eventList.AddLast(e);
+            if (!this.AlreadyInQueue(e)) this.eventList.AddLast(e);
         }
 
         public void QueueProjectile(Projectile p)
         {
-            this.projectileList.AddLast(p);
+            if (!this.AlreadyInQueue(p)) this.projectileList.AddLast(p);
         }
     }
 }
