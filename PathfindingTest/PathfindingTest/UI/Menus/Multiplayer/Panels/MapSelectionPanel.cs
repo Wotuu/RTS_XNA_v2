@@ -25,12 +25,16 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         public LinkedList<MapEntryPanel> panels = new LinkedList<MapEntryPanel>();
         public XNARadioButtonGroup group { get; set; }
         public Texture2D previewTexture { get; set; }
+        public Texture2D playerPreviewCircle { get; set; }
 
         public Vector2 previewTextureSize = new Vector2(200f, 200f);
 
         public MapSelectionPanel(MapPreviewPanel previewPanel, String selectedMapName)
             : base()
         {
+
+            this.playerPreviewCircle = Game1.GetInstance().Content.Load<Texture2D>("Misc/playerPreview");
+
             this.previewPanel = previewPanel;
             this.buttonWidth = 100;
             this.buttonSpacing = 30;
@@ -94,6 +98,22 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         }
 
         /// <summary>
+        /// Gets the currently selected map entry.
+        /// </summary>
+        /// <returns>The map entry</returns>
+        public MapEntryPanel GetSelectedMapEntry()
+        {
+            foreach (MapEntryPanel panel in this.panels)
+            {
+                if (panel.previewButton.selected)
+                {
+                    return panel;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
         /// Called when the OK button was pressed.
         /// </summary>
         /// <param name="source">The XNA Button</param>
@@ -135,8 +155,17 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
             if( previewTexture == null ) return;
             sb.Draw(this.previewTexture, 
                 new Rectangle( this.bounds.X + MapEntryPanel.ENTRY_WIDTH + 20, this.bounds.Y + 10, 
-                    (int)previewTextureSize.X, (int)previewTextureSize.Y), 
+                    (int)previewTextureSize.X, (int)previewTextureSize.Y),
                 null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.001f);
+
+            foreach (Point p in this.GetSelectedMapEntry().mapPlayerLocations)
+            {
+                Point miniMapLocation = this.MapToMiniMap(p);
+                sb.Draw(this.playerPreviewCircle, new Rectangle(
+                    miniMapLocation.X + this.bounds.X + MapEntryPanel.ENTRY_WIDTH + 20,
+                    miniMapLocation.Y + this.bounds.Y + 10, 10, 10),
+                    null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.002f);
+            }
         }
 
         /// <summary>
@@ -151,6 +180,23 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         {
             base.Unload();
             this.okBtn.onClickListeners -= this.OnOKClick;
+        }
+
+        /// <summary>
+        /// Converts map coordinates to mini map coordinates
+        /// </summary>
+        /// <param name="mapCoordinates">The map coordinates you want to convert</param>
+        /// <returns>The mini map coordinates</returns>
+        public Point MapToMiniMap(Point mapCoordinates)
+        {
+            float unscaledFactorX = (this.previewTexture.Width / (float)this.GetSelectedMapEntry().selectedMapWidth);
+            float unscaledFactorY = (this.previewTexture.Height / (float)this.GetSelectedMapEntry().selectedMapHeight);
+
+            float scaledFactorX = (this.previewTextureSize.X / (float)this.previewTexture.Width);
+            float scaledFactorY = (this.previewTextureSize.Y / (float)this.previewTexture.Height);
+
+            return new Point((int)(mapCoordinates.X * unscaledFactorX * scaledFactorX),
+                (int)(mapCoordinates.Y * unscaledFactorY * scaledFactorY));
         }
     }
 }

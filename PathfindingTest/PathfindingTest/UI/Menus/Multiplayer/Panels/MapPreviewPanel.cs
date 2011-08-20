@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.IO;
 using XNAInterfaceComponents.ChildComponents;
 using System.Threading;
+using System.Xml;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
@@ -54,6 +55,10 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 Vector2.Zero, SpriteEffects.None, this.z - 0.001f);
         }
 
+        /// <summary>
+        /// Changes the map.
+        /// </summary>
+        /// <param name="mapName">The mapname to change to.</param>
         public void ChangeMap(String mapName)
         {
             this.selectedMapLbl.text = mapName;
@@ -72,7 +77,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 }
                 catch (IOException ioe)
                 {
-                    // Do nothing
+                    Console.Error.WriteLine("Error opening " + Game1.MAPS_FOLDER_LOCATION + "/" + mapName + ".xml (try " + tries + ")");
                 }
                 Thread.Sleep(100);
                 tries++;
