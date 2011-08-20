@@ -27,6 +27,7 @@ namespace PathfindingTest.Multiplayer.Data
             else if (this.building is Factory) return BuildingHeaders.TYPE_FACTORY;
             else if (this.building is Fortress) return BuildingHeaders.TYPE_FORTRESS;
             else if (this.building is ResourceGather) return BuildingHeaders.TYPE_RESOURCES_GATHER;
+            else if (this.building is Sentry) return BuildingHeaders.TYPE_SENTRY;
             else return Int32.MaxValue;
         }
     }

@@ -45,7 +45,7 @@ namespace PathfindingTest.Buildings
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.animationFont = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/ResourceFont");
 
-            this.visionRange = (float)VisionRange.ResourceGatherer;
+            this.visionRange = 50f;
 
             this.resourceRange = new Circle(100, this, c);
             this.generationBarrier = 12;

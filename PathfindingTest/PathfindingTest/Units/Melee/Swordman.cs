@@ -28,6 +28,7 @@ namespace PathfindingTest.Units.Melee
             this.type = Type.Melee;
 
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
+            this.hitTexture = TextureManager.GetInstance().GetHitTexture(this.type);
             this.halfTextureWidth = this.texture.Width / 2;
             this.halfTextureHeight = this.texture.Height / 2;
         }
@@ -54,8 +55,45 @@ namespace PathfindingTest.Units.Melee
         internal override void Draw(SpriteBatch sb)
         {
             Rectangle rect = this.GetDrawRectangle();
+            rect.X += texture.Width / 2;
+            rect.Y += texture.Height / 2;
             if (!Game1.GetInstance().IsOnScreen(rect)) return;
-            sb.Draw(this.texture, rect, null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+            //sb.Draw(this.texture, rect, null, this.color, this.direction * -1, Vector2.Zero, SpriteEffects.None, this.z);
+
+            if (this.waypoints.Count > 0)
+            {
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.First.Value) + (90 * (Math.PI / 180)));
+
+                if (rotation != rotation)
+                {
+                    rotation = previousRotation;
+                }
+            }
+            else
+            {
+                rotation = previousRotation;
+            }
+
+            if (!hitting)
+            {
+                sb.Draw(this.texture, rect, null, this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
+            }
+            else
+            {
+                sb.Draw(this.hitTexture, rect, new Rectangle(0 + 30 * (int)(hitFrame / 5), 0, 30, 30), this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
+
+                if (hitFrame == (hitTexture.Width / 30) * 5 - 1)
+                {
+                    hitFrame = 0;
+                    hitting = false;
+                }
+                else
+                {
+                    hitFrame++;
+                }
+            }
+
+            previousRotation = rotation;
         }
 
         /// <summary>
@@ -65,6 +103,8 @@ namespace PathfindingTest.Units.Melee
         {
             if (fireCooldown < 0)
             {
+                hitting = true;
+
                 if (target is Unit)
                 {
                     AggroEvent e = new AggroEvent(this, target, true);

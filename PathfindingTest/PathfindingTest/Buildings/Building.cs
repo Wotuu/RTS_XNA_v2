@@ -92,7 +92,7 @@ namespace PathfindingTest.Buildings
         public enum VisionRange
         {
             Barracks = 150,
-            Facory = 150,
+            Factory = 150,
             Fortress = 175,
             ResourceGatherer = 150,
             Sentry = 225
@@ -150,6 +150,8 @@ namespace PathfindingTest.Buildings
                     break;
 
                 case State.Finished:
+                    this.visionRange = Building.GetVisionRange(this.type);
+
                     CountUnitsInQueue();
                     if (productionQueue != null)
                     {
@@ -636,8 +638,35 @@ namespace PathfindingTest.Buildings
                 case Type.Resources:
                     return 100;
 
+                case Type.Sentry:
+                    return 750;
+
                 default:
                     return 0;
+            }
+        }
+
+        public static float GetVisionRange(Type t)
+        {
+            switch (t)
+            {
+                case Type.Barracks:
+                    return (float)VisionRange.Barracks;
+
+                case Type.Factory:
+                    return (float)VisionRange.Factory;
+
+                case Type.Fortress:
+                    return (float)VisionRange.Fortress;
+                    
+                case Type.Resources:
+                    return (float)VisionRange.ResourceGatherer;
+
+                case Type.Sentry:
+                    return (float)VisionRange.Sentry;
+
+                default:
+                    return 0f;
             }
         }
 

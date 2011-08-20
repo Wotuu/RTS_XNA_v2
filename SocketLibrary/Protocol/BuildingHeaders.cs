@@ -16,7 +16,7 @@ namespace SocketLibrary.Protocol
         /// <summary>
         /// Types to be used to request object IDs
         /// </summary>
-        public const int TYPE_BARRACKS = 0, TYPE_FACTORY = 1, TYPE_FORTRESS = 2, TYPE_RESOURCES_GATHER = 3;
+        public const int TYPE_BARRACKS = 0, TYPE_FACTORY = 1, TYPE_FORTRESS = 2, TYPE_RESOURCES_GATHER = 3, TYPE_SENTRY = 4;
 
 
         /// <summary>

@@ -30,6 +30,7 @@ namespace PathfindingTest.UI
         public Boolean loadForBarracks { get; set; }
         public Boolean loadForFactory { get; set; }
         public Boolean loadForFortress { get; set; }
+        public Boolean loadForSentry { get; set; }
         public Boolean draw { get; set; }
 
         public LinkedList<HUDObject> objects { get; set; }
@@ -50,6 +51,7 @@ namespace PathfindingTest.UI
         public HUDObject barracksObject { get; set; }
         public HUDObject factoryObject { get; set; }
         public HUDObject fortressObject { get; set; }
+        public HUDObject sentryObject { get; set; }
 
         public HUDObject engineerObject { get; set; }
         public HUDObject meleeObject { get; set; }
@@ -77,6 +79,7 @@ namespace PathfindingTest.UI
             loadForEngineer = false;
             loadForUnit = false;
             loadForResources = false;
+            loadForSentry = false;
             loadForBarracks = false;
             loadForFactory = false;
             loadForFortress = false;
@@ -151,6 +154,10 @@ namespace PathfindingTest.UI
 
                 factoryObject = new HUDObject(TextureManager.GetInstance().GetTexture(HUDObject.Type.Factory), HUDObject.Type.Factory, startObjectX, startObjectY, color);
                 objects.AddLast(factoryObject);
+                IncrementStartObjectXY(startObjectX);
+
+                sentryObject = new HUDObject(TextureManager.GetInstance().GetTexture(HUDObject.Type.Sentry), HUDObject.Type.Sentry, startObjectX, startObjectY, color);
+                objects.AddLast(sentryObject);
                 IncrementStartObjectXY(startObjectX);
 
                 fortressObject = new HUDObject(TextureManager.GetInstance().GetTexture(HUDObject.Type.Fortress), HUDObject.Type.Fortress, startObjectX, startObjectY, color);
@@ -307,6 +314,15 @@ namespace PathfindingTest.UI
                                 if (player.resources >= Building.GetCost(Building.Type.Factory))
                                 {
                                     b = new Factory(this.player, this.color);
+                                    // Was false
+                                    Game1.GetInstance().IsMouseVisible = true;
+                                }
+                                break;
+
+                            case HUDObject.Type.Sentry:
+                                if (player.resources >= Building.GetCost(Building.Type.Sentry))
+                                {
+                                    b = new Sentry(this.player, this.color);
                                     // Was false
                                     Game1.GetInstance().IsMouseVisible = true;
                                 }
@@ -541,6 +557,7 @@ namespace PathfindingTest.UI
             int barracksCounter = 0;
             int factoryCounter = 0;
             int fortressCounter = 0;
+            int sentryCounter = 0;
 
             if (player.buildingSelection != null)
             {
@@ -562,6 +579,10 @@ namespace PathfindingTest.UI
 
                         case Building.Type.Fortress:
                             fortressCounter++;
+                            break;
+
+                        case Building.Type.Sentry:
+                            sentryCounter++;
                             break;
 
                         default:
@@ -604,6 +625,15 @@ namespace PathfindingTest.UI
             else
             {
                 loadForFortress = false;
+            }
+
+            if (sentryCounter > 0)
+            {
+                loadForSentry = true;
+            }
+            else
+            {
+                loadForSentry = false;
             }
         }
 

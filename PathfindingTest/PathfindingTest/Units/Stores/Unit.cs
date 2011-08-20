@@ -33,6 +33,9 @@ namespace PathfindingTest.Units
         public Type type { get; set; }
         public Color color { get; set; }
         public Texture2D texture { get; set; }
+        public Texture2D hitTexture { get; set; }
+        public Boolean hitting { get; set; }
+        public int hitFrame { get; set; }
         public Boolean selected { get; set; }
 
         public float collisionRadius { get; set; }
@@ -65,7 +68,9 @@ namespace PathfindingTest.Units
         #region Movement variables
         public LinkedList<Point> waypoints { get; set; }
         public float movementSpeed { get; set; }
-        private float direction { get; set; }
+        public float direction { get; set; }
+        public float rotation { get; set; }
+        public float previousRotation { get; set; }
         public Boolean hasToMove { get; set; }
         #endregion
 
@@ -510,6 +515,12 @@ namespace PathfindingTest.Units
             this.attackRange = attackRange;
             this.aggroRange = aggroRange;
             this.rateOfFire = rateOfFire;
+
+            this.rotation = 0f;
+            this.previousRotation = 0f;
+
+            this.hitting = false;
+            this.hitFrame = 0;
 
             this.color = player.color;
             this.waypoints = new LinkedList<Point>();
