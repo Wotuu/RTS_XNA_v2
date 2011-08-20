@@ -327,6 +327,20 @@ namespace GameServer.ChatServer
                         }
                         break;
                     }
+                case Headers.MAP_POSITION_CHANGED:
+                    {
+                        Channel c = ChannelManager.GetInstance().GetChannelByID(user.channelID);
+                        for (int i = 0; i < c.GetUserCount(); i++)
+                        {
+                            ServerUser serverUser = c.GetUserAt(i);
+                            if (serverUser != this.user)
+                            {
+                                // Notify everyone but the one who created the packet
+                                serverUser.chatListener.client.SendPacket(p);
+                            }
+                        }
+                        break;
+                    }
                 case Headers.PACKET_RECEIVED:
                     {
                         // Nothing

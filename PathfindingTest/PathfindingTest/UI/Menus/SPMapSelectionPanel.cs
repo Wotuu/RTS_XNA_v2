@@ -6,6 +6,7 @@ using PathfindingTest.UI.Menus.Multiplayer.Panels;
 using XNAInterfaceComponents.AbstractComponents;
 using PathfindingTest.State;
 using XNAInterfaceComponents.ParentComponents;
+using PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation;
 
 namespace PathfindingTest.UI.Menus
 {
@@ -15,6 +16,14 @@ namespace PathfindingTest.UI.Menus
             : base(null, "")
         {
             this.cancelBtn.onClickListeners += this.OnCancelClick;
+            foreach (MapEntryPanel panel in this.panels)
+            {
+                int count = 0;
+                foreach (MapPlayerLocationButton button in panel.mapPlayerLocationGroup.buttons)
+                {
+                    button.text = (count++) + "";
+                }
+            }
         }
 
         public override void OnOKClick(XNAButton source)

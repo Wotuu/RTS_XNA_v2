@@ -315,6 +315,16 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         if (loadScreen != null) loadScreen.SetLoadingWhat(user, what);
                         break;
                     }
+                case Headers.MAP_POSITION_CHANGED:
+                    {
+                        int userID = PacketUtil.DecodePacketInt(p, 0);
+                        int mapIndex = PacketUtil.DecodePacketInt(p, 4);
+
+                        GameLobby lobby = (GameLobby)MenuManager.GetInstance().GetCurrentlyDisplayedMenu();
+                        lobby.mapPreviewPanel.playerLocationGroup.OnPlayerIndexChangedMP(userID, mapIndex);
+
+                        break;
+                    }
             }
         }
     }

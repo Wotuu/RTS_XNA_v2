@@ -11,16 +11,19 @@ using System.IO;
 using XNAInterfaceComponents.ChildComponents;
 using System.Threading;
 using System.Xml;
+using PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
     public class MapPreviewPanel : XNAPanel
     {
-        private Rectangle imageBounds { get; set; }
-        public Texture2D mapPreview { get; set; }
+        public Rectangle imageBounds { get; set; }
+        public Texture2D previewTexture { get; set; }
 
         public XNALabel selectedMapLbl { get; set; }
         public XNAButton selectMapButton { get; set; }
+
+        public MapPlayerLocationGroup playerLocationGroup { get; set; }
 
         public MapPreviewPanel(ParentComponent parent, Rectangle bounds) :
             base(parent, new Rectangle())
@@ -51,37 +54,40 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         {
             base.Draw(sb);
 
-            if (mapPreview != null) sb.Draw(mapPreview, this.imageBounds, null, Color.White, 0f,
+            if (previewTexture != null) sb.Draw(previewTexture, this.imageBounds, null, Color.White, 0f,
                 Vector2.Zero, SpriteEffects.None, this.z - 0.001f);
         }
 
         /// <summary>
         /// Changes the map.
         /// </summary>
-        /// <param name="mapName">The mapname to change to.</param>
-        public void ChangeMap(String mapName)
+        /// <param name="mapname">The mapname to change to.</param>
+        public void ChangeMap(String mapname)
         {
-            this.selectedMapLbl.text = mapName;
+            this.selectedMapLbl.text = mapname;
             int tries = 0;
             int maxTries = 10;
+
             while (tries < maxTries)
             {
                 try
                 {
-                    Stream stream = new FileStream(Game1.MAPS_FOLDER_LOCATION + "/" + mapName + "/" +
-                                mapName + "_preview.png", FileMode.Open);
-                    this.mapPreview = Texture2D.FromStream(Game1.GetInstance().GraphicsDevice,
+                    Stream stream = new FileStream(Game1.MAPS_FOLDER_LOCATION + "/" + mapname + "/" +
+                                mapname + "_preview.png", FileMode.Open);
+                    this.previewTexture = Texture2D.FromStream(Game1.GetInstance().GraphicsDevice,
                            stream);
                     stream.Close();
                     stream.Dispose();
                 }
                 catch (IOException ioe)
                 {
-                    Console.Error.WriteLine("Error opening " + Game1.MAPS_FOLDER_LOCATION + "/" + mapName + ".xml (try " + tries + ")");
+                    Console.Error.WriteLine("Error opening " + Game1.MAPS_FOLDER_LOCATION + "/" + mapname + ".xml (try " + tries + ") (MapPreviewPanel)");
                 }
                 Thread.Sleep(100);
                 tries++;
             }
+
+            this.playerLocationGroup = new MapPlayerLocationGroup(this, new Point( 10, 10 ), mapname);
         }
     }
 }

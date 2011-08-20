@@ -292,5 +292,21 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         {
             return this.userDisplayPanels.ElementAt(index);
         }
+
+        /// <summary>
+        /// Gets the index of a dispaly panel by user.
+        /// </summary>
+        /// <param name="userID">The user id</param>
+        /// <returns>The index, or -1 if that user doesn't exist currently.</returns>
+        public int GetDisplayPanelIndexByUserID(int userID)
+        {
+            int i = 0;
+            foreach (UserDisplayPanel p in this.userDisplayPanels)
+            {
+                if (p.user.id == userID) return i;
+                i++;
+            }
+            return -1;
+        }
     }
 }

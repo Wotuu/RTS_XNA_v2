@@ -70,7 +70,7 @@ namespace PathfindingTest
         public int mapMoveSensitivity { get; set; }
         public GameMap map { get; set; }
 
-        public Boolean isFoggy = false;
+        public Boolean isFoggy = true;
 
         public RenderTarget2D lightTarget;
         public RenderTarget2D mainTarget;
