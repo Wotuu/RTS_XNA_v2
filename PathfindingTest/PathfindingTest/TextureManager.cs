@@ -24,6 +24,7 @@ namespace PathfindingTest
         public Texture2D horsemanTex { get; set; }
 
         public Texture2D swordsmanHitTex { get; set; }
+        public Texture2D horsemanHitTex { get; set; }
 
         public Texture2D hudMoveTex { get; set; }
         public Texture2D hudAttackTex { get; set; }
@@ -72,6 +73,7 @@ namespace PathfindingTest
             horsemanTex = content.Load<Texture2D>("Units/horseman");
 
             swordsmanHitTex = content.Load<Texture2D>("Units/meleeHit");
+            horsemanHitTex = content.Load<Texture2D>("Units/horsemanHit");
 
             hudMoveTex = content.Load<Texture2D>("HUD/Commands/HUDMove");
             hudAttackTex = content.Load<Texture2D>("HUD/Commands/HUDAttack");
@@ -121,6 +123,9 @@ namespace PathfindingTest
             {
                 case Unit.Type.Melee:
                     return swordsmanHitTex;
+
+                case Unit.Type.Fast:
+                    return horsemanHitTex;
 
                 default:
                     return null;

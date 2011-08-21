@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework;
 using PathfindingTest.Combat;
 using PathfindingTest.Units.Damage;
 using PathfindingTest.Audio;
+using PathfindingTest.Pathfinding;
 
 namespace PathfindingTest.Units.Fast
 {
@@ -18,10 +19,11 @@ namespace PathfindingTest.Units.Fast
         public Horseman(Player p, int x, int y)
             : base(p, x, y, 2f, 20f, 100f, 80)
         {
-            this.baseDamage = (int) Damage.Horseman;
+            this.baseDamage = (int)Damage.Horseman;
             this.type = Type.Fast;
-            this.visionRange = (float) VisionRange.Horseman;
+            this.visionRange = (float)VisionRange.Horseman;
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
+            this.hitTexture = TextureManager.GetInstance().GetHitTexture(this.type);
 
             this.collisionRadius = texture.Width / 2;
             this.halfTextureWidth = this.texture.Width / 2;
@@ -51,8 +53,54 @@ namespace PathfindingTest.Units.Fast
         internal override void Draw(SpriteBatch sb)
         {
             Rectangle rect = this.GetDrawRectangle();
+            rect.X += texture.Width / 2;
+            rect.Y += texture.Height / 2;
             if (!Game1.GetInstance().IsOnScreen(rect)) return;
-            sb.Draw(this.texture, rect, null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+            //sb.Draw(this.texture, rect, null, this.color, this.direction * -1, Vector2.Zero, SpriteEffects.None, this.z);
+
+            if (this.waypoints.Count > 0 && unitToStalk == null)
+            {
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.First.Value) + (90 * (Math.PI / 180)));
+
+                if (rotation != rotation)
+                {
+                    rotation = previousRotation;
+                }
+            }
+            else if (unitToStalk != null)
+            {
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.unitToStalk.GetLocation()) + (90 * (Math.PI / 180)));
+
+                if (rotation != rotation)
+                {
+                    rotation = previousRotation;
+                }
+            }
+            else
+            {
+                rotation = previousRotation;
+            }
+
+            if (!hitting)
+            {
+                sb.Draw(this.texture, rect, null, this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
+            }
+            else
+            {
+                sb.Draw(this.hitTexture, rect, new Rectangle(0 + 30 * (int)(hitFrame / 2), 0, 30, 45), this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
+
+                if (hitFrame == (hitTexture.Width / 30) * 2 - 1)
+                {
+                    hitFrame = 0;
+                    hitting = false;
+                }
+                else
+                {
+                    hitFrame++;
+                }
+            }
+
+            previousRotation = rotation;
         }
 
         public override void OnAggroRecieved(AggroEvent e)
@@ -80,6 +128,8 @@ namespace PathfindingTest.Units.Fast
         {
             if (fireCooldown < 0)
             {
+                hitting = true;
+
                 if (target is Unit)
                 {
                     AggroEvent e = new AggroEvent(this, target, true);

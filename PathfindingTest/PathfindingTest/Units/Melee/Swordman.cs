@@ -18,7 +18,7 @@ namespace PathfindingTest.Units.Melee
     class Swordman : Unit
     {
         public Swordman(Player p, int x, int y)
-            : base(p, x, y, 1.25f, 20f, 100f, 120)
+            : base(p, x, y, 1.25f, 20f, 100f, 65)
         {
             this.baseDamage = (int) Damage.Swordman;
             this.visionRange = (float) VisionRange.Swordman;
@@ -60,9 +60,18 @@ namespace PathfindingTest.Units.Melee
             if (!Game1.GetInstance().IsOnScreen(rect)) return;
             //sb.Draw(this.texture, rect, null, this.color, this.direction * -1, Vector2.Zero, SpriteEffects.None, this.z);
 
-            if (this.waypoints.Count > 0)
+            if (this.waypoints.Count > 0 && unitToStalk == null)
             {
                 rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.First.Value) + (90 * (Math.PI / 180)));
+
+                if (rotation != rotation)
+                {
+                    rotation = previousRotation;
+                }
+            }
+            else if (unitToStalk != null)
+            {
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.unitToStalk.GetLocation()) + (90 * (Math.PI / 180)));
 
                 if (rotation != rotation)
                 {
@@ -80,9 +89,9 @@ namespace PathfindingTest.Units.Melee
             }
             else
             {
-                sb.Draw(this.hitTexture, rect, new Rectangle(0 + 30 * (int)(hitFrame / 5), 0, 30, 30), this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
+                sb.Draw(this.hitTexture, rect, new Rectangle(0 + 30 * (int)(hitFrame / 2), 0, 30, 30), this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
 
-                if (hitFrame == (hitTexture.Width / 30) * 5 - 1)
+                if (hitFrame == (hitTexture.Width / 30) * 2 - 1)
                 {
                     hitFrame = 0;
                     hitting = false;

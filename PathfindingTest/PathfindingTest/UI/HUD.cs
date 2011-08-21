@@ -349,41 +349,116 @@ namespace PathfindingTest.UI
                                 break;
 
                             case HUDObject.Type.Engineer:
-                                if (player.resources >= Unit.GetCost(Unit.Type.Engineer))
+                                foreach (Fortress building in player.buildingSelection.buildings)
                                 {
-                                    foreach (Fortress building in player.buildingSelection.buildings)
+                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
                                     {
-                                        building.CreateUnit(Unit.Type.Engineer);
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            if (player.resources >= Unit.GetCost(Unit.Type.Engineer))
+                                            {
+                                                building.CreateUnit(Unit.Type.Engineer);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (player.resources >= Unit.GetCost(Unit.Type.Engineer))
+                                        {
+                                            building.CreateUnit(Unit.Type.Engineer);
+                                        }
                                     }
                                 }
                                 break;
 
                             case HUDObject.Type.Ranged:
-                                if (player.resources >= Unit.GetCost(Unit.Type.Ranged))
+                                foreach (Barracks building in player.buildingSelection.buildings)
                                 {
-                                    foreach (Barracks building in player.buildingSelection.buildings)
+                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
                                     {
-                                        building.CreateUnit(Unit.Type.Ranged);
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            if (player.resources >= Unit.GetCost(Unit.Type.Ranged))
+                                            {
+                                                building.CreateUnit(Unit.Type.Ranged);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (player.resources >= Unit.GetCost(Unit.Type.Ranged))
+                                        {
+                                            building.CreateUnit(Unit.Type.Ranged);
+                                        }
                                     }
                                 }
                                 break;
 
                             case HUDObject.Type.Melee:
-                                if (player.resources >= Unit.GetCost(Unit.Type.Melee))
+                                foreach (Barracks building in player.buildingSelection.buildings)
                                 {
-                                    foreach (Barracks building in player.buildingSelection.buildings)
+                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
                                     {
-                                        building.CreateUnit(Unit.Type.Melee);
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            if (player.resources >= Unit.GetCost(Unit.Type.Melee))
+                                            {
+                                                building.CreateUnit(Unit.Type.Melee);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (player.resources >= Unit.GetCost(Unit.Type.Melee))
+                                        {
+                                            building.CreateUnit(Unit.Type.Melee);
+                                        }
                                     }
                                 }
                                 break;
 
                             case HUDObject.Type.Fast:
-                                if (player.resources >= Unit.GetCost(Unit.Type.Fast))
+                                foreach (Barracks building in player.buildingSelection.buildings)
                                 {
-                                    foreach (Barracks building in player.buildingSelection.buildings)
+                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
                                     {
-                                        building.CreateUnit(Unit.Type.Fast);
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            if (player.resources >= Unit.GetCost(Unit.Type.Fast))
+                                            {
+                                                building.CreateUnit(Unit.Type.Fast);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (player.resources >= Unit.GetCost(Unit.Type.Fast))
+                                        {
+                                            building.CreateUnit(Unit.Type.Fast);
+                                        }
+                                    }
+                                }
+                                break;
+
+                            case HUDObject.Type.Heavy:
+                                foreach (Factory building in player.buildingSelection.buildings)
+                                {
+                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                    {
+                                        for (int i = 0; i < 5; i++)
+                                        {
+                                            if (player.resources >= Unit.GetCost(Unit.Type.HeavyMelee))
+                                            {
+                                                building.CreateUnit(Unit.Type.HeavyMelee);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (player.resources >= Unit.GetCost(Unit.Type.HeavyMelee))
+                                        {
+                                            building.CreateUnit(Unit.Type.HeavyMelee);
+                                        }
                                     }
                                 }
                                 break;
@@ -393,7 +468,7 @@ namespace PathfindingTest.UI
                         }
                     }
                 }
-                
+
                 foreach (HUDCommandObject co in commandObjects)
                 {
                     if (co.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))

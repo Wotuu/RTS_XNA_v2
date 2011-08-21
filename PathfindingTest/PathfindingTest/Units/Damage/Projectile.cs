@@ -16,8 +16,8 @@ namespace PathfindingTest.Units.Projectiles
 {
     public abstract class Projectile : DamageSource, Offsetable
     {
-        private float startX { get; set; }
-        private float startY { get; set; }
+        public float startX { get; set; }
+        public float startY { get; set; }
         public float x { get; set; }
         public float y { get; set; }
         public Texture2D texture { get; set; }
@@ -38,8 +38,8 @@ namespace PathfindingTest.Units.Projectiles
         public Projectile(Unit parent, Damageable target, DamageEvent.DamageType type, float movementSpeed, int maxRange, int baseDamage)
         {
             this.parent = (Bowman)parent;
-            this.x = parent.x;
-            this.y = parent.y;
+            this.x = parent.x + (23 * (float)Math.Cos(parent.rotation));
+            this.y = parent.y + (7 * (float)Math.Sin(parent.rotation));
             this.startX = this.x;
             this.startY = this.y;
 

@@ -58,14 +58,36 @@ namespace PathfindingTest.Units
         internal override void Draw(SpriteBatch sb)
         {
             Rectangle rect = this.GetDrawRectangle();
+            rect.X += texture.Width / 2;
+            rect.Y += texture.Height / 2;
             if( !Game1.GetInstance().IsOnScreen( rect ) ) return;
 
-            sb.Draw(this.texture, rect, null, this.color, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-
-            /*if (this.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+            if (this.waypoints.Count > 0 && unitToStalk == null)
             {
-                this.DrawHealthBar(sb);
-            }*/
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.First.Value) + (90 * (Math.PI / 180)));                
+
+                if (rotation != rotation)
+                {
+                    rotation = previousRotation;
+                }
+            }
+            else if (unitToStalk != null)
+            {
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.unitToStalk.GetLocation()) + (90 * (Math.PI / 180)));
+
+                if (rotation != rotation)
+                {
+                    rotation = previousRotation;
+                }
+            }
+            else
+            {
+                rotation = previousRotation;
+            }
+
+            sb.Draw(this.texture, rect, null, this.color, rotation, new Vector2((this.texture.Width / 2), (this.texture.Height / 2)), SpriteEffects.None, this.z);
+
+            previousRotation = rotation;
         }
 
         public override void OnAggroRecieved(AggroEvent e)

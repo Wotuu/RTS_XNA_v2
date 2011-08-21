@@ -114,7 +114,7 @@ namespace PathfindingTest.Buildings
                     }
                     else
                     {
-                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefineRectangle());
+                        canPlace = Game1.GetInstance().map.collisionMap.CanPlace(this.DefinePlacementRectangle());
                     }
                     this.x = (ms.X - (texture.Width / 2)) + Game1.GetInstance().drawOffset.X;
                     this.y = (ms.Y - (texture.Height / 2)) + Game1.GetInstance().drawOffset.Y;
@@ -355,9 +355,9 @@ namespace PathfindingTest.Buildings
             {
                 Vector2 offset = Game1.GetInstance().drawOffset;
 
-                DrawUtil.DrawLine(sb, new Point((int)x + (this.texture.Width / 2) - (int)offset.X, 
+                DrawUtil.DrawLine(sb, new Point((int)x + (this.texture.Width / 2) - (int)offset.X + 1, 
                                                 (int)y + (this.texture.Height / 2) - (int)offset.Y), 
-                                  new Point((int)this.originWaypoint.X - (int)offset.X,
+                                  new Point((int)this.originWaypoint.X - (int)offset.X + 1,
                                             (int)this.originWaypoint.Y - (int)offset.Y), 
                                   Color.DarkCyan, 2, this.z + 0.00001f);
 
@@ -368,7 +368,8 @@ namespace PathfindingTest.Buildings
                         Point pp = originWaypoint;
                         foreach (Point p in this.waypoints)
                         {
-                            DrawUtil.DrawLine(sb, new Point(pp.X - (int)offset.X, pp.Y - (int)offset.Y), new Point(p.X - (int)offset.X, p.Y - (int)offset.Y), Color.DarkCyan, 2, this.z + 0.00001f);
+                            DrawUtil.DrawLine(sb, new Point(pp.X - (int)offset.X, pp.Y - (int)offset.Y), new Point(p.X - (int)offset.X, p.Y - (int)offset.Y), Color.DarkCyan, 2, this.z + 0.00002f);
+                            sb.Draw(TextureManager.GetInstance().GetSolidTexture(), new Rectangle(pp.X - (int)offset.X - 2, pp.Y - (int)offset.Y - 2, 4, 4), null, Color.DarkCyan, 0f, Vector2.Zero, SpriteEffects.None, this.z + 0.00001f);
                             pp = p;
                         }
                     }
@@ -599,6 +600,22 @@ namespace PathfindingTest.Buildings
         }
 
         /// <summary>
+        /// Gets the placement rectangle of this building, WITHOUT the draw offset.
+        /// </summary>
+        /// <returns>The rectangle</returns>
+        public Rectangle DefinePlacementRectangle()
+        {
+            if (this.type != Type.Resources && this.type != Type.Sentry)
+            {
+                return new Rectangle((int)this.x, (int)this.y, texture.Width, texture.Height + 30);
+            }
+            else
+            {
+                return DefineRectangle();
+            }
+        }
+
+        /// <summary>
         /// Defines the draw rectangle of this building, WITH the draw offset (giving screen coordinates)
         /// </summary>
         /// <returns>The rectangle</returns>
@@ -606,8 +623,6 @@ namespace PathfindingTest.Buildings
         {
             return new Rectangle((int)this.x - (int)Game1.GetInstance().drawOffset.X, (int)this.y - (int)Game1.GetInstance().drawOffset.Y, texture.Width, texture.Height);
         }
-
-
 
         public Rectangle DefineAddedDrawRectangle()
         {
