@@ -162,7 +162,10 @@ namespace MapEditor.TileMap
             //Nodes ook opslaan
             XmlElement Nodes = mapxml.CreateElement("Nodes");
             rootNode.AppendChild(Nodes);
-            foreach(Node node in PathfindingNodeManager.GetInstance().nodeList){
+            PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
+            for (int i = 0; i < manager.GetNodeCount(); i++)
+            {
+                Node node = (Node)manager.GetNodeAt(i);
                 XmlElement NodeElement = mapxml.CreateElement("Node");
                 NodeElement.SetAttribute("x", node.x.ToString());
                 NodeElement.SetAttribute("y", node.y.ToString());

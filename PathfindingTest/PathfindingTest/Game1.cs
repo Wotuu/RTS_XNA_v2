@@ -159,6 +159,8 @@ namespace PathfindingTest
 
             //testTexture = new MiniMap().GetScaledInstance(testTexture, 0.75f);
             TextureManager.GetInstance();
+            // Start pathfinding processor
+            PathfindingProcessor.GetInstance();
 
             DrawUtil.lineTexture = TextureManager.GetInstance().GetSolidTexture();
             font = Content.Load<SpriteFont>("Fonts/Arial");
@@ -402,7 +404,6 @@ namespace PathfindingTest
                     if (IsMultiplayerGame()) Synchronizer.GetInstance().Synchronize();
                     // These two fill the rest of the frame, so they're supposed to go last.
                     SmartPathfindingNodeProcessor.GetInstance().Process();
-                    PathfindingProcessor.GetInstance().Process();
 
                     frames++;
                     break;
@@ -599,12 +600,13 @@ namespace PathfindingTest
             else if (e.button == MouseEvent.MOUSE_BUTTON_3)
             {
                 PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-                foreach (Node node in manager.nodeList)
+                for( int i = 0; i < manager.GetNodeCount(); i++)
                 {
+                    Node node = (Node)manager.GetNodeAt(i);
                     if (node.GetDrawRectangle().Contains(e.location))
                     {
                         node.Destroy();
-                        manager.nodeList.Remove(node);
+                        manager.RemoveNode(node);
                         break;
                     }
                 }
@@ -622,8 +624,9 @@ namespace PathfindingTest
                     PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
                     // We need to capture it, because it will be reset after this most probably
                     PathfindingNode selectedNode = manager.selectedNode;
-                    foreach (Node node in manager.nodeList)
+                    for (int i = 0; i < manager.GetNodeCount(); i++)
                     {
+                        Node node = (Node)manager.GetNodeAt(i);
                         if (!selectedANode && node.GetDrawRectangle().Contains(e.location))
                         {
                             // Update connections
@@ -701,11 +704,12 @@ namespace PathfindingTest
         /// <summary>
         /// Checks whether the rectangle is on the screen or not.
         /// </summary>
-        /// <param name="rect">The rectangle to check.</param>
+        /// <param name="drawRect">The rectangle to check.</param>
         /// <returns>Yes or no.</returns>
-        public Boolean IsOnScreen(Rectangle rect)
+        public Boolean IsOnScreen(Rectangle drawRect)
         {
-            return rect.Intersects(new Rectangle(0, 0, graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
+            return drawRect.Intersects(new Rectangle(0, 0, 
+                graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
         }
 
         /// <summary>

@@ -300,8 +300,9 @@ namespace AStarCollisionMap.Collision
         {
             PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
             LinkedList<PathfindingNode> inRangeNodes = new LinkedList<PathfindingNode>();
-            foreach (PathfindingNode node in manager.nodeList)
+            for( int i = 0; i < manager.GetNodeCount(); i++)
             {
+                PathfindingNode node = manager.GetNodeAt(i);
                 if (this.IsCollisionBetween(p, node.GetLocation()))
                 {
                     inRangeNodes.AddLast(node);

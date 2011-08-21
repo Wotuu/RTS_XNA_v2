@@ -52,7 +52,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 index++;
             }
 
-            int panelHeight = (int)Math.Max(this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 70, 300);
+            int panelHeight = (int)Math.Max(this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 100, 300);
             this.bounds = new Rectangle(((CLIENT_WINDOW_WIDTH / 2) - 250),
                 ((CLIENT_WINDOW_HEIGHT / 2) - (panelHeight / 2)),
                 500,

@@ -199,7 +199,7 @@ namespace PathfindingTest.Units
         {
             if (this.job != newJob)
             {
-                Console.WriteLine("Unit's Job updated to + " + newJob);
+                // Console.WriteLine("Unit's Job updated to + " + newJob);
                 this.job = newJob;
             }
         }

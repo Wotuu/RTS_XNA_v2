@@ -387,7 +387,7 @@ namespace PathfindingTest.Map
         /// <param name="filename">The filename of the map to load from</param>
         public void LoadPathfindingNodes(String filename)
         {
-            PathfindingNodeManager.GetInstance().nodeList.Clear();
+            PathfindingNodeManager.GetInstance().ClearNodes();
 
 
             XmlDocument xmldoc = new XmlDocument();

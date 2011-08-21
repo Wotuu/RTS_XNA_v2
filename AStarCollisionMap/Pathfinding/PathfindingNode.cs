@@ -38,7 +38,7 @@ namespace AStarCollisionMap.Pathfinding
         public void Destroy()
         {
             RemoveAllConnections();
-            PathfindingNodeManager.GetInstance().nodeList.Remove(this);
+            PathfindingNodeManager.GetInstance().RemoveNode(this);
             PathfindingNodeProcessor.GetInstance().Remove(this);
             collisionMap.collisionChangedListeners -= ((OnCollisionChangedListener)this).OnCollisionChanged;
         }
@@ -48,11 +48,12 @@ namespace AStarCollisionMap.Pathfinding
         /// </summary>
         public void RemoveAllConnections()
         {
-            foreach (PathfindingNode node in PathfindingNodeManager.GetInstance().nodeList)
+            for (int i = 0; i < PathfindingNodeManager.GetInstance().GetNodeCount(); i++ )
             {
-                node.RemoveConnection(this);
+                PathfindingNodeManager.GetInstance().GetNodeAt(i).RemoveConnection(this);
             }
         }
+
 
         /// <summary>
         /// Whether or not this node is connected to the parameter node.
@@ -146,17 +147,18 @@ namespace AStarCollisionMap.Pathfinding
         }
 
         /// <summary>
-        /// Creates the connections between this node and other nodes!
+        /// Creates the connections with a max range (default is 600)
         /// </summary>
-        public void CreateConnections()
+        /// <param name="maxRange">The new max range</param>
+        public void CreateConnections(int maxRange)
         {
             PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-            for( int i = 0; i < manager.nodeList.Count; i++ )
+            for (int i = 0; i < manager.GetNodeCount(); i++)
             {
-                PathfindingNode node = manager.nodeList.ElementAt(i);
+                PathfindingNode node = manager.GetNodeAt(i);
                 // No connection with itsself
                 if (node == this) continue;
-                if (PathfindingUtil.GetHypoteneuseLength(node.GetLocation(), this.GetLocation()) > MAX_CONNECT_RANGE) continue;
+                if (PathfindingUtil.GetHypoteneuseLength(node.GetLocation(), this.GetLocation()) > maxRange) continue;
                 if (!collisionMap.IsCollisionBetween(this.GetLocation(), node.GetLocation()))
                 {
                     // Console.Out.WriteLine("Adding a new connection between " + this + " and " + node);
@@ -165,6 +167,14 @@ namespace AStarCollisionMap.Pathfinding
                     if (node.IsConnected(this) == null) node.connections.AddLast(conn);
                 }
             }
+        }
+
+        /// <summary>
+        /// Creates the connections between this node and other nodes!
+        /// </summary>
+        public void CreateConnections()
+        {
+            this.CreateConnections(MAX_CONNECT_RANGE);
         }
 
         void OnCollisionChangedListener.OnCollisionChanged(CollisionChangedEvent collisionEvent)

@@ -535,7 +535,8 @@ namespace PathfindingTest.Players
                             LinkedList<Unit> selectionUnits = new LinkedList<Unit>();
                             foreach (Unit unit in units)
                             {
-                                if (mouseOverUnit.type == unit.type) selectionUnits.AddLast(unit);
+                                if (Game1.GetInstance().IsOnScreen( unit.DefineDrawRectangle() ) && mouseOverUnit.type == unit.type) 
+                                    selectionUnits.AddLast(unit);
                             }
                             this.currentSelection = new UnitSelection(selectionUnits);
                         }
@@ -567,10 +568,8 @@ namespace PathfindingTest.Players
                             LinkedList<Building> selectionBuildings = new LinkedList<Building>();
                             foreach (Building b in buildings)
                             {
-                                if (mouseOverBuilding.type == b.type)
-                                {
+                                if (Game1.GetInstance().IsOnScreen( b.DefineDrawRectangle() ) && mouseOverBuilding.type == b.type)
                                     selectionBuildings.AddLast(b);
-                                }
                             }
                             this.buildingSelection = new BuildingSelection(selectionBuildings);
                         }

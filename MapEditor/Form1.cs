@@ -388,9 +388,10 @@ namespace MapEditor
                 CollisionMap.drawOffset = camera.Position;
                 CollisionMap.tree.Draw(spriteBatch);
                 PathfindingNodeProcessor.GetInstance().Process();
-                foreach (Node i in PathfindingNodeManager.GetInstance().nodeList)
+                PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
+                for (int i = 0; i < manager.GetNodeCount(); i++)
                 {
-                    i.Draw(spriteBatch);
+                    ((Node)manager.GetNodeAt(i)).Draw(spriteBatch);
                 }
             }
 
@@ -474,7 +475,7 @@ namespace MapEditor
             //CollisionData  = new int[(mapform.MapWidth * Engine.TileWidth) * (mapform.MapHeight * Engine.TileHeight)];
             currentLayer = tileMap.layers[0];
             Players.Clear();
-            PathfindingNodeManager.GetInstance().nodeList.Clear();
+            PathfindingNodeManager.GetInstance().ClearNodes();
         }
 
         private void newMapToolStripMenuItem_Click(object sender, EventArgs e)
@@ -551,10 +552,10 @@ namespace MapEditor
                tileMap = tileMap.opentilemap(openfile.FileName);
                 
                 //load Collisionmap
-               PathfindingNodeManager.GetInstance().nodeList.Clear();
+               PathfindingNodeManager.GetInstance().ClearNodes();
                CollisionMap = new CollisionMap(GraphicsDevice, tileMap.MapWidth * Engine.TileWidth, tileMap.MapHeight * Engine.TileHeight, true, Util.GetQuadDepth(tileMap.MapWidth));
                CollisionMap.LoadMap(openfile.FileName.Substring(0, openfile.FileName.LastIndexOf('\\')), openfile.FileName.Substring(openfile.FileName.LastIndexOf('\\')).Replace(".xml", ""));
-               PathfindingNodeManager.GetInstance().nodeList.Clear();
+               PathfindingNodeManager.GetInstance().ClearNodes();
                 Util.LoadNodes(openfile.FileName, GraphicsDevice);
                 Util.LoadPlayers(openfile.FileName);
                 CollisionData = new int[(tileMap.MapWidth * Engine.TileWidth) * (tileMap.MapHeight * Engine.TileHeight)];
@@ -781,7 +782,7 @@ namespace MapEditor
         {
            // CollisionMap.GetNodeLocationsAroundEdges();
             LinkedList<Point> pointList = CollisionMap.GetNodeLocationsAroundEdges();
-            PathfindingNodeManager.GetInstance().nodeList.Clear();
+            PathfindingNodeManager.GetInstance().ClearNodes();
             foreach (Point p in pointList)
             {
                 new Node(CollisionMap, p.X, p.Y,GraphicsDevice);

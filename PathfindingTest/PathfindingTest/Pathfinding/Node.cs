@@ -47,7 +47,7 @@ namespace PathfindingTest.Pathfinding
             texture = game.Content.Load<Texture2D>("Misc/node");
             this.c = Color.Red;
 
-            PathfindingNodeManager.GetInstance().nodeList.AddLast(this);
+            PathfindingNodeManager.GetInstance().AddNode(this);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace PathfindingTest.Pathfinding
             : base(map)
         {
             Init(x, y);
-            if (forceNodeCreation) this.CreateConnections();
+            if (forceNodeCreation) this.CreateConnections(PathfindingNode.MAX_CONNECT_RANGE);
             else SmartPathfindingNodeProcessor.GetInstance().Push(this);
         }
 

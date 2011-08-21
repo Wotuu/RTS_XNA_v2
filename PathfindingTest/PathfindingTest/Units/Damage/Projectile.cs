@@ -229,7 +229,7 @@ namespace PathfindingTest.Units.Projectiles
 
         public void Hit()
         {
-            Console.WriteLine("Target has been hit!");
+            // Console.WriteLine("Target has been hit!");
             DamageEvent e = new DamageEvent(this, target, parent);
             target.OnDamage(e);
             if (Game1.GetInstance().IsMultiplayerGame())

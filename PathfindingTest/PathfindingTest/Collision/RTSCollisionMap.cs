@@ -73,9 +73,10 @@ namespace PathfindingTest.Collision
             BuildingMesh mesh = new BuildingMesh(this);
             mesh.rect = rect;
             mesh.createdNodes = newNodes;
-            LinkedList<PathfindingNode> nodes = PathfindingNodeManager.GetInstance().nodeList;
-            foreach (PathfindingNode node in nodes)
+            PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
+            for (int i = 0; i < manager.GetNodeCount(); i++)
             {
+                Node node = (Node)manager.GetNodeAt(i);
                 if (rect.Contains(node.GetLocation())) mesh.removedNodes.AddLast(node.GetLocation());
             }
             Console.Out.WriteLine("Mesh create time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms");

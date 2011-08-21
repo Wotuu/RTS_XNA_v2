@@ -53,7 +53,7 @@ namespace MapEditor.Pathfinding
             stream.Dispose();
             this.c = Color.Red;
 
-            PathfindingNodeManager.GetInstance().nodeList.AddLast(this);
+            PathfindingNodeManager.GetInstance().AddNode(this);
         }
 
         /// <summary>

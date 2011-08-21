@@ -44,8 +44,9 @@ namespace PathfindingTest.Audio
 
         public SoundManager()
         {
+            /*
             sfxVolume = 0.45f;
-            bgmVolume = 1f;
+            bgmVolume = 1f;*/
 
             bgmPlaying = false;
             silencePlayed = false;

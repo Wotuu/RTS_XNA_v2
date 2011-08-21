@@ -343,12 +343,13 @@ namespace MapEditor
         private void RemoveNode(object sender, MouseEventArgs e)
         {
             PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-            foreach (Node node in manager.nodeList)
+            for (int i = 0; i < manager.GetNodeCount(); i++)
             {
+                Node node = (Node)manager.GetNodeAt(i);
                 if (node.GetDrawRectangle().Contains(e.X, e.Y))
                 {
                     node.Destroy();
-                    manager.nodeList.Remove(node);
+                    manager.RemoveNode(node);
                     break;
                 }
             }

@@ -157,6 +157,9 @@ namespace PathfindingTest.State
             game.map.miniMap = new MiniMap(game.map);
             game.map.miniMap.CreateMiniMap(true);
 
+            game.drawOffset = new Vector2(Game1.CURRENT_PLAYER.startLocation.X - ( game.graphics.PreferredBackBufferWidth / 2 ),
+                Game1.CURRENT_PLAYER.startLocation.Y - ( game.graphics.PreferredBackBufferHeight / 2 ));
+
             MouseManager.GetInstance().mouseClickedListeners += ((MouseClickListener)game).OnMouseClick;
             MouseManager.GetInstance().mouseReleasedListeners += ((MouseClickListener)game).OnMouseRelease;
             MouseManager.GetInstance().mouseMotionListeners += ((MouseMotionListener)game).OnMouseMotion;

@@ -6,6 +6,7 @@ using PathfindingTest.Units;
 using Microsoft.Xna.Framework;
 using PathfindingTest.State;
 using PathfindingTest.Buildings;
+using System.Threading;
 
 namespace PathfindingTest.Pathfinding
 {
@@ -13,7 +14,8 @@ namespace PathfindingTest.Pathfinding
     {
         private static PathfindingProcessor instance { get; set; }
         private LinkedList<ObjectProcess> toProcess { get; set; }
-        private readonly object queueLock = new object();
+        private readonly object listLock = new object();
+        public Boolean running { get; set; }
 
         /// <summary>
         /// Pushes an object onto the list.
@@ -22,7 +24,7 @@ namespace PathfindingTest.Pathfinding
         /// <param name="target">The target of the unit</param>
         public void Push(Object obj, Point target)
         {
-            lock (queueLock)
+            lock (listLock)
             {
                 //Console.Out.WriteLine("Adding a unit to find it's path: \n" +
                 //    "StackTrace: '{0}'", Environment.StackTrace);
@@ -38,21 +40,24 @@ namespace PathfindingTest.Pathfinding
         {
             for (int i = 0; i < toProcess.Count; i++)
             {
-                ObjectProcess up = toProcess.ElementAt(i);
-                if (obj is Unit)
+                lock (listLock)
                 {
-                    if (up.unit == (Unit)obj)
+                    ObjectProcess up = toProcess.ElementAt(i);
+                    if (obj is Unit)
                     {
-                        toProcess.Remove(up);
-                        break;
+                        if (up.unit == (Unit)obj)
+                        {
+                            toProcess.Remove(up);
+                            break;
+                        }
                     }
-                }
-                else if (obj is Building)
-                {
-                    if (up.building == (Building)obj)
+                    else if (obj is Building)
                     {
-                        toProcess.Remove(up);
-                        break;
+                        if (up.building == (Building)obj)
+                        {
+                            lock (listLock) { toProcess.Remove(up); }
+                            break;
+                        }
                     }
                 }
             }
@@ -63,16 +68,14 @@ namespace PathfindingTest.Pathfinding
         /// </summary>
         public void Process()
         {
-            lock (queueLock)
+            running = true;
+            while (running)
             {
                 if (SmartPathfindingNodeProcessor.GetInstance().GetCount() == 0)
                 {
-                    double timeTaken = 0;
-                    int count = 0;
-                    do
+                    if (toProcess.Count != 0)
                     {
-                        timeTaken = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
-                        if (toProcess.Count != 0)
+                        lock (listLock)
                         {
                             ObjectProcess up = toProcess.ElementAt(0);
 
@@ -87,15 +90,10 @@ namespace PathfindingTest.Pathfinding
                                 toProcess.Remove(up);
                             }
                         }
-                        else break;
-                        count++;
-                        timeTaken = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds - timeTaken;
-                        // Console.Out.WriteLine(GameTimeManager.GetInstance().UpdateMSLeftThisFrame());
                     }
-                    while (GameTimeManager.GetInstance().UpdateMSLeftThisFrame() > timeTaken);
+                    else Thread.Sleep(10);
                 }
-
-                // if (count > 0) Console.Out.WriteLine("Paths processed: " + count);
+                else Thread.Sleep(10);
             }
         }
 
@@ -113,15 +111,18 @@ namespace PathfindingTest.Pathfinding
         /// <returns>True or false.</returns>
         public Boolean AlreadyInQueue(Object obj)
         {
-            for (int i = 0; i < this.toProcess.Count; i++)
+            lock (this.listLock)
             {
-                if (obj is Unit)
+                for (int i = 0; i < this.toProcess.Count; i++)
                 {
-                    if (this.toProcess.ElementAt(i).unit == obj) return true;
-                }
-                else if (obj is Building)
-                {
-                    if (this.toProcess.ElementAt(i).building == obj) return true;
+                    if (obj is Unit)
+                    {
+                        if (this.toProcess.ElementAt(i).unit == obj) return true;
+                    }
+                    else if (obj is Building)
+                    {
+                        if (this.toProcess.ElementAt(i).building == obj) return true;
+                    }
                 }
             }
             return false;
@@ -130,6 +131,7 @@ namespace PathfindingTest.Pathfinding
         private PathfindingProcessor()
         {
             toProcess = new LinkedList<ObjectProcess>();
+            new Thread(this.Process).Start();
         }
 
         private struct ObjectProcess
