@@ -109,6 +109,7 @@ namespace PathfindingTest.State
         /// <param name="name">The name of the map to load.</param>
         private void LoadMap()
         {
+            Game1.GetInstance().TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)(1000 / 10f) );
             Game1 game = Game1.GetInstance();
             game.maxLoadProgress += 5000;
             game.map = new GameMap(this.mapToLoad);
@@ -117,14 +118,18 @@ namespace PathfindingTest.State
             (game.quadTree = new QuadRoot(new Rectangle(0, 0,
                 game.graphics.PreferredBackBufferWidth, game.graphics.PreferredBackBufferHeight)
                 )).CreateTree(5);
+            game.currentLoadProgress += 5000;
             if (game.IsMultiplayerGame())
             {
                 GameServerConnectionManager.GetInstance().user =
                     ChatServerConnectionManager.GetInstance().user;
+
                 GameServerConnectionManager.GetInstance().serverLocation =
                     ChatServerConnectionManager.GetInstance().serverLocation;
+
                 GameServerConnectionManager.GetInstance().ConnectToServer();
             }
+            Game1.GetInstance().TargetElapsedTime = new TimeSpan(0, 0, 0, 0, (int)(1000 / 60f));
         }
 
         /// <summary>
@@ -176,7 +181,7 @@ namespace PathfindingTest.State
             {
                 // Wait 5 seconds, this is purely for debugging to prevent I/O exceptions when
                 // 2 local clients are accessing the same files.
-                Thread.Sleep(5000);
+                Thread.Sleep(2000);
             }
             foreach (User user in UserManager.GetInstance().users)
             {

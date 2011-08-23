@@ -62,10 +62,10 @@ namespace PathfindingTest.Collision
             ticks = DateTime.UtcNow.Ticks;
             Node[] newNodes = new Node[4];
             RTSCollisionMap map = Game1.GetInstance().map.collisionMap;
-            newNodes[0] = new Node(map, rect.Left - 1, rect.Top - 1, true);
-            newNodes[1] = new Node(map, rect.Right + 1, rect.Top - 1, true);
-            newNodes[2] = new Node(map, rect.Left - 1, rect.Bottom + 1, true);
-            newNodes[3] = new Node(map, rect.Right + 1, rect.Bottom + 1, true);
+            newNodes[0] = new Node(map, rect.Left - 1, rect.Top - 1, false);
+            newNodes[1] = new Node(map, rect.Right + 1, rect.Top - 1, false);
+            newNodes[2] = new Node(map, rect.Left - 1, rect.Bottom + 1, false);
+            newNodes[3] = new Node(map, rect.Right + 1, rect.Bottom + 1, false);
             Console.Out.WriteLine("Node create time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms");
 
 
@@ -80,29 +80,16 @@ namespace PathfindingTest.Collision
                 if (rect.Contains(node.GetLocation())) mesh.removedNodes.AddLast(node.GetLocation());
             }
             Console.Out.WriteLine("Mesh create time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms");
-
+            /*
             ticks = DateTime.UtcNow.Ticks;
             LinkedList<Node> processedNodes = new LinkedList<Node>();
             int nodesAdded = 0;
             foreach (Node newNode in newNodes)
             {
-                foreach (Node connectedNode in newNode.GetConnectedNodes())
-                {
-                    // Let's not process things twice, as it's quite a heavy computation
-                    if (!processedNodes.Contains(connectedNode))
-                    {
-                        // Remove its current nodes
-                        connectedNode.RemoveAllConnections();
-                        // Scedule it for reprocessing
-                        SmartPathfindingNodeProcessor.GetInstance().Push(connectedNode);
-                        processedNodes.AddLast(connectedNode);
-                        nodesAdded++;
-                    }
-                }
             }
 
             Console.Out.WriteLine("Node connection time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms, adding " + nodesAdded + " nodes");
-
+            */
             ticks = DateTime.UtcNow.Ticks;
             FireCollisionChangedEvent(e);
             Console.Out.WriteLine("Event time: " + (DateTime.UtcNow.Ticks - ticks));

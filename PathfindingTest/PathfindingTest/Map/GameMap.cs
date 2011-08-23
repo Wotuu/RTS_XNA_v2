@@ -11,6 +11,7 @@ using System.IO;
 using AStarCollisionMap.Collision;
 using PathfindingTest.Pathfinding;
 using AStarCollisionMap.Pathfinding;
+using System.Threading;
 
 
 public delegate void OnLoadProgressChanged(GameMap source, int percentDone);
@@ -411,12 +412,15 @@ namespace PathfindingTest.Map
                     throw new Exception("XML document is not formatted correctly");
                 }
 
-                new Node(this.collisionMap,
+                Node pfNode = new Node(this.collisionMap,
                     Int32.Parse(node.Attributes.GetNamedItem("x").Value),
                     Int32.Parse(node.Attributes.GetNamedItem("y").Value), true);
+                pfNode.generatedOnLoadTime = true;
                 // One more node ready
                 Game1.GetInstance().currentLoadProgress += 100;
             }
+
+            SmartPathfindingNodeProcessor.GetInstance().StartThread();
         }
 
         /// <summary>

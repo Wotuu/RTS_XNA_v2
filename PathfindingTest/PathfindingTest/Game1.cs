@@ -126,7 +126,7 @@ namespace PathfindingTest
 
             Content.RootDirectory = "Content";
             this.IsMouseVisible = true;
-            this.IsFixedTimeStep = false;
+            this.IsFixedTimeStep = true;
             instance = this;
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
@@ -212,6 +212,8 @@ namespace PathfindingTest
 
             if (Game1.GetInstance().map != null)
                 Game1.GetInstance().map.Dispose();
+
+            PathfindingProcessor.GetInstance().running = false;
         }
 
         private RenderTarget2D CreateRenderTarget()
@@ -264,7 +266,7 @@ namespace PathfindingTest
 
 
                         // Finished loading
-                        if (maxLoadProgress != 0 && currentLoadProgress == maxLoadProgress)
+                        if (maxLoadProgress != 0 && currentLoadProgress >= maxLoadProgress)
                         {
                             StateManager.GetInstance().FinishedLoadingMap();
                         }
@@ -296,7 +298,7 @@ namespace PathfindingTest
                         }
 
                         // Just once
-                        if (percentage == 100 && this.previousLoadPercentageMP != 100)
+                        if (percentage >= 100 && this.previousLoadPercentageMP != 100)
                         {
                             StateManager.GetInstance().FinishedLoadingMap();
                             Console.Out.WriteLine("Sending finished loading packet! -> " + ChatServerConnectionManager.GetInstance().user.id);
@@ -343,50 +345,51 @@ namespace PathfindingTest
                      */
                     //if (frames % 2 == 0) 
 
+                    float targetMapMoveSensitivity = (float)(GameTimeManager.GetInstance().time_step * mapMoveSensitivity);
 
                     // Use arrow keys to move the map
                     if (keyboardState.IsKeyDown(Keys.Left) && drawOffset.X > 0)
                     {
-                        if (drawOffset.X - mapMoveSensitivity < 0)
+                        if (drawOffset.X - targetMapMoveSensitivity < 0)
                         {
                             this.drawOffset = new Vector2(0, this.drawOffset.Y);
                         }
                         else
                         {
-                            this.drawOffset = new Vector2(this.drawOffset.X - mapMoveSensitivity, this.drawOffset.Y);
+                            this.drawOffset = new Vector2(this.drawOffset.X - targetMapMoveSensitivity, this.drawOffset.Y);
                         }
                     }
                     if (keyboardState.IsKeyDown(Keys.Right) && drawOffset.X + 1024 < map.collisionMap.mapWidth)
                     {
-                        if (drawOffset.X + mapMoveSensitivity > map.collisionMap.mapWidth)
+                        if (drawOffset.X + targetMapMoveSensitivity > map.collisionMap.mapWidth)
                         {
                             this.drawOffset = new Vector2(map.collisionMap.mapWidth, this.drawOffset.Y);
                         }
                         else
                         {
-                            this.drawOffset = new Vector2(this.drawOffset.X + mapMoveSensitivity, this.drawOffset.Y);
+                            this.drawOffset = new Vector2(this.drawOffset.X + targetMapMoveSensitivity, this.drawOffset.Y);
                         }
                     }
                     if (keyboardState.IsKeyDown(Keys.Up) && drawOffset.Y > 0)
                     {
-                        if (drawOffset.Y - mapMoveSensitivity < 0)
+                        if (drawOffset.Y - targetMapMoveSensitivity < 0)
                         {
                             this.drawOffset = new Vector2(this.drawOffset.X, 0);
                         }
                         else
                         {
-                            this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y - mapMoveSensitivity);
+                            this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y - targetMapMoveSensitivity);
                         }
                     }
                     if (keyboardState.IsKeyDown(Keys.Down) && drawOffset.Y + 768 < map.collisionMap.mapHeight)
                     {
-                        if (drawOffset.Y + mapMoveSensitivity > map.collisionMap.mapHeight)
+                        if (drawOffset.Y + targetMapMoveSensitivity > map.collisionMap.mapHeight)
                         {
                             this.drawOffset = new Vector2(this.drawOffset.X, map.collisionMap.mapHeight);
                         }
                         else
                         {
-                            this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y + mapMoveSensitivity);
+                            this.drawOffset = new Vector2(this.drawOffset.X, this.drawOffset.Y + targetMapMoveSensitivity);
                         }
                     }
 
@@ -403,7 +406,7 @@ namespace PathfindingTest
 
                     if (IsMultiplayerGame()) Synchronizer.GetInstance().Synchronize();
                     // These two fill the rest of the frame, so they're supposed to go last.
-                    SmartPathfindingNodeProcessor.GetInstance().Process();
+                    // SmartPathfindingNodeProcessor.GetInstance().Process();
 
                     frames++;
                     break;
@@ -468,11 +471,12 @@ namespace PathfindingTest
                 map.Draw(spriteBatch);
                 //try
                 //{
-                //LinkedList<PathfindingNode> list = PathfindingNodeManager.GetInstance().nodeList;
-                //foreach (Node node in list)
-                //{
-                //    node.Draw(spriteBatch);
-                //}
+                
+                /*
+                for( int i = 0; i < PathfindingNodeManager.GetInstance().GetNodeCount(); i++ )
+                {
+                    ((Node)PathfindingNodeManager.GetInstance().GetNodeAt(i)).Draw(spriteBatch);
+                }*/
 
                 foreach (Player p in players)
                 {
@@ -639,9 +643,12 @@ namespace PathfindingTest
                                 }
                                 else
                                 {
-                                    PathfindingNodeConnection conn = new PathfindingNodeConnection(node, selectedNode);
-                                    selectedNode.connections.AddLast(conn);
-                                    node.connections.AddLast(conn);
+                                    lock (node.connectionSyncLock)
+                                    {
+                                        PathfindingNodeConnection conn = new PathfindingNodeConnection(node, selectedNode);
+                                        selectedNode.connections.AddLast(conn);
+                                        node.connections.AddLast(conn);
+                                    }
                                 }
                             }
                             //if (!controlDown) {

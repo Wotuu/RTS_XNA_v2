@@ -85,7 +85,7 @@ namespace PathfindingTest.Players
             units = new LinkedList<Unit>();
             buildings = new LinkedList<Building>();
             hud = new HUD(this, color);
-            resources = 10000;
+            resources = 100000;
 
             meleeStore = new MeleeStore(this);
             rangedStore = new RangedStore(this);

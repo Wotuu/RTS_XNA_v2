@@ -280,12 +280,13 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         }
 
                         StateManager.GetInstance().gameState = StateManager.State.GameRunning;
-                        int count = 0;
-                        foreach (Player player in Game1.GetInstance().players)
+                        //  int count = 0;
+                        Game1.CURRENT_PLAYER.SpawnStartUnits();
+                        /*foreach (Player player in Game1.GetInstance().players)
                         {
                             player.SpawnStartUnits();
                             count++;
-                        }
+                        }*/
                         break;
                     }
 

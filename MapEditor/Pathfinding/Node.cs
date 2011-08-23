@@ -88,10 +88,14 @@ namespace MapEditor.Pathfinding
             
             if(viewport.Contains(this.GetDrawRectangle())){
                 sb.Draw(texture, this.GetDrawRectangle(), null, c, 0f, Vector2.Zero, SpriteEffects.None, 0.01f);
-            
-                foreach (PathfindingNodeConnection conn in this.connections)
+
+                lock (this.connectionSyncLock)
                 {
-                    new DrawableNodeConnection(conn).Draw(sb);
+                    /*
+                    foreach (PathfindingNodeConnection conn in this.connections)
+                    {
+                        new DrawableNodeConnection(conn).Draw(sb);
+                    }*/
                 }
             }
             

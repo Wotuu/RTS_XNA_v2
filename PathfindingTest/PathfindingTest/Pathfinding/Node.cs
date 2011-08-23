@@ -18,6 +18,9 @@ namespace PathfindingTest.Pathfinding
 
         private Texture2D texture;
 
+        public Boolean generatedOnLoadTime { get; set; }
+
+        public double lastConnectionCreateTime { get; set; }
 
 
         private Boolean _selected;
@@ -46,7 +49,7 @@ namespace PathfindingTest.Pathfinding
             this.y = y;
             texture = game.Content.Load<Texture2D>("Misc/node");
             this.c = Color.Red;
-
+            this.onConnectionsCreatedListeners += this.OnConnectionsCreated;
             PathfindingNodeManager.GetInstance().AddNode(this);
         }
 
@@ -81,9 +84,16 @@ namespace PathfindingTest.Pathfinding
             // Draw some connections twice, but o well!
 
             // if( Monitor.TryEnter(this.connections, 0) ){
-            foreach (PathfindingNodeConnection conn in this.connections)
+            lock (this.connectionSyncLock)
             {
-                new DrawableNodeConnection(conn).Draw(sb);
+                try
+                {
+                    foreach (PathfindingNodeConnection conn in this.connections)
+                    {
+                        new DrawableNodeConnection(conn).Draw(sb);
+                    }
+                }
+                catch (Exception e) { }
             }
 
             // sb.DrawString(game.font, "" + score, new Vector2(drawX, drawY - 14), Color.Black);
@@ -103,6 +113,30 @@ namespace PathfindingTest.Pathfinding
             float drawX = this.x - (texture.Width / 2), drawY = this.y - (texture.Height / 2);
             return new Rectangle((int)(drawX - game.drawOffset.X), (int)(drawY - game.drawOffset.Y),
                 this.texture.Width, this.texture.Height);
+        }
+
+        public void OnConnectionsCreated(PathfindingNode source)
+        {
+            if (!this.initialised && !generatedOnLoadTime)
+            {
+                double currTime = 
+                    new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds ;
+                // For each node we can make a connection to
+                foreach (Node connectedNode in this.GetConnectedNodes())
+                {
+                    // Scedule it for reprocessing
+                    if (currTime - connectedNode.lastConnectionCreateTime > 5000)
+                    {
+                        // Remove its current nodes
+                        connectedNode.RemoveAllConnections();
+                        connectedNode.lastConnectionCreateTime = currTime;
+                        SmartPathfindingNodeProcessor.GetInstance().Push(connectedNode);
+                    }
+                    // Console.Out.WriteLine("Re-sceduled a node!");
+                }
+                this.initialised = true;
+            }
+            lastConnectionCreateTime = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
         }
     }
 }

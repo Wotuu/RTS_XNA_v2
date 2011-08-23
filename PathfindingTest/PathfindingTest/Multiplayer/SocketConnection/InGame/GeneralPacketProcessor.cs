@@ -78,7 +78,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int serverID = PacketUtil.DecodePacketInt(p, 4);
                         Console.Out.WriteLine("Received object data request by " + targetUserID + ": " + serverID);
                         // Someone wants to know data
-                        MultiplayerData data = MultiplayerDataManager.GetInstance().GetDataByServerID(serverID);
+                        MultiplayerData data = MultiplayerDataManager.GetInstance().GetDataByServerID(serverID, true);
 
                         if (data != null && data.isLocal)
                         {

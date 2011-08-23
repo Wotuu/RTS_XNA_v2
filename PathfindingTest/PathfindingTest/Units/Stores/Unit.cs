@@ -17,6 +17,7 @@ using PathfindingTest.State;
 using PathfindingTest.Multiplayer.Data;
 using System.Diagnostics;
 using PathfindingTest.Buildings;
+using PathfindingTest.Units.Melee;
 
 namespace PathfindingTest.Units
 {
@@ -233,8 +234,9 @@ namespace PathfindingTest.Units
                 return;
             }
 
-            Point waypoint = this.waypoints.ElementAt(0);
-            
+            Point waypoint = this.waypoints.FirstOrDefault();
+            if (waypoint == null) return;
+
             SetMoveToTarget(waypoint.X, waypoint.Y);
 
             if (this.collisionWith.Count > 0)

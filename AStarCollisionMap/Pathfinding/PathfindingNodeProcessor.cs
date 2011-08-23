@@ -25,7 +25,7 @@ namespace AStarCollisionMap.Pathfinding
         /// <param name="node">The node to push.</param>
         public void Push(PathfindingNode node)
         {
-            toProcess.AddLast(node);
+            if( !toProcess.Contains(node) ) toProcess.AddLast(node);
         }
 
         /// <summary>

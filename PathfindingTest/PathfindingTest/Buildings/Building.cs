@@ -563,14 +563,16 @@ namespace PathfindingTest.Buildings
                 {
                     if (waypoints.Count > 0)
                     {
+                        newUnit.multiplayerData.moveTarget = waypoints.Last.Value;
                         newUnit.MoveToQueue(waypoints.Last.Value);
+                        Console.Out.WriteLine("Moving unit after building it to " + waypoints.Last.Value);
                         newUnit.hasToMove = true;
                     }
                     productionQueue.RemoveFirst();
-                }
 
-                //// Synchronize this unit, since the unit has moved (in other words, teleported)
-                //if (Game1.GetInstance().IsMultiplayerGame()) Synchronizer.GetInstance().QueueUnit(pu);
+                    //// Synchronize this unit, since the unit has moved (in other words, teleported)
+                    if (Game1.GetInstance().IsMultiplayerGame()) Synchronizer.GetInstance().QueueUnit(newUnit);
+                }
             }
         }
 

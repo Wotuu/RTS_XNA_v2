@@ -33,7 +33,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int count = 0;
                         do
                         {
-                            data = MultiplayerDataManager.GetInstance().GetDataByServerID(serverID);
+                            data = MultiplayerDataManager.GetInstance().GetDataByServerID(serverID, true);
                             count++;
                             if (count > 5)
                             {
@@ -74,7 +74,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int playerID = PacketUtil.DecodePacketInt(p, 0);
                         int serverID = PacketUtil.DecodePacketInt(p, 4);
                         int type = PacketUtil.DecodePacketInt(p, 8);
-                        if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) == null) {
+                        if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID, false) == null) {
                             ObjectCreator.GetInstance().CreateUnit(playerID, serverID, type);
                         }
 
@@ -85,8 +85,8 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                         int damageSource = PacketUtil.DecodePacketInt(p, 0);
                         int fromServerID = PacketUtil.DecodePacketInt(p, 4);
                         int toServerID = PacketUtil.DecodePacketInt(p, 8);
-                        Unit fromUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(fromServerID)).unit;
-                        Unit targetUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(toServerID)).unit;
+                        Unit fromUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(fromServerID, true)).unit;
+                        Unit targetUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(toServerID, true)).unit;
 
 
                         DamageEvent e = new DamageEvent(DecodeSource(damageSource, fromServerID), targetUnit, fromUnit);
@@ -114,7 +114,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         /// <returns>The damageSource, or null</returns>
         private DamageSource DecodeSource(int damageSource, int fromServerID)
         {
-            Unit fromUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(fromServerID)).unit;
+            Unit fromUnit = ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(fromServerID, true)).unit;
 
             switch (damageSource)
             {

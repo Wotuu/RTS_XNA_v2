@@ -40,7 +40,7 @@ namespace PathfindingTest.Map
 
         public void OnMouseDrag(MouseEvent e)
         {
-            if (this.currentDrawRectangle.Contains(e.location))
+            if (this.currentDrawRectangle.Contains(e.location) && Game1.CURRENT_PLAYER.selectBox == null )
             {
                 Point miniMapLocation = new Point(e.location.X - this.currentDrawRectangle.X, e.location.Y - this.currentDrawRectangle.Y);
                 ActionOnMiniMap(miniMapLocation);

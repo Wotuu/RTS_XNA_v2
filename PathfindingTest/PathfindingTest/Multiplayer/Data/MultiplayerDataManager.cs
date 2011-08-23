@@ -10,6 +10,8 @@ namespace PathfindingTest.Multiplayer.Data
         private LinkedList<MultiplayerData> data = new LinkedList<MultiplayerData>();
         private static MultiplayerDataManager instance { get; set; }
 
+        public readonly object dataSyncLock = new object();
+
         public static MultiplayerDataManager GetInstance()
         {
             if (instance == null) instance = new MultiplayerDataManager();
@@ -23,13 +25,16 @@ namespace PathfindingTest.Multiplayer.Data
         /// </summary>
         /// <param name="serverID">The server ID.</param>
         /// <returns></returns>
-        public MultiplayerData GetDataByServerID(int serverID)
+        public MultiplayerData GetDataByServerID(int serverID, Boolean showError)
         {
-            foreach (MultiplayerData data in this.data)
+            lock (this.dataSyncLock)
             {
-                if (data.serverID == serverID) return data;
+                foreach (MultiplayerData mpData in this.data)
+                {
+                    if (mpData.serverID == serverID) return mpData;
+                }
+                if( showError ) Console.Out.WriteLine("Cannot find multiplayer data by server ID " + serverID);
             }
-            Console.Out.WriteLine("Cannot find multiplayer data by server ID " + serverID);
             return null;
         }
 
@@ -40,9 +45,12 @@ namespace PathfindingTest.Multiplayer.Data
         /// <returns></returns>
         public MultiplayerData GetDataByLocalID(int localID)
         {
-            foreach (MultiplayerData data in this.data)
+            lock (this.dataSyncLock)
             {
-                if (data.localID == localID) return data;
+                foreach (MultiplayerData data in this.data)
+                {
+                    if (data.localID == localID) return data;
+                }
             }
             return null;
         }
@@ -53,7 +61,10 @@ namespace PathfindingTest.Multiplayer.Data
         /// <param name="data">The data to add.</param>
         public void AddData(MultiplayerData data)
         {
-            this.data.AddLast(data);
+            lock (this.dataSyncLock)
+            {
+                this.data.AddLast(data);
+            }
         }
     }
 }

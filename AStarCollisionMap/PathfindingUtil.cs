@@ -22,6 +22,19 @@ namespace AStarCollisionMap
         }
 
         /// <summary>
+        /// Gets the length of the hypoteneuse between two points, squared (without root multiplication)
+        /// </summary>
+        /// <param name="p1">Point 1</param>
+        /// <param name="p2">Point 2</param>
+        /// <returns>The length squared</returns>
+        public static double GetSquaredHypoteneuseLength(Point p1, Point p2)
+        {
+            int xDiff = Math.Abs(p1.X - p2.X);
+            int yDiff = Math.Abs(p1.Y - p2.Y);
+            return Math.Pow(xDiff, 2) + Math.Pow(yDiff, 2);
+        }
+
+        /// <summary>
         /// Gets the angle of the hypoteneuse with the X-axis between two points.
         /// </summary>
         /// <param name="p1">Point one</param>

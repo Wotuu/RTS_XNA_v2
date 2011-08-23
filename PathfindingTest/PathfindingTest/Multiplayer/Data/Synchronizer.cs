@@ -10,6 +10,7 @@ using PathfindingTest.Multiplayer.SocketConnection.InGame;
 using PathfindingTest.Combat;
 using PathfindingTest.Units.Projectiles;
 using PathfindingTest.Units.Damage;
+using System.Threading;
 
 namespace PathfindingTest.Multiplayer.Data
 {
@@ -44,35 +45,38 @@ namespace PathfindingTest.Multiplayer.Data
             {
                 // Sync this unit.
                 Unit unit = unitList.First.Value;
-                if (!unit.multiplayerData.isCreated)
+                if (unit.multiplayerData.serverID != -1)
                 {
-                    // Notify the rest of the world of the creation of this unit.
-                    Packet newUnitPacket = new Packet(UnitHeaders.GAME_NEW_UNIT);
+                    if (!unit.multiplayerData.isCreated)
+                    {
+                        // Notify the rest of the world of the creation of this unit.
+                        Packet newUnitPacket = new Packet(UnitHeaders.GAME_NEW_UNIT);
 
-                    // Get this packet going before the other one
-                    newUnitPacket.AddInt(unit.player.multiplayerID);
-                    newUnitPacket.AddInt(unit.multiplayerData.serverID);
-                    newUnitPacket.AddInt(unit.multiplayerData.GetObjectType());
-                    // Notify everyone else that we have created a unit
-                    GameServerConnectionManager.GetInstance().SendPacket(newUnitPacket);
-                    unit.multiplayerData.isCreated = true;
+                        // Get this packet going before the other one
+                        newUnitPacket.AddInt(unit.player.multiplayerID);
+                        newUnitPacket.AddInt(unit.multiplayerData.serverID);
+                        newUnitPacket.AddInt(unit.multiplayerData.GetObjectType());
+                        // Notify everyone else that we have created a unit
+                        GameServerConnectionManager.GetInstance().SendPacket(newUnitPacket);
+                        unit.multiplayerData.isCreated = true;
+                    }
+
+
+                    Packet p = new Packet(UnitHeaders.GAME_UNIT_LOCATION);
+                    p.AddInt(unit.multiplayerData.serverID);
+                    p.AddInt(unit.multiplayerData.moveTarget.X);
+                    p.AddInt(unit.multiplayerData.moveTarget.Y);
+                    p.AddInt((int)unit.x);
+                    p.AddInt((int)unit.y);
+
+                    unit.multiplayerData.lastPulse = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
+                    GameServerConnectionManager.GetInstance().SendPacket(p);
+
+                    // Console.Out.WriteLine("Synchronised " + unit);
+
+                    unitList.RemoveFirst();
+                    objectsSynced++;
                 }
-
-
-                Packet p = new Packet(UnitHeaders.GAME_UNIT_LOCATION);
-                p.AddInt(unit.multiplayerData.serverID);
-                p.AddInt(unit.multiplayerData.moveTarget.X);
-                p.AddInt(unit.multiplayerData.moveTarget.Y);
-                p.AddInt((int)unit.x);
-                p.AddInt((int)unit.y);
-
-                unit.multiplayerData.lastPulse = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
-                GameServerConnectionManager.GetInstance().SendPacket(p);
-
-                // Console.Out.WriteLine("Synchronised " + unit);
-
-                unitList.RemoveFirst();
-                objectsSynced++;
             }
 
 
@@ -80,32 +84,35 @@ namespace PathfindingTest.Multiplayer.Data
             {
                 Building building = buildingList.First.Value;
 
-                if (!building.multiplayerData.isCreated)
+                if (building.multiplayerData.serverID != -1)
                 {
-                    // Notify the rest of the world of the creation of this unit.
-                    Packet newBuildingPacket = new Packet(BuildingHeaders.GAME_NEW_BUILDING);
+                    if (!building.multiplayerData.isCreated)
+                    {
+                        // Notify the rest of the world of the creation of this unit.
+                        Packet newBuildingPacket = new Packet(BuildingHeaders.GAME_NEW_BUILDING);
 
-                    // Get this packet going before the other one
-                    newBuildingPacket.AddInt(building.p.multiplayerID);
-                    newBuildingPacket.AddInt(building.multiplayerData.serverID);
-                    newBuildingPacket.AddInt(building.multiplayerData.GetObjectType());
-                    newBuildingPacket.AddInt(building.constructedBy.multiplayerData.serverID);
+                        // Get this packet going before the other one
+                        newBuildingPacket.AddInt(building.p.multiplayerID);
+                        newBuildingPacket.AddInt(building.multiplayerData.serverID);
+                        newBuildingPacket.AddInt(building.multiplayerData.GetObjectType());
+                        newBuildingPacket.AddInt(building.constructedBy.multiplayerData.serverID);
 
-                    // Notify everyone else that we have created a unit
-                    GameServerConnectionManager.GetInstance().SendPacket(newBuildingPacket);
-                    building.multiplayerData.isCreated = true;
+                        // Notify everyone else that we have created a unit
+                        GameServerConnectionManager.GetInstance().SendPacket(newBuildingPacket);
+                        building.multiplayerData.isCreated = true;
+                    }
+
+                    Packet movePacket = new Packet(BuildingHeaders.GAME_BUILDING_LOCATION);
+                    movePacket.AddInt(building.multiplayerData.serverID);
+                    movePacket.AddInt((int)building.x);
+                    movePacket.AddInt((int)building.y);
+                    GameServerConnectionManager.GetInstance().SendPacket(movePacket);
+
+
+
+                    buildingList.RemoveFirst();
+                    objectsSynced++;
                 }
-
-                Packet movePacket = new Packet(BuildingHeaders.GAME_BUILDING_LOCATION);
-                movePacket.AddInt(building.multiplayerData.serverID);
-                movePacket.AddInt((int)building.x);
-                movePacket.AddInt((int)building.y);
-                GameServerConnectionManager.GetInstance().SendPacket(movePacket);
-
-
-
-                buildingList.RemoveFirst();
-                objectsSynced++;
             }
 
             while (objectsSynced < maxObjectsPerFrame && eventList.Count > 0)
@@ -119,6 +126,8 @@ namespace PathfindingTest.Multiplayer.Data
                     damagePacket.SetHeader(UnitHeaders.GAME_UNIT_MELEE_DAMAGE);
                     damagePacket.AddInt(EncodeMeleeSwing(swing.type));
                     damagePacket.AddInt(e.source.multiplayerData.serverID);
+                    if (e.target is Unit) damagePacket.AddInt(((Unit)e.target).multiplayerData.serverID);
+                    else if (e.target is Building) damagePacket.AddInt(((Building)e.target).multiplayerData.serverID);
                     //damagePacket.AddInt(e.target.multiplayerData.serverID);
                     GameServerConnectionManager.GetInstance().SendPacket(damagePacket);
                 }
@@ -132,20 +141,24 @@ namespace PathfindingTest.Multiplayer.Data
             {
                 Projectile toSync = projectileList.First.Value;
 
-                if (toSync is Arrow && !toSync.multiplayerData.isCreated)
+                if (toSync.multiplayerData.serverID != -1)
                 {
-                    Packet newArrowPacket = new Packet(UnitHeaders.GAME_UNIT_RANGED_SHOT);
-                    newArrowPacket.AddInt(toSync.multiplayerData.serverID);
-                    newArrowPacket.AddInt(toSync.parent.multiplayerData.serverID);
-                    //newArrowPacket.AddInt(toSync.target.multiplayerData.serverID);
+                    if (toSync is Arrow && !toSync.multiplayerData.isCreated)
+                    {
+                        Packet newArrowPacket = new Packet(UnitHeaders.GAME_UNIT_RANGED_SHOT);
+                        newArrowPacket.AddInt(toSync.multiplayerData.serverID);
+                        newArrowPacket.AddInt(toSync.parent.multiplayerData.serverID);
+                        if (toSync.target is Unit) newArrowPacket.AddInt(((Unit)toSync.target).multiplayerData.serverID);
+                        else if (toSync.target is Building) newArrowPacket.AddInt(((Building)toSync.target).multiplayerData.serverID); 
 
-                    Console.Out.WriteLine("Sending existance of arrow " + toSync.multiplayerData.serverID);
-                    GameServerConnectionManager.GetInstance().SendPacket(newArrowPacket);
-                    toSync.multiplayerData.isCreated = true;
+                        Console.Out.WriteLine("Sending existance of arrow " + toSync.multiplayerData.serverID);
+                        GameServerConnectionManager.GetInstance().SendPacket(newArrowPacket);
+                        toSync.multiplayerData.isCreated = true;
+                    }
+
+                    projectileList.RemoveFirst();
+                    objectsSynced++;
                 }
-
-                projectileList.RemoveFirst();
-                objectsSynced++;
             }
         }
 
@@ -190,48 +203,68 @@ namespace PathfindingTest.Multiplayer.Data
         #region Already in Queue
         public Boolean AlreadyInQueue(Unit unit)
         {
-            for (int i = 0; i < this.unitList.Count; i++)
+            try
             {
-                Unit currentUnit = this.unitList.ElementAt(i);
-                if (currentUnit == unit) return true;
+                for (int i = 0; i < this.unitList.Count; i++)
+                {
+                    Unit currentUnit = this.unitList.ElementAt(i);
+                    if (currentUnit == unit) return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception e) { return false; }
         }
 
         public Boolean AlreadyInQueue(Building building)
         {
-            for (int i = 0; i < this.buildingList.Count; i++)
+            try
             {
-                Building currentBuilding = this.buildingList.ElementAt(i);
-                if (currentBuilding == building) return true;
+                for (int i = 0; i < this.buildingList.Count; i++)
+                {
+                    Building currentBuilding = this.buildingList.ElementAt(i);
+                    if (currentBuilding == building) return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception e) { return false; }
         }
 
         public Boolean AlreadyInQueue(DamageEvent e)
         {
-            for (int i = 0; i < this.eventList.Count; i++)
+            try
             {
-                DamageEvent currentEvent = this.eventList.ElementAt(i);
-                if (currentEvent == e) return true;
+                for (int i = 0; i < this.eventList.Count; i++)
+                {
+                    DamageEvent currentEvent = this.eventList.ElementAt(i);
+                    if (currentEvent == e) return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception ex) { return false; }
         }
 
         public Boolean AlreadyInQueue(Projectile projectile)
         {
-            for (int i = 0; i < this.projectileList.Count; i++)
+            try
             {
-                Projectile currentProjectile = this.projectileList.ElementAt(i);
-                if (currentProjectile == projectile) return true;
+                for (int i = 0; i < this.projectileList.Count; i++)
+                {
+                    Projectile currentProjectile = this.projectileList.ElementAt(i);
+                    if (currentProjectile == projectile) return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception e) { return false; }
         }
         #endregion
 
         public void QueueUnit(Unit unit)
         {
-            if( !this.AlreadyInQueue(unit) ) this.unitList.AddLast(unit);
+            if (!this.AlreadyInQueue(unit))
+            {
+                this.unitList.AddLast(unit);
+                Console.WriteLine("StackTrace: '{0}'\n target={1}", Environment.StackTrace, unit.multiplayerData.moveTarget);
+            }
         }
 
         public void QueueBuilding(Building building)

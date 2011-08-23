@@ -32,7 +32,7 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         /// <param name="type">The type of the unit.</param>
         public void CreateUnit(int playerID, int serverID, int type)
         {
-            if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) != null) return;
+            if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID, false) != null) return;
             Unit unit = null;
             switch (type)
             {
@@ -72,10 +72,10 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         /// <param name="type">The type of the unit.</param>
         public void CreateBuilding(int playerID, int serverID, int type, int byID)
         {
-            if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID) != null) return;
+            if (MultiplayerDataManager.GetInstance().GetDataByServerID(serverID, false) != null) return;
             Building building = null;
             Player p = Game1.GetInstance().GetPlayerByMultiplayerID(playerID);
-            Engineer engineer = (Engineer)((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(byID)).unit;
+            Engineer engineer = (Engineer)((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(byID, true)).unit;
             switch (type)
             {
                 case BuildingHeaders.TYPE_BARRACKS:
@@ -117,9 +117,9 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         public void CreateProjectile(int shooterServerID, int targetServerID, int arrowServerID)
         {
             Unit sourceUnit =
-                ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(shooterServerID)).unit;
+                ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(shooterServerID, true)).unit;
             Arrow arrow = new Arrow(sourceUnit,
-                ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(targetServerID)).unit);
+                ((UnitMultiplayerData)MultiplayerDataManager.GetInstance().GetDataByServerID(targetServerID, true)).unit);
             arrow.multiplayerData.serverID = arrowServerID;
             //((Bowman)sourceUnit).projectiles.AddLast(arrow); @@WMP moet naar de arrowmanager 
             Console.Out.WriteLine("Created arrow arrow by request; " + arrowServerID);
