@@ -369,6 +369,7 @@ namespace PathfindingTest.Players
 
         public void DrawMiniLights(SpriteBatch spriteBatch, MiniMap map)
         {
+            
             foreach (Unit unit in this.units)
             {
                 Point miniMapPoint = map.MapToMiniMap(unit.GetLocation());
@@ -381,7 +382,7 @@ namespace PathfindingTest.Players
                     Color.White,
                     0f,
                     new Vector2(16, 16),
-                    1,
+                    (int) (unit.visionRange / lightTexture.Width / (2.1)),
                     SpriteEffects.None,
                     1.0f);
             }
@@ -399,7 +400,7 @@ namespace PathfindingTest.Players
                         Color.White,
                         0f,
                         new Vector2(16, 16),
-                        1,
+                        (int)(building.visionRange / lightTexture.Width / (2.1)),
                         SpriteEffects.None,
                         1.0f);
                 }
