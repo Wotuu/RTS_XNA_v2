@@ -21,11 +21,15 @@ namespace PathfindingTest.Map
         public Vector2 miniMapTileSize = new Vector2(3f, 3f);
         public OnLoadTick onLoadTickListeners { get; set; }
         public float z { get; set; }
+        public Game1 game;
 
-        private Rectangle currentDrawRectangle { get; set; }
+
+        public RenderTarget2D miniLightTarget;
+        public RenderTarget2D miniMainTarget;
+
+        public Rectangle currentDrawRectangle { get; set; }
 
         public Color rectangleColor { get; set; }
-
 
         public MiniMap(GameMap map)
         {
@@ -36,11 +40,12 @@ namespace PathfindingTest.Map
             // Just above the HUD
             this.z = 0.09999f;
             rectangleColor = Color.Red;
+            game = Game1.GetInstance();
         }
 
         public void OnMouseDrag(MouseEvent e)
         {
-            if (this.currentDrawRectangle.Contains(e.location) && Game1.CURRENT_PLAYER.selectBox == null )
+            if (this.currentDrawRectangle.Contains(e.location) && Game1.CURRENT_PLAYER.selectBox == null)
             {
                 Point miniMapLocation = new Point(e.location.X - this.currentDrawRectangle.X, e.location.Y - this.currentDrawRectangle.Y);
                 ActionOnMiniMap(miniMapLocation);
@@ -149,7 +154,6 @@ namespace PathfindingTest.Map
             this.miniMapTexture = MergeTextures(scaledTextures);
         }*/
         #endregion
-
 
         #region Scale Functions
         /// <summary>
@@ -402,18 +406,35 @@ namespace PathfindingTest.Map
         /// <param name="targetRectangle">The target rectangle the minimap will appear on.</param>
         public void Draw(SpriteBatch sb, Rectangle targetRectangle)
         {
-            currentDrawRectangle = targetRectangle;
-            sb.Draw(this.miniMapTexture, targetRectangle, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z);
-            this.DrawScreenRectangle(sb);
 
-            foreach (Player p in Game1.GetInstance().players)
+            if (game.isFoggy)
+            {
+                if (miniMainTarget == null)
+                {
+                    miniMainTarget = game.CreateRenderTarget(targetRectangle.Width, targetRectangle.Height);
+                }
+                if (miniLightTarget == null)
+                {
+                    miniLightTarget = game.CreateRenderTarget(targetRectangle.Width, targetRectangle.Height);
+                }
+
+                game.GraphicsDevice.SetRenderTarget(miniMainTarget);
+                game.GraphicsDevice.Clear(Color.Black);
+            }
+
+            currentDrawRectangle = targetRectangle;
+
+            //sb.Draw(this.miniMapTexture, targetRectangle, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+            sb.Draw(this.miniMapTexture, new Rectangle(0,0,targetRectangle.Width,targetRectangle.Height), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z);
+
+            foreach (Player p in game.players)
             {
                 for (int j = 0; j < p.units.Count; j++)
                 {
                     Unit unit = p.units.ElementAt(j);
                     Point miniMapPoint = this.MapToMiniMap(unit.GetLocation());
-                    sb.Draw(DrawUtil.lineTexture, new Rectangle(miniMapPoint.X - 1 + this.currentDrawRectangle.X,
-                        miniMapPoint.Y - 1 + this.currentDrawRectangle.Y,
+                    sb.Draw(DrawUtil.lineTexture, new Rectangle(miniMapPoint.X - 1,
+                        miniMapPoint.Y - 1,
                         2, 2), null, p.color, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.00001f);
                 }
 
@@ -422,11 +443,62 @@ namespace PathfindingTest.Map
                     Building building = p.buildings.ElementAt(j);
                     if (building.state == Building.State.Preview) continue;
                     Point miniMapPoint = this.MapToMiniMap(building.GetLocation());
-                    sb.Draw(DrawUtil.lineTexture, new Rectangle(miniMapPoint.X - 2 + this.currentDrawRectangle.X,
-                        miniMapPoint.Y - 2 + this.currentDrawRectangle.Y,
+                    sb.Draw(DrawUtil.lineTexture, new Rectangle(miniMapPoint.X - 2,
+                        miniMapPoint.Y - 2,
                         4, 4), null, p.color, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.00001f);
                 }
             }
+
+            sb.End();
+
+            if (game.isFoggy)
+            {
+                try
+                {
+                    game.GraphicsDevice.SetRenderTarget(miniLightTarget);
+                    game.GraphicsDevice.Clear(Color.Black);
+
+                    sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+                    Game1.CURRENT_PLAYER.DrawMiniLights(sb, this);
+
+                    sb.End();
+
+                    game.GraphicsDevice.SetRenderTarget(null);
+
+                    Texture2D miniMainTex = miniMainTarget;
+                    Texture2D miniLightTex = miniLightTarget;
+
+                    game.basicMiniFogOfWarEffect.Parameters["LightsTexture"].SetValue(miniLightTex);
+
+                    sb.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
+
+                    foreach (EffectPass effect in game.basicMiniFogOfWarEffect.CurrentTechnique.Passes)
+                    {
+                        effect.Apply();
+                    }
+
+                    sb.Draw(
+                        miniMainTex,
+                        targetRectangle,
+                        Color.White
+                    );
+
+                    sb.End();
+
+                }
+                catch (Exception e) {
+                    Console.WriteLine(e.Message);
+                }
+            }
+
+            game.GraphicsDevice.SetRenderTarget(null);
+
+            sb.Begin(SpriteSortMode.FrontToBack, null);
+
+
+            this.DrawScreenRectangle(sb);
+
         }
     }
 }

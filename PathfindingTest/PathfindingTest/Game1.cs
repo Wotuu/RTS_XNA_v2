@@ -70,11 +70,12 @@ namespace PathfindingTest
         public int mapMoveSensitivity { get; set; }
         public GameMap map { get; set; }
 
-        public Boolean isFoggy = false;
+        public Boolean isFoggy = true;
 
         public RenderTarget2D lightTarget;
         public RenderTarget2D mainTarget;
         public Effect basicFogOfWarEffect;
+        public Effect basicMiniFogOfWarEffect;
 
         private Vector2 _drawOffset { get; set; }
         public Vector2 drawOffset
@@ -131,12 +132,20 @@ namespace PathfindingTest
             graphics.PreferredBackBufferWidth = 1024;
             graphics.PreferredBackBufferHeight = 768;
             //graphics.ToggleFullScreen();
+
+            graphics.PreparingDeviceSettings += graphics_PreparingDeviceSettings;
+
             graphics.ApplyChanges();
             this.InactiveSleepTime = new System.TimeSpan(0);
 
 
             drawOffset = Vector2.Zero;
         }
+
+        void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
+        {
+            e.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+        } 
 
         Texture2D testTexture { get; set; }
         Texture2D[,] toMerge { get; set; }
@@ -167,6 +176,7 @@ namespace PathfindingTest
             ChildComponent.DEFAULT_FONT = font;
 
             basicFogOfWarEffect = Content.Load<Effect>("Fog/BasicFogOfWar");
+            basicMiniFogOfWarEffect = Content.Load<Effect>("Fog/BasicFogOfWar");
 
             mainTarget = CreateRenderTarget();
             lightTarget = CreateRenderTarget();
@@ -216,9 +226,13 @@ namespace PathfindingTest
             PathfindingProcessor.GetInstance().running = false;
         }
 
-        private RenderTarget2D CreateRenderTarget()
+        public RenderTarget2D CreateRenderTarget()
         {
             return new RenderTarget2D(GraphicsDevice, GraphicsDevice.PresentationParameters.BackBufferWidth, GraphicsDevice.PresentationParameters.BackBufferHeight);
+        }
+        public RenderTarget2D CreateRenderTarget(int Width, int Height)
+        {
+            return new RenderTarget2D(GraphicsDevice, Width, Height);
         }
 
         #endregion
@@ -452,11 +466,9 @@ namespace PathfindingTest
 
             if (sm.gameState == StateManager.State.MainMenu)
             {
-
             }
             else if (sm.gameState == StateManager.State.GameInit)
             {
-
             }
             else if (sm.gameState == StateManager.State.GameRunning ||
                sm.gameState == StateManager.State.GamePaused)
@@ -498,7 +510,7 @@ namespace PathfindingTest
 
                             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
-                            CURRENT_PLAYER.DrawLights(gameTime, spriteBatch);
+                            CURRENT_PLAYER.DrawLights(spriteBatch);
 
                             spriteBatch.End();
 
@@ -508,7 +520,7 @@ namespace PathfindingTest
                             Texture2D lightTex = lightTarget;
 
                             basicFogOfWarEffect.Parameters["LightsTexture"].SetValue(lightTex);
-
+                            
                             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
                             foreach (EffectPass effect in basicFogOfWarEffect.CurrentTechnique.Passes)

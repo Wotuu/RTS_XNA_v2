@@ -96,7 +96,7 @@ namespace PathfindingTest.Buildings
             Factory = 150,
             Fortress = 175,
             ResourceGatherer = 150,
-            Sentry = 225
+            Sentry = 350
         }
 
         public abstract void Update(KeyboardState ks, MouseState ms);

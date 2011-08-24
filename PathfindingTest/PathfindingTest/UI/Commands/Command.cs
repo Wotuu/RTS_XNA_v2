@@ -10,6 +10,8 @@ using PathfindingTest.Players;
 using PathfindingTest.Units;
 using System.Diagnostics;
 using PathfindingTest.Buildings;
+using PathfindingTest.Selection.Patterns;
+using PathfindingTest.Pathfinding;
 
 namespace PathfindingTest.UI.Commands
 {
@@ -159,6 +161,18 @@ namespace PathfindingTest.UI.Commands
                                 }
                             }
                         }
+                        else
+                        {
+                            Player currentPlayer = Game1.CURRENT_PLAYER;
+
+                            Point offsettedMouseLocation = currentPlayer.GetAddedOffsettedMouseLocation(me);
+                            // Point location = new Point((int)(m.location.X), (int)(m.location.Y));
+                            UnitGroupPattern newPattern = currentPlayer.GetNewPreviewPattern(
+                                offsettedMouseLocation,
+                                offsettedMouseLocation,
+                                (int)Util.GetHypoteneuseAngleDegrees(offsettedMouseLocation, offsettedMouseLocation));
+                            player.currentSelection.Assault(newPattern);
+                        }  
                         this.Dispose();
                         break;
 

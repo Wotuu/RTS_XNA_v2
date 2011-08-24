@@ -17,6 +17,7 @@ using PathfindingTest.Units.Stores;
 using System.Diagnostics;
 using PathfindingTest.UI.Commands;
 using PathfindingTest.Units.Damage;
+using PathfindingTest.Map;
 
 namespace PathfindingTest.Players
 {
@@ -330,7 +331,7 @@ namespace PathfindingTest.Players
             }
         }
 
-        public void DrawLights(GameTime gameTime, SpriteBatch spriteBatch)
+        public void DrawLights(SpriteBatch spriteBatch)
         {
             foreach (Unit unit in this.units)
             {
@@ -360,6 +361,45 @@ namespace PathfindingTest.Players
                         0f,
                         new Vector2(16, 16),
                         (building.visionRange / lightTexture.Width * 4),
+                        SpriteEffects.None,
+                        1.0f);
+                }
+            }
+        }
+
+        public void DrawMiniLights(SpriteBatch spriteBatch, MiniMap map)
+        {
+            foreach (Unit unit in this.units)
+            {
+                Point miniMapPoint = map.MapToMiniMap(unit.GetLocation());
+                spriteBatch.Draw(
+                    lightTexture,
+                    new Vector2(
+                        miniMapPoint.X - 1,
+                        miniMapPoint.Y - 1),
+                    null,
+                    Color.White,
+                    0f,
+                    new Vector2(16, 16),
+                    1,
+                    SpriteEffects.None,
+                    1.0f);
+            }
+
+            foreach (Building building in this.buildings)
+            {
+                if (building.state != Building.State.Preview)
+                {
+                    Point miniMapPoint = map.MapToMiniMap(building.GetLocation());
+                    spriteBatch.Draw(
+                        lightTexture,
+                        new Vector2(miniMapPoint.X,
+                                    miniMapPoint.Y),
+                        null,
+                        Color.White,
+                        0f,
+                        new Vector2(16, 16),
+                        1,
                         SpriteEffects.None,
                         1.0f);
                 }
@@ -785,11 +825,8 @@ namespace PathfindingTest.Players
 
         public void DrawLights(GameTime gameTime, SpriteBatch spriteBatch, Texture2D lightTexture)
         {
-            spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
-
             foreach (Unit unit in this.units)
             {
-
                 spriteBatch.Draw(
                     lightTexture,
                     new Vector2(unit.x, unit.y),
@@ -801,8 +838,6 @@ namespace PathfindingTest.Players
                     SpriteEffects.None,
                     1.0f);
             }
-
-            spriteBatch.End();
         }
     }
 }

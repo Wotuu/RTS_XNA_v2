@@ -64,6 +64,8 @@ namespace PathfindingTest.Units
         public float rateOfFire { get; set; }
         public float visionRange { get; set; }
 
+        public Point assaultPoint { get; set; }
+
         public UnitMultiplayerData multiplayerData { get; set; }
 
         #region Movement variables
@@ -185,7 +187,6 @@ namespace PathfindingTest.Units
         {
             if (this.waypoints.Count == 0)
             {
-                SetJob(Job.Idle);
                 return;
             }
             // Point target = this.waypoints.ElementAt(0);
@@ -302,6 +303,10 @@ namespace PathfindingTest.Units
                     {
                         Point newTarget = waypoints.ElementAt(0);
                         SetMoveToTarget(newTarget.X, newTarget.Y);
+                    }
+                    else
+                    {
+                        SetJob(Job.Idle);
                     }
                 }
                 else
@@ -476,6 +481,11 @@ namespace PathfindingTest.Units
             return result;
         }
 
+        public void SetAssaultLocation(Point assaultPoint)
+        {
+            this.assaultPoint = assaultPoint;
+        }
+
         /// <summary>
         /// Feel free to use "\ <(*^_^*)> /"
         /// </summary>
@@ -532,6 +542,8 @@ namespace PathfindingTest.Units
             this.collisionWith = new LinkedList<Unit>();
             this.enemiesInRange = new LinkedList<Unit>();
             this.friendliesProtectingMe = new LinkedList<Unit>();
+
+            this.job = Job.Idle;
 
             healthBar = new HealthBar(this);
 

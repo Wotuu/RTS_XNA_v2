@@ -253,8 +253,10 @@ namespace PathfindingTest.UI
             Game1.GetInstance().map.miniMap.z = 0.09998f;
 
             // Draw mini map
-            sb.Draw(miniMapTex, this.DefineMiniMapRectangle(), null, color, 0f, Vector2.Zero, SpriteEffects.None, 0.09999f);
+            
             Game1.GetInstance().map.miniMap.Draw(sb, new Rectangle(834, 574, 185, 189));
+            //sb.Draw(miniMapTex, this.DefineMiniMapRectangle(), null, Color.Transparent, 0f, Vector2.Zero, SpriteEffects.None, 0.09999f);
+            DrawUtil.DrawClearRectangle(sb, this.DefineMiniMapRectangle(), 1, color, 0.09999f);
 
             if (draw)
             {

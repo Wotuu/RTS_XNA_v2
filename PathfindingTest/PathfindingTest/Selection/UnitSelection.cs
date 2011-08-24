@@ -103,6 +103,20 @@ namespace PathfindingTest.Selection
         }
 
         /// <summary>
+        /// Moves this unit group according to the given pattern.
+        /// </summary>
+        /// <param name="pattern">The pattern to use when calculating where the units should go.</param>
+        public void Assault(UnitGroupPattern pattern)
+        {
+            MoveTo(pattern);
+            foreach (Unit unit in units)
+            {
+                unit.SetAssaultLocation(pattern.location);
+                unit.SetJob(Unit.Job.Attacking);
+            }
+        }
+
+        /// <summary>
         /// Deselects all units in this UnitSelection
         /// </summary>
         public void DeselectAll()

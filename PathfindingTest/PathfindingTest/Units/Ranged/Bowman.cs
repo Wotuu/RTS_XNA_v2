@@ -25,7 +25,7 @@ namespace PathfindingTest.Units
             this.baseDamage = baseDamage;
 
             this.type = Type.Ranged;
-            this.visionRange = (float) VisionRange.Bowman;
+            this.visionRange = (float)VisionRange.Bowman;
 
             this.texture = TextureManager.GetInstance().GetTexture(this.type);
             this.halfTextureWidth = this.texture.Width / 2;
@@ -37,21 +37,50 @@ namespace PathfindingTest.Units
         {
             UpdateMovement();
             AttemptReload();
-            if (this.job != Unit.Job.Moving)
+            switch (this.job)
             {
-                if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
-                {
-                    UpdateAttack();
-                }
-                else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
-                {
-                    UpdateDefense();
-                }
+                case Job.Moving: break;
+                case Job.Attacking: 
+                    if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+                    {
+                        UpdateAttack();
+                    }
 
-                if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
-                {
-                    TryToSwing();
-                }
+                    if (Game1.GetInstance().frames % 15 == 0 && unitToStalk == null)
+                    {
+                        if (this.waypoints.Count < 1)
+                        {
+                            this.waypoints.Clear();
+                            MoveToQueue(assaultPoint);
+                        }
+                    }
+                    else
+                    {
+
+                        if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
+                        {
+                            TryToSwing();
+                        }
+                    }
+
+                    break;
+                default:
+                    {
+                        if (Game1.GetInstance().frames % 15 == 0 && unitToDefend == null)
+                        {
+                            UpdateAttack();
+                        }
+                        else if (Game1.GetInstance().frames % 15 == 0 && unitToDefend != null)
+                        {
+                            UpdateDefense();
+                        }
+
+                        if (Game1.GetInstance().frames % 4 == 0 && (unitToStalk != null || buildingToDestroy != null))
+                        {
+                            TryToSwing();
+                        }
+                    }
+                    break;
             }
         }
 
@@ -60,7 +89,7 @@ namespace PathfindingTest.Units
             Rectangle rect = this.GetDrawRectangle();
             rect.X += texture.Width / 2;
             rect.Y += texture.Height / 2;
-            if( !Game1.GetInstance().IsOnScreen( rect ) ) return;
+            if (!Game1.GetInstance().IsOnScreen(rect)) return;
 
             if (this.waypoints.Count > 0 && unitToStalk == null)
             {
@@ -100,7 +129,7 @@ namespace PathfindingTest.Units
             {
                 foreach (Unit unit in friendliesProtectingMe)
                 {
-                    if( unit != this ) 
+                    if (unit != this)
                         unit.OnAggroRecieved(e);
                 }
             }
