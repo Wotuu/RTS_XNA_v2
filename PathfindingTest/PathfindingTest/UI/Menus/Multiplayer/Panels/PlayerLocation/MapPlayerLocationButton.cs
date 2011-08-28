@@ -64,10 +64,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
                 miniMapLocation.Y + group.offset.Y - SIZE.Y / 2, SIZE.X, SIZE.Y);
 
             Rectangle drawBounds = this.GetScreenBounds();
+            MouseState state = Mouse.GetState();
 
             if ( ( this.parent is SPMapSelectionPanel || 
                 this.parent is MapPreviewPanel ) &&
-                drawBounds.Contains( Mouse.GetState().X, Mouse.GetState().Y ) ) drawTexture = MOUSE_OVER_TEXTURE; 
+                drawBounds.Contains( state.X, state.Y ) ) drawTexture = MOUSE_OVER_TEXTURE; 
 
             sb.Draw(drawTexture, drawBounds,
                 null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.parent.z - 0.002f);

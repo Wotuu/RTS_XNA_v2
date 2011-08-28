@@ -48,7 +48,7 @@ namespace PathfindingTest.Units
 
                     if (Game1.GetInstance().frames % 15 == 0 && unitToStalk == null)
                     {
-                        if (this.waypoints.Count < 1)
+                        if (this.waypoints.Count() < 1)
                         {
                             this.waypoints.Clear();
                             MoveToQueue(assaultPoint);
@@ -91,9 +91,9 @@ namespace PathfindingTest.Units
             rect.Y += texture.Height / 2;
             if (!Game1.GetInstance().IsOnScreen(rect)) return;
 
-            if (this.waypoints.Count > 0 && unitToStalk == null)
+            if (this.waypoints.Count() > 0 && unitToStalk == null)
             {
-                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.First.Value) + (90 * (Math.PI / 180)));                
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.GetFirst()) + (90 * (Math.PI / 180)));                
 
                 if (rotation != rotation)
                 {
@@ -125,12 +125,12 @@ namespace PathfindingTest.Units
             {
                 unitToStalk = e.from;
             }
-            if (friendliesProtectingMe.Count > 0)
+            if (friendliesProtectingMe.Count() > 0)
             {
-                foreach (Unit unit in friendliesProtectingMe)
+                for (int i = 0; i < this.friendliesProtectingMe.Count(); i++)
                 {
-                    if (unit != this)
-                        unit.OnAggroRecieved(e);
+                    Unit unit = this.friendliesProtectingMe.ElementAt(i);
+                    if( unit != this) unit.OnAggroRecieved(e);
                 }
             }
             // Console.Out.WriteLine("Recieved aggro from something! D=");

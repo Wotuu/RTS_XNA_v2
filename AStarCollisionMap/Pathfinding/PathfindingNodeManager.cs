@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CustomLists.Lists;
 
 namespace AStarCollisionMap.Pathfinding
 {
@@ -9,7 +10,7 @@ namespace AStarCollisionMap.Pathfinding
     {
         private static PathfindingNodeManager instance;
 
-        private LinkedList<PathfindingNode> nodeList { get; set; }
+        private CustomArrayList<PathfindingNode> nodeList { get; set; }
 
         public readonly object nodeLock = new object();
 
@@ -67,7 +68,7 @@ namespace AStarCollisionMap.Pathfinding
         /// <returns>The count</returns>
         public int GetNodeCount()
         {
-            return this.nodeList.Count;
+            return this.nodeList.Count();
         }
 
         private PathfindingNode _selectedNode;
@@ -95,7 +96,7 @@ namespace AStarCollisionMap.Pathfinding
         private PathfindingNodeManager()
         {
             // Console.Out.WriteLine("Making a new PathfindingNodeManager");
-            this.nodeList = new LinkedList<PathfindingNode>();
+            this.nodeList = new CustomArrayList<PathfindingNode>();
         }
     }
 }

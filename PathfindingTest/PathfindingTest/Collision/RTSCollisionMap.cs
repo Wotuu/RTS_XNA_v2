@@ -9,6 +9,7 @@ using PathfindingTest.Players;
 using PathfindingTest.Units;
 using AStarCollisionMap.Pathfinding;
 using Microsoft.Xna.Framework.Graphics;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Collision
 {
@@ -33,10 +34,10 @@ namespace PathfindingTest.Collision
                 }
             }
             // Collision with units
-            foreach (Player player in Game1.GetInstance().players)
-            {
-                foreach (Unit unit in player.units)
-                {
+            for( int i = 0; i < Game1.GetInstance().players.Count(); i++ ){
+                Player player = Game1.GetInstance().players.ElementAt(i);
+                for( int j = 0; j < player.units.Count(); j++ ){
+                    Unit unit = player.units.ElementAt(j);
                     if (rect.Contains(unit.GetLocation())) return false;
                 }
             }
@@ -82,7 +83,7 @@ namespace PathfindingTest.Collision
             Console.Out.WriteLine("Mesh create time: " + (DateTime.UtcNow.Ticks - ticks) / 10000 + "ms");
             /*
             ticks = DateTime.UtcNow.Ticks;
-            LinkedList<Node> processedNodes = new LinkedList<Node>();
+            CustomArrayList<Node> processedNodes = new CustomArrayList<Node>();
             int nodesAdded = 0;
             foreach (Node newNode in newNodes)
             {
@@ -112,9 +113,9 @@ namespace PathfindingTest.Collision
         /// Places nodes around collision edges
         /// </summary>
         public void PlaceNodesAroundEdges(){
-            LinkedList<Point> pointList = this.GetNodeLocationsAroundEdges();
-            foreach (Point p in pointList)
-            {
+            CustomArrayList<Point> pointList = this.GetNodeLocationsAroundEdges();
+            for( int i = 0; i < pointList.Count(); i++ ){
+                Point p = pointList.ElementAt(i);
                 new Node(Game1.GetInstance().map.collisionMap, p.X, p.Y);
             }
         }

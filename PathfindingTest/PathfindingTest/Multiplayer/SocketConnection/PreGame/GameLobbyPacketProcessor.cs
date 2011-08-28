@@ -274,9 +274,9 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                         int playerID = PacketUtil.DecodePacketInt(p, 0);
                         Console.Out.WriteLine("Done loading packet received! -> " + playerID);
                         Game1.GetInstance().GetPlayerByMultiplayerID(playerID).doneLoading = true;
-                        foreach (Player player in Game1.GetInstance().players)
+                        for (int i = 0; i < Game1.GetInstance().players.Count(); i++)
                         {
-                            if (!player.doneLoading) return;
+                            if (!Game1.GetInstance().players.ElementAt(i).doneLoading) return;
                         }
 
                         StateManager.GetInstance().gameState = StateManager.State.GameRunning;

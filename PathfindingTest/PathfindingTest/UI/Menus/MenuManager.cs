@@ -8,12 +8,13 @@ using XNAInterfaceComponents.AbstractComponents;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
 using PathfindingTest.UI.Menus.Multiplayer.Panels;
+using CustomLists.Lists;
 
 namespace PathfindingTest.UI.Menus
 {
     public class MenuManager
     {
-        public LinkedList<ParentComponent> addedComponents { get; set; }
+        public CustomArrayList<ParentComponent> addedComponents { get; set; }
         public static SpriteFont BUTTON_FONT { get; set; }
         public static SpriteFont BIG_TEXTFIELD_FONT { get; set; }
         public static SpriteFont SMALL_TEXTFIELD_FONT { get; set; }
@@ -47,14 +48,14 @@ namespace PathfindingTest.UI.Menus
         /// <returns>The Parent component. Cast this one.</returns>
         public ParentComponent GetCurrentlyDisplayedMenu()
         {
-            if (this.addedComponents.Count == 0) return null;
+            if (this.addedComponents.Count() == 0) return null;
             else return this.addedComponents.ElementAt(0);
         }
 
         public void ShowMenu(Menu menu)
         {
-            foreach( ParentComponent pc in addedComponents ){
-                pc.Unload();
+            for( int i = 0; i < this.addedComponents.Count(); i++ ){
+                this.addedComponents.ElementAt(i).Unload();
             }
             addedComponents.Clear();
             if (menu == Menu.MainMenu)
@@ -112,7 +113,7 @@ namespace PathfindingTest.UI.Menus
 
         private MenuManager()
         {
-            addedComponents = new LinkedList<ParentComponent>();
+            addedComponents = new CustomArrayList<ParentComponent>();
 
             BUTTON_FONT = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/MenuButton");
             BIG_TEXTFIELD_FONT = Game1.GetInstance().Content.Load<SpriteFont>("Fonts/BigMenuTextField");

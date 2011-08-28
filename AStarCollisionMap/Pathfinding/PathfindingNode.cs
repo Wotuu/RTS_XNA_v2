@@ -5,6 +5,8 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using AStarCollisionMap.Collision;
 using AStarCollisionMap.Pathfinding;
+using CustomLists.Lists;
+using System.Diagnostics;
 
 public delegate void OnConnectionsCreated(PathfindingNode source);
 
@@ -19,7 +21,7 @@ namespace AStarCollisionMap.Pathfinding
         public int y { get; set; }
         /// Variable to determine scoring for the AStar pathfinding algorithm
         public int score { get; set; }
-        /// The states this node can be.
+
         public static int MAX_CONNECT_RANGE = 600;
 
         /// The parent of this class (used in the algorithm).
@@ -33,7 +35,7 @@ namespace AStarCollisionMap.Pathfinding
         public int costToStart { get; set; }
         public int costToEnd { get; set; }
 
-        public LinkedList<PathfindingNodeConnection> connections { get; set; }
+        public CustomArrayList<PathfindingNodeConnection> connections { get; set; }
         public readonly object connectionSyncLock = new object();
 
         public OnConnectionsCreated onConnectionsCreatedListeners { get; set; }
@@ -72,8 +74,8 @@ namespace AStarCollisionMap.Pathfinding
 
             lock (this.connectionSyncLock)
             {
-                foreach (PathfindingNodeConnection conn in connections)
-                {
+                for( int i = 0; i < this.connections.Count(); i++ ) {
+                    PathfindingNodeConnection conn = this.connections.ElementAt(i);
                     if (conn.node1 == node || conn.node2 == node)
                     {
                         return conn;
@@ -92,8 +94,7 @@ namespace AStarCollisionMap.Pathfinding
             {
                 try
                 {
-                    // Can't use foreach here, because you're removing elements
-                    for (int i = 0; i < connections.Count; i++)
+                    for (int i = 0; i < connections.Count(); i++)
                     {
                         PathfindingNodeConnection conn = connections.ElementAt(i);
                         if (conn.node1 == node || conn.node2 == node)
@@ -109,16 +110,17 @@ namespace AStarCollisionMap.Pathfinding
         }
 
         /// <summary>
-        /// Gets the connected nodes 
+        /// Gets the connected nodes.
         /// </summary>
         /// <returns></returns>
-        public LinkedList<PathfindingNode> GetConnectedNodes()
+        public CustomArrayList<PathfindingNode> GetConnectedNodes()
         {
-            LinkedList<PathfindingNode> list = new LinkedList<PathfindingNode>();
+            CustomArrayList<PathfindingNode> list = new CustomArrayList<PathfindingNode>();
             lock (this.connectionSyncLock)
             {
-                foreach (PathfindingNodeConnection conn in this.connections)
+                for (int i = 0; i < this.connections.Count(); i++)
                 {
+                    PathfindingNodeConnection conn = this.connections.ElementAt(i);
                     if (conn.node1 != this) list.AddLast(conn.node1);
                     else if (conn.node2 != this) list.AddLast(conn.node2);
                 }
@@ -143,14 +145,14 @@ namespace AStarCollisionMap.Pathfinding
             return (int)PathfindingUtil.GetHypoteneuseLength(this.GetLocation(), end);
         }
 
-        public LinkedList<PathfindingNode> BuildPath(PathfindingNode start)
+        public CustomArrayList<PathfindingNode> BuildPath(PathfindingNode start)
         {
-            LinkedList<PathfindingNode> path = new LinkedList<PathfindingNode>();
+            CustomArrayList<PathfindingNode> path = new CustomArrayList<PathfindingNode>();
             int count = 0;
             PathfindingNode currentParent = this;
             while (currentParent != null)
             {
-                path.AddFirst(currentParent);
+                path.AddFirst(currentParent, true);
                 if (currentParent != start) {
                     currentParent = currentParent.parent;
                     count++;
@@ -163,7 +165,7 @@ namespace AStarCollisionMap.Pathfinding
                     break;
                 }
             }
-            /*LinkedList<PathfindingNode> reversedPath = new LinkedList<PathfindingNode>();
+            /*CustomArrayList<PathfindingNode> reversedPath = new CustomArrayList<PathfindingNode>();
             foreach (PathfindingNode node in path)
             {
                 reversedPath.AddFirst(node);
@@ -184,7 +186,7 @@ namespace AStarCollisionMap.Pathfinding
             {
                 PathfindingNode node = manager.GetNodeAt(i);
                 // No connection with itsself
-                if (node == this) continue;
+                if (node == this || node == null ) continue;
                 if (PathfindingUtil.GetSquaredHypoteneuseLength(node.GetLocation(), this.GetLocation()) > maxRange) continue;
                 if (!collisionMap.IsCollisionBetween(this.GetLocation(), node.GetLocation()))
                 {
@@ -220,7 +222,7 @@ namespace AStarCollisionMap.Pathfinding
         public PathfindingNode(CollisionMap collisionMap)
         {
             this.collisionMap = collisionMap;
-            connections = new LinkedList<PathfindingNodeConnection>();
+            connections = new CustomArrayList<PathfindingNodeConnection>();
             collisionMap.collisionChangedListeners += ((OnCollisionChangedListener)this).OnCollisionChanged;
         }
     }

@@ -12,6 +12,7 @@ using PathfindingTest.Primitives;
 using PathfindingTest.Units;
 using PathfindingTest.Multiplayer.Data;
 using PathfindingTest.Pathfinding;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Buildings
 {
@@ -19,7 +20,7 @@ namespace PathfindingTest.Buildings
     {
 
         public Circle resourceRange { get; set; }
-        public LinkedList<Circle> surface { get; set; }
+        public CustomArrayList<Circle> surface { get; set; }
         public int resources { get; set; }
         public Boolean resourcesAdded { get; set; }
         public int generationBarrier { get; set; }
@@ -57,8 +58,9 @@ namespace PathfindingTest.Buildings
             this.drawAnimation = false;
             this.animationCounter = 0;
 
-            foreach (Building b in p.buildings)
+            for (int i = 0; i < p.buildings.Count(); i++)
             {
+                Building b = p.buildings.ElementAt(i);
                 if (b is ResourceGather)
                 {
                     ResourceGather rg = (ResourceGather)b;
@@ -113,15 +115,16 @@ namespace PathfindingTest.Buildings
             this.mesh = Game1.GetInstance().map.collisionMap.PlaceBuilding(this.DefineRectangle());
             Game1.GetInstance().IsMouseVisible = true;
 
-            foreach (Building b in p.buildings)
+            for (int i = 0; i < p.buildings.Count(); i++)
             {
+                Building b = p.buildings.ElementAt(i);
                 if (b != this)
                 {
                     if (b.type != Type.Resources && b.type != Type.Sentry)
                     {
-                        if (b.waypoints.Count > 0)
+                        if (b.waypoints.Count() > 0)
                         {
-                            Point point = b.waypoints.Last.Value;
+                            Point point = b.waypoints.GetLast();
                             PathfindingProcessor.GetInstance().Push(b, point);
                         }
                     }
@@ -137,8 +140,9 @@ namespace PathfindingTest.Buildings
             p.resources -= Building.GetCost(this.type);
             resources = CalculateRPS();
 
-            foreach (Building b in p.buildings)
+            for (int i = 0; i < p.buildings.Count(); i++)
             {
+                Building b = p.buildings.ElementAt(i);
                 if (b is ResourceGather)
                 {
                     ResourceGather rg = (ResourceGather)b;
@@ -153,8 +157,9 @@ namespace PathfindingTest.Buildings
 
             double rs = 50;
 
-            foreach (Building b in p.buildings)
+            for (int i = 0; i < p.buildings.Count(); i++)
             {
+                Building b = p.buildings.ElementAt(i);
                 if (b is ResourceGather)
                 {
                     ResourceGather rg = (ResourceGather)b;

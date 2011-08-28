@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Multiplayer.Data
 {
     public class MultiplayerDataManager
     {
-        private LinkedList<MultiplayerData> data = new LinkedList<MultiplayerData>();
+        private CustomArrayList<MultiplayerData> data = new CustomArrayList<MultiplayerData>();
         private static MultiplayerDataManager instance { get; set; }
 
         public readonly object dataSyncLock = new object();
@@ -29,8 +30,9 @@ namespace PathfindingTest.Multiplayer.Data
         {
             lock (this.dataSyncLock)
             {
-                foreach (MultiplayerData mpData in this.data)
+                for (int i = 0; i < this.data.Count(); i++)
                 {
+                    MultiplayerData mpData = this.data.ElementAt(i);
                     if (mpData.serverID == serverID) return mpData;
                 }
                 if( showError ) Console.Out.WriteLine("Cannot find multiplayer data by server ID " + serverID);
@@ -47,9 +49,9 @@ namespace PathfindingTest.Multiplayer.Data
         {
             lock (this.dataSyncLock)
             {
-                foreach (MultiplayerData data in this.data)
-                {
-                    if (data.localID == localID) return data;
+                for( int i = 0; i < this.data.Count(); i++){
+                    MultiplayerData mpData = this.data.ElementAt(i);
+                    if (mpData.localID == localID) return mpData;
                 }
             }
             return null;

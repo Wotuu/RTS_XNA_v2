@@ -11,15 +11,16 @@ using PathfindingTest.Combat;
 using PathfindingTest.Units.Projectiles;
 using PathfindingTest.Units.Damage;
 using System.Threading;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Multiplayer.Data
 {
     public class Synchronizer
     {
-        private LinkedList<Unit> unitList = new LinkedList<Unit>();
-        private LinkedList<Building> buildingList = new LinkedList<Building>();
-        private LinkedList<DamageEvent> eventList = new LinkedList<DamageEvent>();
-        private LinkedList<Projectile> projectileList = new LinkedList<Projectile>();
+        private CustomArrayList<Unit> unitList = new CustomArrayList<Unit>();
+        private CustomArrayList<Building> buildingList = new CustomArrayList<Building>();
+        private CustomArrayList<DamageEvent> eventList = new CustomArrayList<DamageEvent>();
+        private CustomArrayList<Projectile> projectileList = new CustomArrayList<Projectile>();
 
         private int maxObjectsPerFrame = 5;
 
@@ -41,10 +42,10 @@ namespace PathfindingTest.Multiplayer.Data
         {
             int objectsSynced = 0;
 
-            while (objectsSynced < maxObjectsPerFrame && unitList.Count > 0)
+            while (objectsSynced < maxObjectsPerFrame && unitList.Count() > 0)
             {
                 // Sync this unit.
-                Unit unit = unitList.First.Value;
+                Unit unit = unitList.GetFirst();
                 if (unit.multiplayerData.serverID != -1)
                 {
                     if (!unit.multiplayerData.isCreated)
@@ -80,9 +81,9 @@ namespace PathfindingTest.Multiplayer.Data
             }
 
 
-            while (objectsSynced < maxObjectsPerFrame && buildingList.Count > 0)
+            while (objectsSynced < maxObjectsPerFrame && buildingList.Count() > 0)
             {
-                Building building = buildingList.First.Value;
+                Building building = buildingList.GetFirst();
 
                 if (building.multiplayerData.serverID != -1)
                 {
@@ -115,9 +116,9 @@ namespace PathfindingTest.Multiplayer.Data
                 }
             }
 
-            while (objectsSynced < maxObjectsPerFrame && eventList.Count > 0)
+            while (objectsSynced < maxObjectsPerFrame && eventList.Count() > 0)
             {
-                DamageEvent e = eventList.First.Value;
+                DamageEvent e = eventList.GetFirst();
 
                 Packet damagePacket = new Packet();
                 if (e.by is MeleeSwing)
@@ -137,9 +138,9 @@ namespace PathfindingTest.Multiplayer.Data
                 objectsSynced++;
             }
 
-            while (objectsSynced < maxObjectsPerFrame && projectileList.Count > 0)
+            while (objectsSynced < maxObjectsPerFrame && projectileList.Count() > 0)
             {
-                Projectile toSync = projectileList.First.Value;
+                Projectile toSync = projectileList.GetFirst();
 
                 if (toSync.multiplayerData.serverID != -1)
                 {
@@ -205,7 +206,7 @@ namespace PathfindingTest.Multiplayer.Data
         {
             try
             {
-                for (int i = 0; i < this.unitList.Count; i++)
+                for (int i = 0; i < this.unitList.Count(); i++)
                 {
                     Unit currentUnit = this.unitList.ElementAt(i);
                     if (currentUnit == unit) return true;
@@ -219,7 +220,7 @@ namespace PathfindingTest.Multiplayer.Data
         {
             try
             {
-                for (int i = 0; i < this.buildingList.Count; i++)
+                for (int i = 0; i < this.buildingList.Count(); i++)
                 {
                     Building currentBuilding = this.buildingList.ElementAt(i);
                     if (currentBuilding == building) return true;
@@ -233,7 +234,7 @@ namespace PathfindingTest.Multiplayer.Data
         {
             try
             {
-                for (int i = 0; i < this.eventList.Count; i++)
+                for (int i = 0; i < this.eventList.Count(); i++)
                 {
                     DamageEvent currentEvent = this.eventList.ElementAt(i);
                     if (currentEvent == e) return true;
@@ -247,7 +248,7 @@ namespace PathfindingTest.Multiplayer.Data
         {
             try
             {
-                for (int i = 0; i < this.projectileList.Count; i++)
+                for (int i = 0; i < this.projectileList.Count(); i++)
                 {
                     Projectile currentProjectile = this.projectileList.ElementAt(i);
                     if (currentProjectile == projectile) return true;
@@ -263,7 +264,7 @@ namespace PathfindingTest.Multiplayer.Data
             if (!this.AlreadyInQueue(unit))
             {
                 this.unitList.AddLast(unit);
-                Console.WriteLine("StackTrace: '{0}'\n target={1}", Environment.StackTrace, unit.multiplayerData.moveTarget);
+                // Console.WriteLine("StackTrace: '{0}'\n target={1}", Environment.StackTrace, unit.multiplayerData.moveTarget);
             }
         }
 

@@ -427,9 +427,10 @@ namespace PathfindingTest.Map
             //sb.Draw(this.miniMapTexture, targetRectangle, null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z);
             sb.Draw(this.miniMapTexture, new Rectangle(0,0,targetRectangle.Width,targetRectangle.Height), null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z);
 
-            foreach (Player p in game.players)
+            for (int i = 0; i < game.players.Count(); i++)
             {
-                for (int j = 0; j < p.units.Count; j++)
+                Player p = game.players.ElementAt(i);
+                for (int j = 0; j < p.units.Count(); j++)
                 {
                     Unit unit = p.units.ElementAt(j);
                     Point miniMapPoint = this.MapToMiniMap(unit.GetLocation());
@@ -438,7 +439,7 @@ namespace PathfindingTest.Map
                         2, 2), null, p.color, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.00001f);
                 }
 
-                for (int j = 0; j < p.buildings.Count; j++)
+                for (int j = 0; j < p.buildings.Count(); j++)
                 {
                     Building building = p.buildings.ElementAt(j);
                     if (building.state == Building.State.Preview) continue;

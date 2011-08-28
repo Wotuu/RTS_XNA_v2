@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using CustomLists.Lists;
 
 namespace AStarCollisionMap.Pathfinding
 {
     public class PathfindingNodeProcessor
     {
-        protected LinkedList<PathfindingNode> toProcess { get; set; }
+        protected CustomArrayList<PathfindingNode> toProcess { get; set; }
         protected static PathfindingNodeProcessor instance { get; set; }
 
         /// <summary>
@@ -33,17 +34,13 @@ namespace AStarCollisionMap.Pathfinding
         /// </summary>
         public void Process()
         {
-            if (toProcess.Count > 0)
+            if (toProcess.Count() > 0)
             {
                 PathfindingNode pop = toProcess.ElementAt(0);
                 //lock (pop.connections)
                 //{
                 pop.CreateConnections();
                 toProcess.RemoveFirst();
-                if (toProcess.Count == 0)
-                {
-
-                }
                 //}
             }
         }
@@ -61,7 +58,7 @@ namespace AStarCollisionMap.Pathfinding
 
         protected PathfindingNodeProcessor()
         {
-            toProcess = new LinkedList<PathfindingNode>();
+            toProcess = new CustomArrayList<PathfindingNode>();
         }
     }
 }

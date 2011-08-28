@@ -48,15 +48,15 @@ namespace PathfindingTest.Buildings
             this.mesh = Game1.GetInstance().map.collisionMap.PlaceBuilding(this.DefineRectangle());
             Game1.GetInstance().IsMouseVisible = true;
 
-            foreach (Building b in p.buildings)
-            {
+            for( int i = 0; i < p.buildings.Count(); i++){
+                Building b = p.buildings.ElementAt(i);
                 if (b != this)
                 {
                     if (b.type != Type.Resources && b.type != Type.Sentry)
                     {
-                        if (b.waypoints.Count > 0)
+                        if (b.waypoints.Count() > 0)
                         {
-                            Point point = b.waypoints.Last.Value;
+                            Point point = b.waypoints.GetLast();
                             PathfindingProcessor.GetInstance().Push(b, point);
                         }
                     }

@@ -781,7 +781,7 @@ namespace MapEditor
         private void BtnDrawNodes_Click(object sender, EventArgs e)
         {
            // CollisionMap.GetNodeLocationsAroundEdges();
-            LinkedList<Point> pointList = CollisionMap.GetNodeLocationsAroundEdges();
+            LinkedList<Point> pointList = CollisionMap.GetNodeLocationsAroundEdges().ToLinkedList();
             PathfindingNodeManager.GetInstance().ClearNodes();
             foreach (Point p in pointList)
             {

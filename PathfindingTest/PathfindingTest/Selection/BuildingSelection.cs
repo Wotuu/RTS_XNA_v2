@@ -3,37 +3,37 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using PathfindingTest.Buildings;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Selection
 {
     public class BuildingSelection
     {
 
-        public LinkedList<Building> buildings { get; set; }
+        public CustomArrayList<Building> buildings { get; set; }
 
         public BuildingSelection()
         {
-            this.buildings = new LinkedList<Building>();
+            this.buildings = new CustomArrayList<Building>();
         }
 
-        public BuildingSelection(LinkedList<Building> buildings)
+        public BuildingSelection(CustomArrayList<Building> buildings)
         {
             this.buildings = buildings;
         }
 
         public void DeselectAll()
         {
-            foreach (Building b in buildings)
-            {
-                b.selected = false;
+            for( int i = 0; i < this.buildings.Count(); i++){
+                this.buildings.ElementAt(i).selected = false;
             }
         }
 
         public void SelectAll()
         {
-            foreach (Building b in buildings)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
-                b.selected = true;
+                this.buildings.ElementAt(i).selected = true;
             }
         }
     }

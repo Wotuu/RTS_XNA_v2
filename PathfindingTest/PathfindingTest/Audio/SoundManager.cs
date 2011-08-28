@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Media;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Audio
 {
@@ -17,13 +18,13 @@ namespace PathfindingTest.Audio
         public Boolean menuSoundPlaying { get; set; }
         public Boolean silencePlayed { get; set; }
 
-        public LinkedList<SoundEffectInstance> arrowSounds { get; set; }
-        public LinkedList<SoundEffectInstance> swordSounds { get; set; }
-        public LinkedList<SoundEffectInstance> lanceSounds { get; set; }
+        public CustomArrayList<SoundEffectInstance> arrowSounds { get; set; }
+        public CustomArrayList<SoundEffectInstance> swordSounds { get; set; }
+        public CustomArrayList<SoundEffectInstance> lanceSounds { get; set; }
 
         public Song menuSound { get; set; }
         public Song silence { get; set; }
-        public LinkedList<Song> ingameSounds { get; set; }
+        public CustomArrayList<Song> ingameSounds { get; set; }
 
         public enum BGMType
         {
@@ -51,11 +52,11 @@ namespace PathfindingTest.Audio
             bgmPlaying = false;
             silencePlayed = false;
 
-            arrowSounds = new LinkedList<SoundEffectInstance>();
-            swordSounds = new LinkedList<SoundEffectInstance>();
-            lanceSounds = new LinkedList<SoundEffectInstance>();
+            arrowSounds = new CustomArrayList<SoundEffectInstance>();
+            swordSounds = new CustomArrayList<SoundEffectInstance>();
+            lanceSounds = new CustomArrayList<SoundEffectInstance>();
 
-            ingameSounds = new LinkedList<Song>();
+            ingameSounds = new CustomArrayList<Song>();
 
             InitiateSound();
         }
@@ -125,9 +126,9 @@ namespace PathfindingTest.Audio
             }
         }
 
-        public void PlaySFX(LinkedList<SoundEffectInstance> source)
+        public void PlaySFX(CustomArrayList<SoundEffectInstance> source)
         {
-            SoundEffectInstance sound = source.ElementAt(new Random().Next(source.Count));
+            SoundEffectInstance sound = source.ElementAt(new Random().Next(source.Count()));
             sound.Volume = sfxVolume;
             sound.Play();
         }
@@ -168,7 +169,7 @@ namespace PathfindingTest.Audio
                         {
                             MediaPlayer.Volume = bgmVolume;
                             MediaPlayer.IsRepeating = false;
-                            MediaPlayer.Play(ingameSounds.ElementAt(new Random().Next(ingameSounds.Count)));
+                            MediaPlayer.Play(ingameSounds.ElementAt(new Random().Next(ingameSounds.Count())));
                             bgmPlaying = true;
                             silencePlayed = false;
                         }

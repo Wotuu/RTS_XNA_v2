@@ -63,9 +63,9 @@ namespace PathfindingTest.Units.Melee
             if (!Game1.GetInstance().IsOnScreen(rect)) return;
             //sb.Draw(this.texture, rect, null, this.color, this.direction * -1, Vector2.Zero, SpriteEffects.None, this.z);
 
-            if (this.waypoints.Count > 0 && unitToStalk == null)
+            if (this.waypoints.Count() > 0 && unitToStalk == null)
             {
-                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.First.Value) + (90 * (Math.PI / 180)));
+                rotation = (float)(Util.GetHypoteneuseAngleRad(this.GetLocation(), this.waypoints.GetFirst()) + (90 * (Math.PI / 180)));
 
                 if (rotation != rotation)
                 {
@@ -144,11 +144,10 @@ namespace PathfindingTest.Units.Melee
             {
                 unitToStalk = e.from;
             }
-            if (friendliesProtectingMe.Count > 0)
+            if (friendliesProtectingMe.Count() > 0)
             {
-                foreach (Unit unit in friendliesProtectingMe)
-                {
-                    unit.OnAggroRecieved(e);
+                for( int i = 0; i < this.friendliesProtectingMe.Count(); i++){
+                    this.friendliesProtectingMe.ElementAt(i).OnAggroRecieved(e);
                 }
             }
             //Console.Out.WriteLine("Recieved aggro from something! D=");

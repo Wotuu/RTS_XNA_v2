@@ -50,8 +50,8 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
 
                         Unit unit = ((UnitMultiplayerData)data).unit;
 
-                        if (unit.waypoints.Count == 0 || unit.waypoints.Last.Value.X != targetX ||
-                            unit.waypoints.Last.Value.Y != targetY)
+                        if (unit.waypoints.Count() == 0 || unit.waypoints.GetLast().X != targetX ||
+                            unit.waypoints.GetLast().Y != targetY)
                         {
                             Point target = new Point(targetX, targetY);
                             unit.multiplayerData.moveTarget = target;

@@ -5,6 +5,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using PathfindingTest.Pathfinding;
 using AStarCollisionMap.Collision;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Selection.Patterns
 {
@@ -23,16 +24,16 @@ namespace PathfindingTest.Selection.Patterns
             this.orientation = orientation;
         }
 
-        public override LinkedList<Point> ApplyPattern()
+        public override CustomArrayList<Point> ApplyPattern()
         {
-            LinkedList<Point> list = new LinkedList<Point>();
-            if (selection.units.Count == 1)
+            CustomArrayList<Point> list = new CustomArrayList<Point>();
+            if (selection.units.Count() == 1)
             {
                 list.AddLast(location);
                 return list;
             }
 
-            int rows = (int)Math.Ceiling((selection.units.Count / (double)width));
+            int rows = (int)Math.Ceiling((selection.units.Count() / (double)width));
 
             int offset_x = 0 - (((width - 1) * spacing) / 2);
             int offset_y = 0 - (((rows - 1) * spacing) / 2);
@@ -40,7 +41,7 @@ namespace PathfindingTest.Selection.Patterns
             int count = 0;
             for (int y = 0; y < rows; y++)
             {
-                for (int x = 0; (x < width) && (count < selection.units.Count); x++)
+                for (int x = 0; (x < width) && (count < selection.units.Count()); x++)
                 {
                     // Create the rectangle pattern
                     Point newPoint = new Point(location.X + offset_x + x * spacing, 

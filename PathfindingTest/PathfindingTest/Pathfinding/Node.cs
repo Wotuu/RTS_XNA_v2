@@ -9,6 +9,7 @@ using System.Threading;
 using System.Xml;
 using AStarCollisionMap.Pathfinding;
 using PathfindingTest.Collision;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Pathfinding
 {
@@ -88,9 +89,8 @@ namespace PathfindingTest.Pathfinding
             {
                 try
                 {
-                    foreach (PathfindingNodeConnection conn in this.connections)
-                    {
-                        new DrawableNodeConnection(conn).Draw(sb);
+                    for( int i = 0; i < this.connections.Count(); i++){
+                        new DrawableNodeConnection(this.connections.ElementAt(i)).Draw(sb);
                     }
                 }
                 catch (Exception e) { }
@@ -122,15 +122,20 @@ namespace PathfindingTest.Pathfinding
                 double currTime = 
                     new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds ;
                 // For each node we can make a connection to
-                foreach (Node connectedNode in this.GetConnectedNodes())
-                {
-                    // Scedule it for reprocessing
-                    if (currTime - connectedNode.lastConnectionCreateTime > 5000)
+                CustomArrayList<PathfindingNode> connectedNodes = this.GetConnectedNodes();
+
+                for( int i = 0; i < connectedNodes.Count(); i++){
+                    if (connectedNodes.ElementAt(i) is Node)
                     {
-                        // Remove its current nodes
-                        connectedNode.RemoveAllConnections();
-                        connectedNode.lastConnectionCreateTime = currTime;
-                        SmartPathfindingNodeProcessor.GetInstance().Push(connectedNode);
+                        Node connectedNode = (Node)connectedNodes.ElementAt(i);
+                        // Scedule it for reprocessing
+                        if (currTime - connectedNode.lastConnectionCreateTime > 5000)
+                        {
+                            // Remove its current nodes
+                            connectedNode.RemoveAllConnections();
+                            connectedNode.lastConnectionCreateTime = currTime;
+                            SmartPathfindingNodeProcessor.GetInstance().Push(connectedNode);
+                        }
                     }
                     // Console.Out.WriteLine("Re-sceduled a node!");
                 }

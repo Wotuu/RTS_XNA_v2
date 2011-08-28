@@ -10,7 +10,7 @@ namespace PathfindingTest.Pathfinding
 {
     public class SmartPathfindingNodeProcessor : PathfindingNodeProcessor
     {
-        Boolean running { get; set; }
+        public Boolean running { get; set; }
 
         private SmartPathfindingNodeProcessor() {
         }
@@ -40,7 +40,7 @@ namespace PathfindingTest.Pathfinding
             while( running ) {
                 try
                 {
-                    while (toProcess.Count > 0)
+                    while (toProcess.Count() > 0)
                     {
                         PathfindingNode pop = toProcess.ElementAt(0);
                         pop.CreateConnections();
@@ -60,7 +60,7 @@ namespace PathfindingTest.Pathfinding
 
         public int GetCount()
         {
-            return this.toProcess.Count;
+            return this.toProcess.Count();
         }
     }
 }

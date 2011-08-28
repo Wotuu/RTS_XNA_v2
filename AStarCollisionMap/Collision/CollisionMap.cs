@@ -9,6 +9,7 @@ using AStarCollisionMap.Pathfinding;
 using AStarCollisionMap.QuadTree;
 using System.IO;
 using System.Xml;
+using CustomLists.Lists;
 
 public delegate void OnCollisionChanged(CollisionChangedEvent c_event);
 public delegate void OnMapTileLoad(CollisionMap source);
@@ -110,7 +111,7 @@ namespace AStarCollisionMap.Collision
             e.collisionAdded = add;
 
 
-            LinkedList<Quad> quadList = new LinkedList<Quad>();
+            CustomArrayList<Quad> quadList = new CustomArrayList<Quad>();
             double checkInterval = 3.0;
 
             quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left, rect.Top)));
@@ -136,18 +137,18 @@ namespace AStarCollisionMap.Collision
             for (int i = 0; i < checkInterval; i++)
                 quadList.AddLast(this.tree.GetQuadByPoint(new Point(rect.Left, rect.Top + (int)(i * (rect.Height / checkInterval)))));
 
-            LinkedList<Quad> affectedQuads = new LinkedList<Quad>();
+            CustomArrayList<Quad> affectedQuads = new CustomArrayList<Quad>();
 
-            for (int i = 0; i < quadList.Count; i++)
+            for (int i = 0; i < quadList.Count(); i++)
             {
                 Quad quad = quadList.ElementAt(i);
                 if (quad != null && !affectedQuads.Contains(quad)) affectedQuads.AddLast(quad);
             }
 
             // Update each of the quads.
-            foreach (Quad q in affectedQuads)
-            {
-                Console.Out.WriteLine(q.rectangle);
+            for( int i = 0; i < affectedQuads.Count(); i++ ){
+                Quad q = affectedQuads.ElementAt(i);
+
                 Rectangle updatedRect = Rectangle.Intersect(q.rectangle, rect);
                 updatedRect.X = updatedRect.X - q.rectangle.X;
                 updatedRect.Y = updatedRect.Y - q.rectangle.Y;
@@ -163,10 +164,10 @@ namespace AStarCollisionMap.Collision
         /// <summary>
         /// Places nodes around all the edges
         /// </summary>
-        public LinkedList<Point> GetNodeLocationsAroundEdges()
+        public CustomArrayList<Point> GetNodeLocationsAroundEdges()
         {
             Boolean previous = CollisionAt(0);
-            LinkedList<Point> pointList = new LinkedList<Point>();
+            CustomArrayList<Point> pointList = new CustomArrayList<Point>();
             for (int i = 0; i < dataLength - 1; i++)
             {
                 Boolean current = CollisionAt(i);
@@ -203,10 +204,10 @@ namespace AStarCollisionMap.Collision
             }
 
             // Remove nodes that are closer than NODE_REMOVE_DISTANCE of each other
-            for (int i = 0; i < pointList.Count; i++)
+            for (int i = 0; i < pointList.Count(); i++)
             {
                 Point p1 = pointList.ElementAt(i);
-                for (int j = 0; j < pointList.Count; j++)
+                for (int j = 0; j < pointList.Count(); j++)
                 {
                     Point p2 = pointList.ElementAt(j);
                     if (p1 != p2 && PathfindingUtil.GetHypoteneuseLength(p1, p2) < NODE_REMOVE_DISTANCE)
@@ -299,7 +300,7 @@ namespace AStarCollisionMap.Collision
         public PathfindingNode ClosestNodeInLOS(Point p)
         {
             PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-            LinkedList<PathfindingNode> inRangeNodes = new LinkedList<PathfindingNode>();
+            CustomArrayList<PathfindingNode> inRangeNodes = new CustomArrayList<PathfindingNode>();
             for( int i = 0; i < manager.GetNodeCount(); i++)
             {
                 PathfindingNode node = manager.GetNodeAt(i);
@@ -310,8 +311,9 @@ namespace AStarCollisionMap.Collision
             }
             PathfindingNode closestNode = inRangeNodes.ElementAt(0);
             double closestDistance = Double.MaxValue;
-            foreach (PathfindingNode node in inRangeNodes)
-            {
+            for( int i = 0; i < inRangeNodes.Count(); i++ ){
+                PathfindingNode node = inRangeNodes.ElementAt(i);
+
                 double newDistance = PathfindingUtil.GetHypoteneuseLength(closestNode.GetLocation(), node.GetLocation());
                 if (closestDistance > newDistance)
                 {
@@ -342,7 +344,7 @@ namespace AStarCollisionMap.Collision
             double yDelta = (yDiff / maxWidth) * spacing;
             // Console.Out.WriteLine("yDelta: " + yDelta);
 
-            LinkedList<Point> pointList = new LinkedList<Point>();
+            CustomArrayList<Point> pointList = new CustomArrayList<Point>();
             Point currentPoint = p1;
             Point previousPoint = new Point(-100, -100);
             double currentX = p1.X, currentY = p1.Y;
@@ -362,7 +364,7 @@ namespace AStarCollisionMap.Collision
                 }
                 previousPoint = newPoint;
             }
-            return pointList.ToArray<Point>();
+            return pointList.ToArray();
         }
 
         /// <summary>

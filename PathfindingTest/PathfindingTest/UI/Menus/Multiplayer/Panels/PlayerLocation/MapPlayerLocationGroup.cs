@@ -73,9 +73,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation
                 if (parent is MapSelectionPanel)
                 {
                     MapSelectionPanel panel = ((MapSelectionPanel)parent);
-                    foreach (MapEntryPanel entry in panel.panels)
+                    for (int i = 0; i < panel.panels.Count(); i++)
                     {
-                        entry.mapPlayerLocationGroup.OnMapSelectionChanged(false);
+                        panel.panels.ElementAt(i).mapPlayerLocationGroup.OnMapSelectionChanged(false);
                     }
                 }
             }

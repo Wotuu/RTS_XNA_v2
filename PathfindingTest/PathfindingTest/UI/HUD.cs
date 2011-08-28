@@ -11,6 +11,7 @@ using PathfindingTest.Pathfinding;
 using XNAInputHandler.MouseInput;
 using PathfindingTest.UI.Commands;
 using AStarCollisionMap.Pathfinding;
+using CustomLists.Lists;
 
 namespace PathfindingTest.UI
 {
@@ -33,8 +34,8 @@ namespace PathfindingTest.UI
         public Boolean loadForSentry { get; set; }
         public Boolean draw { get; set; }
 
-        public LinkedList<HUDObject> objects { get; set; }
-        public LinkedList<HUDCommandObject> commandObjects { get; set; }
+        public CustomArrayList<HUDObject> objects { get; set; }
+        public CustomArrayList<HUDCommandObject> commandObjects { get; set; }
 
         private float startObjectX = 278;
         private float startObjectY = 688;
@@ -85,7 +86,7 @@ namespace PathfindingTest.UI
             loadForFortress = false;
             draw = false;
 
-            objects = new LinkedList<HUDObject>();
+            objects = new CustomArrayList<HUDObject>();
 
             LoadCommands();
 
@@ -95,7 +96,7 @@ namespace PathfindingTest.UI
 
         private void LoadCommands()
         {
-            commandObjects = new LinkedList<HUDCommandObject>();
+            commandObjects = new CustomArrayList<HUDCommandObject>();
             startCommandX = 673;
             startCommandY = 688;
 
@@ -135,11 +136,11 @@ namespace PathfindingTest.UI
             }
             CountUnits();
 
-            objects = new LinkedList<HUDObject>();
+            objects = new CustomArrayList<HUDObject>();
 
-            foreach (HUDCommandObject co in commandObjects)
+            for (int i = 0; i < this.commandObjects.Count(); i++)
             {
-                co.disabled = true;
+                this.commandObjects.ElementAt(i).disabled = true;
             }
 
             if (loadForEngineer)
@@ -164,8 +165,9 @@ namespace PathfindingTest.UI
                 objects.AddLast(fortressObject);
                 IncrementStartObjectXY(startObjectX);
 
-                foreach (HUDCommandObject co in commandObjects)
+                for (int i = 0; i < this.commandObjects.Count(); i++)
                 {
+                    HUDCommandObject co = this.commandObjects.ElementAt(i);
                     if (co.type == HUDCommandObject.Type.Repair || co.type == HUDCommandObject.Type.Move || co.type == HUDCommandObject.Type.Stop || co.type == HUDCommandObject.Type.Defend)
                     {
                         co.disabled = false;
@@ -174,8 +176,9 @@ namespace PathfindingTest.UI
             }
             if (loadForUnit)
             {
-                foreach (HUDCommandObject co in commandObjects)
+                for (int i = 0; i < this.commandObjects.Count(); i++)
                 {
+                    HUDCommandObject co = this.commandObjects.ElementAt(i);
                     if (co.type == HUDCommandObject.Type.Attack || co.type == HUDCommandObject.Type.Defend || co.type == HUDCommandObject.Type.Move || co.type == HUDCommandObject.Type.Stop)
                     {
                         co.disabled = false;
@@ -253,7 +256,7 @@ namespace PathfindingTest.UI
             Game1.GetInstance().map.miniMap.z = 0.09998f;
 
             // Draw mini map
-            
+
             Game1.GetInstance().map.miniMap.Draw(sb, new Rectangle(834, 574, 185, 189));
             //sb.Draw(miniMapTex, this.DefineMiniMapRectangle(), null, Color.Transparent, 0f, Vector2.Zero, SpriteEffects.None, 0.09999f);
             DrawUtil.DrawClearRectangle(sb, this.DefineMiniMapRectangle(), 1, color, 0.09999f);
@@ -268,8 +271,9 @@ namespace PathfindingTest.UI
 
             if (player.buildingSelection != null)
             {
-                foreach (Building b in player.buildingSelection.buildings)
+                for (int i = 0; i < player.buildingSelection.buildings.Count(); i++)
                 {
+                    Building b = player.buildingSelection.buildings.ElementAt(i);
                     if (b.state != Building.State.Preview)
                     {
                         b.DrawQueuedStats(sb);
@@ -277,14 +281,14 @@ namespace PathfindingTest.UI
                 }
             }
 
-            foreach (HUDObject o in objects)
+            for (int i = 0; i < this.objects.Count(); i++)
             {
-                o.Draw(sb);
+                this.objects.ElementAt(i).Draw(sb);
             }
 
-            foreach (HUDCommandObject co in commandObjects)
+            for (int i = 0; i < this.commandObjects.Count(); i++)
             {
-                co.Draw(sb);
+                this.commandObjects.ElementAt(i).Draw(sb);
             }
         }
 
@@ -294,11 +298,13 @@ namespace PathfindingTest.UI
         /// <param name="me">The MouseEvent to use</param>
         void MouseClickListener.OnMouseClick(MouseEvent me)
         {
+            MouseState state = Mouse.GetState();
             if (me.button == MouseEvent.MOUSE_BUTTON_1)
             {
-                foreach (HUDObject o in objects)
+                for (int i = 0; i < this.objects.Count(); i++)
                 {
-                    if (o.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                    HUDObject o = this.objects.ElementAt(i);
+                    if (o.DefineRectangle().Contains(state.X, state.Y))
                     {
                         player.RemovePreviewBuildings();
                         Building b;
@@ -351,11 +357,23 @@ namespace PathfindingTest.UI
                                 break;
 
                             case HUDObject.Type.Engineer:
-                                foreach (Fortress building in player.buildingSelection.buildings)
+                                for (int k = 0; k < player.buildingSelection.buildings.Count(); k++)
                                 {
-                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                    Building bu = player.buildingSelection.buildings.ElementAt(k);
+                                    if (bu is Fortress)
                                     {
-                                        for (int i = 0; i < 5; i++)
+                                        Fortress building = (Fortress)bu;
+                                        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                        {
+                                            for (int j = 0; j < 5; j++)
+                                            {
+                                                if (player.resources >= Unit.GetCost(Unit.Type.Engineer))
+                                                {
+                                                    building.CreateUnit(Unit.Type.Engineer);
+                                                }
+                                            }
+                                        }
+                                        else
                                         {
                                             if (player.resources >= Unit.GetCost(Unit.Type.Engineer))
                                             {
@@ -363,22 +381,27 @@ namespace PathfindingTest.UI
                                             }
                                         }
                                     }
-                                    else
-                                    {
-                                        if (player.resources >= Unit.GetCost(Unit.Type.Engineer))
-                                        {
-                                            building.CreateUnit(Unit.Type.Engineer);
-                                        }
-                                    }
                                 }
                                 break;
 
                             case HUDObject.Type.Ranged:
-                                foreach (Barracks building in player.buildingSelection.buildings)
+                                for (int k = 0; k < player.buildingSelection.buildings.Count(); k++)
                                 {
-                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                    Building bu = player.buildingSelection.buildings.ElementAt(k);
+                                    if (bu is Barracks)
                                     {
-                                        for (int i = 0; i < 5; i++)
+                                        Barracks building = (Barracks)bu;
+                                        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                        {
+                                            for (int j = 0; j < 5; j++)
+                                            {
+                                                if (player.resources >= Unit.GetCost(Unit.Type.Ranged))
+                                                {
+                                                    building.CreateUnit(Unit.Type.Ranged);
+                                                }
+                                            }
+                                        }
+                                        else
                                         {
                                             if (player.resources >= Unit.GetCost(Unit.Type.Ranged))
                                             {
@@ -386,22 +409,27 @@ namespace PathfindingTest.UI
                                             }
                                         }
                                     }
-                                    else
-                                    {
-                                        if (player.resources >= Unit.GetCost(Unit.Type.Ranged))
-                                        {
-                                            building.CreateUnit(Unit.Type.Ranged);
-                                        }
-                                    }
                                 }
                                 break;
 
                             case HUDObject.Type.Melee:
-                                foreach (Barracks building in player.buildingSelection.buildings)
+                                for (int k = 0; k < player.buildingSelection.buildings.Count(); k++)
                                 {
-                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                    Building bu = player.buildingSelection.buildings.ElementAt(k);
+                                    if (bu is Barracks)
                                     {
-                                        for (int i = 0; i < 5; i++)
+                                        Barracks building = (Barracks)bu;
+                                        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                        {
+                                            for (int j = 0; j < 5; j++)
+                                            {
+                                                if (player.resources >= Unit.GetCost(Unit.Type.Melee))
+                                                {
+                                                    building.CreateUnit(Unit.Type.Melee);
+                                                }
+                                            }
+                                        }
+                                        else
                                         {
                                             if (player.resources >= Unit.GetCost(Unit.Type.Melee))
                                             {
@@ -409,22 +437,27 @@ namespace PathfindingTest.UI
                                             }
                                         }
                                     }
-                                    else
-                                    {
-                                        if (player.resources >= Unit.GetCost(Unit.Type.Melee))
-                                        {
-                                            building.CreateUnit(Unit.Type.Melee);
-                                        }
-                                    }
                                 }
                                 break;
 
                             case HUDObject.Type.Fast:
-                                foreach (Barracks building in player.buildingSelection.buildings)
+                                for (int k = 0; k < player.buildingSelection.buildings.Count(); k++)
                                 {
-                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                    Building bu = player.buildingSelection.buildings.ElementAt(k);
+                                    if (bu is Barracks)
                                     {
-                                        for (int i = 0; i < 5; i++)
+                                        Barracks building = (Barracks)bu;
+                                        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                        {
+                                            for (int j = 0; j < 5; j++)
+                                            {
+                                                if (player.resources >= Unit.GetCost(Unit.Type.Fast))
+                                                {
+                                                    building.CreateUnit(Unit.Type.Fast);
+                                                }
+                                            }
+                                        }
+                                        else
                                         {
                                             if (player.resources >= Unit.GetCost(Unit.Type.Fast))
                                             {
@@ -432,34 +465,32 @@ namespace PathfindingTest.UI
                                             }
                                         }
                                     }
-                                    else
-                                    {
-                                        if (player.resources >= Unit.GetCost(Unit.Type.Fast))
-                                        {
-                                            building.CreateUnit(Unit.Type.Fast);
-                                        }
-                                    }
                                 }
                                 break;
 
                             case HUDObject.Type.Heavy:
-                                foreach (Factory building in player.buildingSelection.buildings)
+                                for (int k = 0; k < player.buildingSelection.buildings.Count(); k++)
                                 {
-                                    if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                    Building bu = player.buildingSelection.buildings.ElementAt(k);
+                                    if (bu is Factory)
                                     {
-                                        for (int i = 0; i < 5; i++)
+                                        Factory building = (Factory)bu;
+                                        if (Keyboard.GetState().IsKeyDown(Keys.LeftShift) || Keyboard.GetState().IsKeyDown(Keys.RightShift))
+                                        {
+                                            for (int j = 0; j < 5; j++)
+                                            {
+                                                if (player.resources >= Unit.GetCost(Unit.Type.HeavyMelee))
+                                                {
+                                                    building.CreateUnit(Unit.Type.HeavyMelee);
+                                                }
+                                            }
+                                        }
+                                        else
                                         {
                                             if (player.resources >= Unit.GetCost(Unit.Type.HeavyMelee))
                                             {
                                                 building.CreateUnit(Unit.Type.HeavyMelee);
                                             }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        if (player.resources >= Unit.GetCost(Unit.Type.HeavyMelee))
-                                        {
-                                            building.CreateUnit(Unit.Type.HeavyMelee);
                                         }
                                     }
                                 }
@@ -471,37 +502,38 @@ namespace PathfindingTest.UI
                     }
                 }
 
-                foreach (HUDCommandObject co in commandObjects)
+                for (int i = 0; i < this.commandObjects.Count(); i++)
                 {
-                    if (co.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                    HUDCommandObject co = this.commandObjects.ElementAt(i);
+                    if (co.DefineRectangle().Contains(state.X, state.Y))
                     {
                         switch (co.type)
                         {
                             case HUDCommandObject.Type.Repair:
                                 if (!co.disabled)
                                 {
-                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Repair), this.player, Command.Type.Repair, Mouse.GetState().X, Mouse.GetState().Y, new Color(255, 187, 0, 255));
+                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Repair), this.player, Command.Type.Repair, state.X, state.Y, new Color(255, 187, 0, 255));
                                 }
                                 break;
 
                             case HUDCommandObject.Type.Attack:
                                 if (!co.disabled)
                                 {
-                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Attack), this.player, Command.Type.Attack, Mouse.GetState().X, Mouse.GetState().Y, new Color(255, 0, 12, 255));
+                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Attack), this.player, Command.Type.Attack, state.X, state.Y, new Color(255, 0, 12, 255));
                                 }
                                 break;
 
                             case HUDCommandObject.Type.Defend:
                                 if (!co.disabled)
                                 {
-                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Defend), this.player, Command.Type.Defend, Mouse.GetState().X, Mouse.GetState().Y, new Color(255, 125, 0, 255));
+                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Defend), this.player, Command.Type.Defend, state.X, state.Y, new Color(255, 125, 0, 255));
                                 }
                                 break;
 
                             case HUDCommandObject.Type.Move:
                                 if (!co.disabled)
                                 {
-                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Move), this.player, Command.Type.Move, Mouse.GetState().X, Mouse.GetState().Y, new Color(0, 100, 255, 255));
+                                    player.command = new Command(TextureManager.GetInstance().GetTexture(HUDCommandObject.Type.Move), this.player, Command.Type.Move, state.X, state.Y, new Color(0, 100, 255, 255));
                                 }
                                 break;
 
@@ -510,8 +542,9 @@ namespace PathfindingTest.UI
                                 {
                                     if (player.currentSelection != null)
                                     {
-                                        foreach (Unit u in player.currentSelection.units)
+                                        for (int j = 0; j < player.currentSelection.units.Count(); j++)
                                         {
+                                            Unit u = player.currentSelection.units.ElementAt(j);
                                             u.unitToDefend = null;
                                             u.unitToStalk = null;
                                             u.waypoints.Clear();
@@ -529,24 +562,26 @@ namespace PathfindingTest.UI
                     }
                 }
 
-                foreach (Building b in player.buildings)
+                for (int i = 0; i < player.buildings.Count(); i++)
                 {
+                    Building b = player.buildings.ElementAt(i);
                     if (b.state == Building.State.Preview &&
                         !this.DefineRectangle().Contains(new Rectangle(me.location.X, me.location.Y, 1, 1)) &&
                         Game1.GetInstance().map.collisionMap.CanPlace(b.DefineRectangle()))
                     {
                         Engineer temp = null;
-
-                        foreach (Unit u in player.currentSelection.units)
+                        for (int j = 0; j < player.currentSelection.units.Count(); j++)
                         {
+                            Unit u = player.currentSelection.units.ElementAt(j);
+
                             if (u.type == Unit.Type.Engineer)
                             {
                                 Point p = new Point((int)(b.x + (b.texture.Width / 2)), (int)(b.y + (b.texture.Height / 2)));
 
                                 // Add a point that is on the circle near the building, not inside the building!
                                 Point targetPoint = new Point(0, 0);
-                                if (u.waypoints.Count == 0) targetPoint = new Point((int)u.x, (int)u.y);
-                                else targetPoint = u.waypoints.ElementAt(u.waypoints.Count - 1);
+                                if (u.waypoints.Count() == 0) targetPoint = new Point((int)u.x, (int)u.y);
+                                else targetPoint = u.waypoints.ElementAt(u.waypoints.Count() - 1);
                                 // Move to the point around the circle of the building, but increase the radius a bit
                                 // so we're not standing on the exact top of the building
                                 u.MoveToQueue(
@@ -589,9 +624,9 @@ namespace PathfindingTest.UI
 
             if (player.currentSelection != null)
             {
-                foreach (Unit u in player.currentSelection.units)
+                for (int j = 0; j < player.currentSelection.units.Count(); j++)
                 {
-                    switch (u.type)
+                    switch (player.currentSelection.units.ElementAt(j).type)
                     {
                         case Unit.Type.Engineer:
                             engineerCounter++;
@@ -649,8 +684,9 @@ namespace PathfindingTest.UI
 
             if (player.buildingSelection != null)
             {
-                foreach (Building b in player.buildingSelection.buildings)
+                for (int i = 0; i < player.buildingSelection.buildings.Count(); i++)
                 {
+                    Building b = player.buildingSelection.buildings.ElementAt(i);
                     switch (b.type)
                     {
                         case Building.Type.Resources:
@@ -732,10 +768,11 @@ namespace PathfindingTest.UI
         public Boolean IsMouseOverBuilding()
         {
             Boolean check = false;
+            MouseState state = Mouse.GetState();
 
-            foreach (HUDObject o in objects)
-            {
-                if (o.DefineRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+            for( int i = 0; i < this.objects.Count(); i++ ){
+                HUDObject obj = this.objects.ElementAt(i);
+                if (obj.DefineRectangle().Contains(state.X, state.Y))
                 {
                     check = true;
                 }

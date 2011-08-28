@@ -37,6 +37,7 @@ using PathfindingTest.UI.Menus;
 using SocketLibrary.Protocol;
 using PathfindingTest.Multiplayer.PreGame.SocketConnection;
 using PathfindingTest.UI.Menus.Multiplayer;
+using CustomLists.Lists;
 
 namespace PathfindingTest
 {
@@ -59,7 +60,7 @@ namespace PathfindingTest
         private int previousDrawUpdateFrames { get; set; }
         private int draws { get; set; }
 
-        public LinkedList<Player> players { get; set; }
+        public CustomArrayList<Player> players { get; set; }
         public static Player CURRENT_PLAYER { get; set; }
 
         public MultiplayerGame multiplayerGame { get; set; }
@@ -70,7 +71,7 @@ namespace PathfindingTest
         public int mapMoveSensitivity { get; set; }
         public GameMap map { get; set; }
 
-        public Boolean isFoggy = true;
+        public Boolean isFoggy = false;
 
         public RenderTarget2D lightTarget;
         public RenderTarget2D mainTarget;
@@ -145,7 +146,7 @@ namespace PathfindingTest
         void graphics_PreparingDeviceSettings(object sender, PreparingDeviceSettingsEventArgs e)
         {
             e.GraphicsDeviceInformation.PresentationParameters.RenderTargetUsage = RenderTargetUsage.PreserveContents;
-        } 
+        }
 
         Texture2D testTexture { get; set; }
         Texture2D[,] toMerge { get; set; }
@@ -224,6 +225,7 @@ namespace PathfindingTest
                 Game1.GetInstance().map.Dispose();
 
             PathfindingProcessor.GetInstance().running = false;
+            SmartPathfindingNodeProcessor.GetInstance().running = false;
         }
 
         public RenderTarget2D CreateRenderTarget()
@@ -332,16 +334,16 @@ namespace PathfindingTest
 
                     // Play Music
                     SoundManager.GetInstance().PlayBGM(SoundManager.BGMType.InGame);
+                    MouseState mouseState = Mouse.GetState();
 
                     // Update units
-                    foreach (Player p in players)
+                    for (int i = 0; i < this.players.Count(); i++)
                     {
-                        p.Update(Keyboard.GetState(), Mouse.GetState());
+                        this.players.ElementAt(i).Update(Keyboard.GetState(), mouseState);
                     }
 
                     // Update other random stuff?
                     KeyboardState keyboardState = Keyboard.GetState();
-                    MouseState mouseState = Mouse.GetState();
                     if ((keyboardState.IsKeyDown(Keys.LeftShift) || keyboardState.IsKeyDown(Keys.RightShift))
                         && mouseState.LeftButton == ButtonState.Pressed)
                     {
@@ -483,16 +485,17 @@ namespace PathfindingTest
                 map.Draw(spriteBatch);
                 //try
                 //{
-                
+
                 /*
-                for( int i = 0; i < PathfindingNodeManager.GetInstance().GetNodeCount(); i++ )
+                for (int i = 0; i < PathfindingNodeManager.GetInstance().GetNodeCount(); i++)
                 {
                     ((Node)PathfindingNodeManager.GetInstance().GetNodeAt(i)).Draw(spriteBatch);
-                }*/
+                }
+                 */
 
-                foreach (Player p in players)
+                for (int i = 0; i < this.players.Count(); i++)
                 {
-                    p.Draw(this.spriteBatch);
+                    this.players.ElementAt(i).Draw(this.spriteBatch);
                 }
 
                 spriteBatch.End();
@@ -501,8 +504,9 @@ namespace PathfindingTest
 
                 try
                 {
-                    foreach (Player p in players)
+                    for (int i = 0; i < this.players.Count(); i++)
                     {
+                        Player p = this.players.ElementAt(i);
                         if (p == CURRENT_PLAYER && isFoggy)
                         {
                             GraphicsDevice.SetRenderTarget(lightTarget);
@@ -520,7 +524,7 @@ namespace PathfindingTest
                             Texture2D lightTex = lightTarget;
 
                             basicFogOfWarEffect.Parameters["LightsTexture"].SetValue(lightTex);
-                            
+
                             spriteBatch.Begin(SpriteSortMode.Immediate, BlendState.AlphaBlend);
 
                             foreach (EffectPass effect in basicFogOfWarEffect.CurrentTechnique.Passes)
@@ -546,10 +550,9 @@ namespace PathfindingTest
 
                 try
                 {
-
-                    foreach (Player p in players)
+                    for (int i = 0; i < this.players.Count(); i++)
                     {
-                        p.DrawHud(this.spriteBatch);
+                        this.players.ElementAt(i).DrawHud(this.spriteBatch);
                     }
                 }
                 catch (Exception e) { }
@@ -616,7 +619,7 @@ namespace PathfindingTest
             else if (e.button == MouseEvent.MOUSE_BUTTON_3)
             {
                 PathfindingNodeManager manager = PathfindingNodeManager.GetInstance();
-                for( int i = 0; i < manager.GetNodeCount(); i++)
+                for (int i = 0; i < manager.GetNodeCount(); i++)
                 {
                     Node node = (Node)manager.GetNodeAt(i);
                     if (node.GetDrawRectangle().Contains(e.location))
@@ -712,9 +715,10 @@ namespace PathfindingTest
         /// <returns>The player that you need.</returns>
         public Player GetPlayerByMultiplayerID(int id)
         {
-            foreach (Player player in players)
+            for (int i = 0; i < this.players.Count(); i++)
             {
-                if (player.multiplayerID == id) return player;
+                Player p = this.players.ElementAt(i);
+                if (p.multiplayerID == id) return p;
             }
             Console.Error.WriteLine("Cannot find player with id = " + id);
             return null;
@@ -727,7 +731,7 @@ namespace PathfindingTest
         /// <returns>Yes or no.</returns>
         public Boolean IsOnScreen(Rectangle drawRect)
         {
-            return drawRect.Intersects(new Rectangle(0, 0, 
+            return drawRect.Intersects(new Rectangle(0, 0,
                 graphics.PreferredBackBufferWidth, graphics.PreferredBackBufferHeight));
         }
 

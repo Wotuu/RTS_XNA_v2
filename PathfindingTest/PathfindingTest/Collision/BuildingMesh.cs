@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework;
 using PathfindingTest.Interfaces;
 using AStarCollisionMap.Collision;
 using AStarCollisionMap.Pathfinding;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Collision
 {
@@ -25,7 +26,7 @@ namespace PathfindingTest.Collision
         /// <summary>
         /// Contains points of nodes that were removed by the placement of this 
         /// </summary>
-        public LinkedList<Point> removedNodes { get; set; }
+        public CustomArrayList<Point> removedNodes { get; set; }
 
         /// <summary>
         /// The rectangle that was used to update the collisionmap
@@ -44,11 +45,12 @@ namespace PathfindingTest.Collision
                 part.quad.collisionTexture.UpdateCollision(part.rectangle, false);
             }
 
-            LinkedList<Node> processedNodes = new LinkedList<Node>();
+            CustomArrayList<Node> processedNodes = new CustomArrayList<Node>();
             foreach (Node node in createdNodes)
             {
-                foreach (Node connectedNode in node.GetConnectedNodes())
-                {
+                CustomArrayList<PathfindingNode> connectedNodes = node.GetConnectedNodes();
+                for( int i = 0; i < connectedNodes.Count(); i++ ){
+                    Node connectedNode = (Node)connectedNodes.ElementAt(i);
                     if (!processedNodes.Contains(connectedNode))
                     {
                         SmartPathfindingNodeProcessor.GetInstance().Push(connectedNode);
@@ -57,9 +59,8 @@ namespace PathfindingTest.Collision
                 }
                 node.Destroy();
             }
-
-            foreach (Point p in removedNodes)
-            {
+            for( int i = 0; i < this.removedNodes.Count(); i++ ){
+                Point p = this.removedNodes.ElementAt(i);
                 // Console.Out.WriteLine("Restoring node " + p);
                 new Node(collision, p.X, p.Y);
             }
@@ -72,7 +73,7 @@ namespace PathfindingTest.Collision
         {
             this.collision = collision;
             createdNodes = new Node[4];
-            removedNodes = new LinkedList<Point>();
+            removedNodes = new CustomArrayList<Point>();
         }
     }
 }

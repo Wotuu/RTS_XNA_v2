@@ -16,10 +16,10 @@ namespace PathfindingTest.UI.Menus
             : base(null, "")
         {
             this.cancelBtn.onClickListeners += this.OnCancelClick;
-            foreach (MapEntryPanel panel in this.panels)
+            /*foreach (MapEntryPanel panel in this.panels)
             {
                 int count = 0;
-            }
+            }*/
         }
 
         public override void OnOKClick(XNAButton source)

@@ -96,8 +96,8 @@ namespace PathfindingTest.Units
 
             // Add a point that is on the circle near the building, not inside the building!
             Point targetPoint = new Point(0, 0);
-            if (this.waypoints.Count == 0) targetPoint = new Point((int)this.x, (int)this.y);
-            else targetPoint = this.waypoints.ElementAt(this.waypoints.Count - 1);
+            if (this.waypoints.Count() == 0) targetPoint = new Point((int)this.x, (int)this.y);
+            else targetPoint = this.waypoints.ElementAt(this.waypoints.Count() - 1);
             // Move to the point around the circle of the building, but increase the radius a bit
             // so we're not standing on the exact top of the building
             this.MoveToQueue(

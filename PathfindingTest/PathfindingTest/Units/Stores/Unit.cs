@@ -18,6 +18,7 @@ using PathfindingTest.Multiplayer.Data;
 using System.Diagnostics;
 using PathfindingTest.Buildings;
 using PathfindingTest.Units.Melee;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Units
 {
@@ -40,16 +41,16 @@ namespace PathfindingTest.Units
         public Boolean selected { get; set; }
 
         public float collisionRadius { get; set; }
-        private LinkedList<Unit> collisionWith { get; set; }
+        private CustomArrayList<Unit> collisionWith { get; set; }
         public Boolean repelsOthers { get; set; }
         public Quad quad { get; set; }
 
         public float currentHealth { get; set; }
         public float maxHealth { get; set; }
         private HealthBar healthBar { get; set; }
-        public LinkedList<Unit> enemiesInRange { get; set; }
-        public LinkedList<Unit> friendliesProtectingMe { get; set; }
-        public LinkedList<Building> buildingsInRange { get; set; }
+        public CustomArrayList<Unit> enemiesInRange { get; set; }
+        public CustomArrayList<Unit> friendliesProtectingMe { get; set; }
+        public CustomArrayList<Building> buildingsInRange { get; set; }
         public int baseDamage { get; set; }
 
         public Boolean isDead = false;
@@ -69,7 +70,7 @@ namespace PathfindingTest.Units
         public UnitMultiplayerData multiplayerData { get; set; }
 
         #region Movement variables
-        public LinkedList<Point> waypoints { get; set; }
+        public CustomArrayList<Point> waypoints { get; set; }
         public float movementSpeed { get; set; }
         public float direction { get; set; }
         public float rotation { get; set; }
@@ -122,10 +123,12 @@ namespace PathfindingTest.Units
         public void CheckCollision()
         {
             collisionWith.Clear();
-            foreach (Player player in Game1.GetInstance().players)
+            for (int i = 0; i < Game1.GetInstance().players.Count(); i++)
             {
-                foreach (Unit unit in player.units)
+                Player p = Game1.GetInstance().players.ElementAt(i);
+                for (int j = 0; j < player.units.Count(); j++)
                 {
+                    Unit unit = player.units.ElementAt(j);
                     if (unit == this) continue;
                     //if (this.waypoints.Count != 0)
                     //{
@@ -185,7 +188,7 @@ namespace PathfindingTest.Units
         /// </summary>
         protected void UpdateMovement()
         {
-            if (this.waypoints.Count == 0)
+            if (this.waypoints.Count() == 0)
             {
                 return;
             }
@@ -235,12 +238,12 @@ namespace PathfindingTest.Units
                 return;
             }
 
-            Point waypoint = this.waypoints.FirstOrDefault();
-            if (waypoint == null) return;
+            Point waypoint = this.waypoints.GetFirst();
+            if (waypoint == null || waypoint == Point.Zero) return;
 
             SetMoveToTarget(waypoint.X, waypoint.Y);
 
-            if (this.collisionWith.Count > 0)
+            if (this.collisionWith.Count() > 0)
             {
                 // Uh-oh, we got a collision :(
                 // Console.Out.WriteLine("Collision found");
@@ -296,10 +299,10 @@ namespace PathfindingTest.Units
             {
                 this.x = waypoint.X;
                 this.y = waypoint.Y;
-                if (waypoints.Count > 0)
+                if (waypoints.Count() > 0)
                 {
-                    waypoints.RemoveFirst();
-                    if (waypoints.Count > 0)
+                    waypoints.RemoveFirst(true);
+                    if (waypoints.Count()> 0)
                     {
                         Point newTarget = waypoints.ElementAt(0);
                         SetMoveToTarget(newTarget.X, newTarget.Y);
@@ -341,17 +344,19 @@ namespace PathfindingTest.Units
             }
             else
             {
-                enemiesInRange = new LinkedList<Unit>();
+                enemiesInRange = new CustomArrayList<Unit>();
                 CheckForEnemiesInRange(rangeToCheck);
             }
-            foreach (Player player in Game1.GetInstance().players)
+            for (int i = 0; i < Game1.GetInstance().players.Count(); i++ )
             {
+                Player player = Game1.GetInstance().players.ElementAt(i);
                 // Don't check for units on our alliance
                 if (player.alliance.members.Contains(this.player)) continue;
                 else
                 {
-                    foreach (Unit unit in player.units)
+                    for (int j = 0; j < player.units.Count(); j++)
                     {
+                        Unit unit = player.units.ElementAt(j);
                         if (Util.GetHypoteneuseLength(unit.GetLocation(), this.GetLocation()) < rangeToCheck)
                         {
                             enemiesInRange.AddLast(unit);
@@ -372,17 +377,17 @@ namespace PathfindingTest.Units
             }
             else
             {
-                buildingsInRange = new LinkedList<Building>();
+                buildingsInRange = new CustomArrayList<Building>();
                 CheckForBuildingsInRange(rangeToCheck);
             }
-            foreach (Player player in Game1.GetInstance().players)
-            {
+            for( int i = 0; i < Game1.GetInstance().players.Count(); i++ ){
+                Player player = Game1.GetInstance().players.ElementAt(i);
                 // Don't check for units on our alliance
                 if (player.alliance.members.Contains(this.player)) continue;
                 else
                 {
-                    foreach (Building building in player.buildings)
-                    {
+                    for( int j = 0; j < player.buildings.Count(); j++){
+                        Building building = player.buildings.ElementAt(j);
                         if (Util.GetHypoteneuseLength(building.GetLocation(), this.GetLocation()) < rangeToCheck)
                         {
                             buildingsInRange.AddLast(building);
@@ -448,9 +453,9 @@ namespace PathfindingTest.Units
         /// </summary>
         /// <param name="p">The point to calculate to.</param>
         /// <returns>The list containing all the points that you should visit.</returns>
-        public LinkedList<Point> CalculatePath(Point p)
+        public CustomArrayList<Point> CalculatePath(Point p)
         {
-            LinkedList<Point> result = new LinkedList<Point>();
+            CustomArrayList<Point> result = new CustomArrayList<Point>();
             long ticks = DateTime.UtcNow.Ticks;
             if (Game1.GetInstance().map.collisionMap.IsCollisionBetween(new Point((int)this.x, (int)this.y), p))
             {
@@ -458,18 +463,18 @@ namespace PathfindingTest.Units
                 // Create temp nodes
                 Node start = new Node(game.map.collisionMap, (int)this.x, (int)this.y, true);
                 Node end = new Node(game.map.collisionMap, p.X, p.Y, true);
-                LinkedList<PathfindingNode> nodes = new AStar(start, end).FindPath();
+                CustomArrayList<PathfindingNode> nodes = new AStar(start, end).FindPath();
                 if (nodes != null)
                 {
                     // Remove the first node, because that's the node we're currently on ..
-                    nodes.RemoveFirst();
+                    nodes.RemoveFirst(true);
                     // Clear our current waypoints
                     this.waypoints.Clear();
-                    foreach (Node n in nodes)
-                    {
-                        result.AddLast(n.GetLocation());
+                    for( int i = 0; i < nodes.Count(); i++ ){
+                        result.AddLast(nodes.ElementAt(i).GetLocation());
                     }
                 }
+
                 // Nodes can no longer be used
                 start.Destroy();
                 end.Destroy();
@@ -510,9 +515,9 @@ namespace PathfindingTest.Units
                 }
             }
             this.waypoints = CalculatePath(p);
-            if (this.waypoints.Count > 0)
+            if (this.waypoints.Count() > 0)
             {
-                Point newTarget = this.waypoints.First.Value;
+                Point newTarget = this.waypoints.GetFirst();
                 SetMoveToTarget(newTarget.X, newTarget.Y);
             }
             // Console.Out.WriteLine("Found path in " + ((DateTime.UtcNow.Ticks - ticks) / 10000) + "ms");
@@ -523,7 +528,7 @@ namespace PathfindingTest.Units
             this.player = p;
             this.x = x;
             this.y = y;
-            this.z = 1f - ( this.player.units.Count + 1) * 0.0001f;
+            this.z = 1f - ( this.player.units.Count() + 1) * 0.0001f;
             this.movementSpeed = movementSpeed;
             this.attackRange = attackRange;
             this.aggroRange = aggroRange;
@@ -536,12 +541,12 @@ namespace PathfindingTest.Units
             this.hitFrame = 0;
 
             this.color = player.color;
-            this.waypoints = new LinkedList<Point>();
+            this.waypoints = new CustomArrayList<Point>();
 
             this.repelsOthers = true;
-            this.collisionWith = new LinkedList<Unit>();
-            this.enemiesInRange = new LinkedList<Unit>();
-            this.friendliesProtectingMe = new LinkedList<Unit>();
+            this.collisionWith = new CustomArrayList<Unit>();
+            this.enemiesInRange = new CustomArrayList<Unit>();
+            this.friendliesProtectingMe = new CustomArrayList<Unit>();
 
             this.job = Job.Idle;
 
@@ -577,9 +582,9 @@ namespace PathfindingTest.Units
 
         void OnCollisionChangedListener.OnCollisionChanged(CollisionChangedEvent collisionEvent)
         {
-            if (waypoints.Count > 0)
+            if (waypoints.Count() > 0)
             {
-                this.MoveToQueue(this.waypoints.ElementAt(this.waypoints.Count - 1));
+                this.MoveToQueue(this.waypoints.ElementAt(this.waypoints.Count() - 1));
             }
         }
 
@@ -665,7 +670,7 @@ namespace PathfindingTest.Units
                 }
                 else
                 {
-                    if (waypoints.Count < 1)
+                    if (waypoints.Count() < 1)
                     {
                         Point p = new Point((int)unitToStalk.x, (int)unitToStalk.y);
                         this.MoveToQueue(p);
@@ -685,7 +690,7 @@ namespace PathfindingTest.Units
                 }
                 else
                 {
-                    if (waypoints.Count < 1)
+                    if (waypoints.Count() < 1)
                     {
                         Point p = new Point((int)buildingToDestroy.x, (int)buildingToDestroy.y);
                         this.MoveToQueue(p);
@@ -704,7 +709,7 @@ namespace PathfindingTest.Units
             {
                 //get new target
                 CheckForEnemiesInRange(this.aggroRange);
-                if (this.enemiesInRange.Count > 0)
+                if (this.enemiesInRange.Count() > 0)
                 {
                     unitToStalk = enemiesInRange.ElementAt(0);
                 }
@@ -712,7 +717,7 @@ namespace PathfindingTest.Units
             else
             {
                 CheckForBuildingsInRange(this.aggroRange);
-                if (this.buildingsInRange.Count > 0)
+                if (this.buildingsInRange.Count() > 0)
                 {
                     buildingToDestroy = buildingsInRange.ElementAt(0);
                 }
@@ -729,7 +734,7 @@ namespace PathfindingTest.Units
                 }
                 else
                 {
-                    if (waypoints.Count < 1)
+                    if (waypoints.Count() < 1)
                     {
                         Point p = new Point((int)unitToDefend.x, (int)unitToDefend.y);
                         this.MoveToQueue(p);

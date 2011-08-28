@@ -18,6 +18,7 @@ using SocketLibrary.Protocol;
 using PathfindingTest.Combat;
 using PathfindingTest.Interfaces;
 using AStarCollisionMap.Pathfinding;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Buildings
 {
@@ -46,7 +47,7 @@ namespace PathfindingTest.Buildings
         public Boolean isDestroyed = false;
         public State state { get; set; }
 
-        public LinkedList<ProductionUnit> productionQueue { get; set; }
+        public CustomArrayList<ProductionUnit> productionQueue { get; set; }
 
         public Type type { get; set; }
         public Texture2D texture { get; set; }
@@ -57,9 +58,9 @@ namespace PathfindingTest.Buildings
 
         public float visionRange { get; set; }
 
-        public LinkedList<Unit> constructionQueue { get; set; }
+        public CustomArrayList<Unit> constructionQueue { get; set; }
         public Point originWaypoint { get; set; }
-        public LinkedList<Point> waypoints { get; set; }
+        public CustomArrayList<Point> waypoints { get; set; }
 
         public BuildingMultiplayerData multiplayerData { get; set; }
 
@@ -156,7 +157,7 @@ namespace PathfindingTest.Buildings
                     CountUnitsInQueue();
                     if (productionQueue != null)
                     {
-                        if (productionQueue.Count > 0)
+                        if (productionQueue.Count() > 0)
                         {
                             this.state = State.Producing;
                         }
@@ -191,12 +192,12 @@ namespace PathfindingTest.Buildings
 
                     if (productionQueue != null)
                     {
-                        if (productionQueue.Count == 0)
+                        if (productionQueue.Count() == 0)
                         {
                             this.state = State.Finished;
                             break;
                         }
-                        else if (productionQueue.Count > 0)
+                        else if (productionQueue.Count() > 0)
                         {
                             Produce();
                         }
@@ -274,7 +275,7 @@ namespace PathfindingTest.Buildings
             }
             else if (this.state == State.Producing)
             {
-                if (productionQueue.Count > 0)
+                if (productionQueue.Count() > 0)
                 {
                     ProductionUnit pu = productionQueue.ElementAt(0);
                     progressBar.progress = pu.productionProgress;
@@ -301,9 +302,9 @@ namespace PathfindingTest.Buildings
                 if (engineerInQueue > 0)
                 {
                     Vector2 stringPos = p.hud.sf.MeasureString(engineerInQueue.ToString());
-                    sb.DrawString(p.hud.sf, engineerInQueue.ToString(), 
+                    sb.DrawString(p.hud.sf, engineerInQueue.ToString(),
                                   new Vector2(p.hud.engineerObject.x + (p.hud.engineerObject.texture.Width / 2) - (stringPos.X / 2),
-                                              p.hud.engineerObject.y + (p.hud.engineerObject.texture.Height / 2) - (stringPos.Y / 2)), 
+                                              p.hud.engineerObject.y + (p.hud.engineerObject.texture.Height / 2) - (stringPos.Y / 2)),
                                   Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0.0998f);
                 }
                 if (meleeInQueue > 0)
@@ -355,19 +356,20 @@ namespace PathfindingTest.Buildings
             {
                 Vector2 offset = Game1.GetInstance().drawOffset;
 
-                DrawUtil.DrawLine(sb, new Point((int)x + (this.texture.Width / 2) - (int)offset.X + 1, 
-                                                (int)y + (this.texture.Height / 2) - (int)offset.Y), 
+                DrawUtil.DrawLine(sb, new Point((int)x + (this.texture.Width / 2) - (int)offset.X + 1,
+                                                (int)y + (this.texture.Height / 2) - (int)offset.Y),
                                   new Point((int)this.originWaypoint.X - (int)offset.X + 1,
-                                            (int)this.originWaypoint.Y - (int)offset.Y), 
+                                            (int)this.originWaypoint.Y - (int)offset.Y),
                                   Color.DarkCyan, 2, this.z + 0.00001f);
 
                 if (this.waypoints != null)
                 {
-                    if (this.waypoints.Count > 0)
+                    if (this.waypoints.Count() > 0)
                     {
                         Point pp = originWaypoint;
-                        foreach (Point p in this.waypoints)
+                        for (int i = 0; i < this.waypoints.Count(); i++)
                         {
+                            Point p = this.waypoints.ElementAt(i);
                             DrawUtil.DrawLine(sb, new Point(pp.X - (int)offset.X, pp.Y - (int)offset.Y), new Point(p.X - (int)offset.X, p.Y - (int)offset.Y), Color.DarkCyan, 2, this.z + 0.00002f);
                             sb.Draw(TextureManager.GetInstance().GetSolidTexture(), new Rectangle(pp.X - (int)offset.X - 2, pp.Y - (int)offset.Y - 2, 4, 4), null, Color.DarkCyan, 0f, Vector2.Zero, SpriteEffects.None, this.z + 0.00001f);
                             pp = p;
@@ -386,9 +388,9 @@ namespace PathfindingTest.Buildings
             meleeInQueue = 0;
             rangedInQueue = 0;
 
-            foreach (ProductionUnit u in productionQueue)
+            for (int i = 0; i < this.productionQueue.Count(); i++)
             {
-                switch (u.type)
+                switch (this.productionQueue.ElementAt(i).type)
                 {
                     case Unit.Type.Engineer:
                         engineerInQueue++;
@@ -561,14 +563,16 @@ namespace PathfindingTest.Buildings
 
                 if (newUnit != null)
                 {
-                    if (waypoints.Count > 0)
+                    if (waypoints.Count() > 0)
                     {
-                        newUnit.multiplayerData.moveTarget = waypoints.Last.Value;
-                        newUnit.MoveToQueue(waypoints.Last.Value);
-                        Console.Out.WriteLine("Moving unit after building it to " + waypoints.Last.Value);
+                        if (Game1.GetInstance().IsMultiplayerGame()) 
+                            newUnit.multiplayerData.moveTarget = waypoints.GetLast();
+
+                        newUnit.MoveToQueue(waypoints.GetLast());
+                        Console.Out.WriteLine("Moving unit after building it to " + waypoints.GetLast());
                         newUnit.hasToMove = true;
                     }
-                    productionQueue.RemoveFirst();
+                    productionQueue.RemoveFirst(true);
 
                     //// Synchronize this unit, since the unit has moved (in other words, teleported)
                     if (Game1.GetInstance().IsMultiplayerGame()) Synchronizer.GetInstance().QueueUnit(newUnit);
@@ -648,8 +652,9 @@ namespace PathfindingTest.Buildings
 
             if (this is ResourceGather && this.state != State.Preview)
             {
-                foreach (Building b in p.buildings)
+                for (int i = 0; i < p.buildings.Count(); i++)
                 {
+                    Building b = p.buildings.ElementAt(i);
                     if (b is ResourceGather)
                     {
                         ResourceGather rg = (ResourceGather)b;
@@ -709,7 +714,7 @@ namespace PathfindingTest.Buildings
 
                 case Type.Fortress:
                     return (float)VisionRange.Fortress;
-                    
+
                 case Type.Resources:
                     return (float)VisionRange.ResourceGatherer;
 
@@ -727,12 +732,12 @@ namespace PathfindingTest.Buildings
             this.p.buildings.AddLast(this);
             this.constructProgress = 0;
 
-            this.z = 1f - player.buildings.Count * 0.0001f;
+            this.z = 1f - player.buildings.Count() * 0.0001f;
 
             this.progressBar = new ProgressBar(this);
             this.healthBar = new HealthBar(this);
 
-            this.productionQueue = new LinkedList<ProductionUnit>();
+            this.productionQueue = new CustomArrayList<ProductionUnit>();
 
             if (Game1.GetInstance().IsMultiplayerGame())
             {
@@ -759,10 +764,10 @@ namespace PathfindingTest.Buildings
         /// </summary>
         /// <param name="p">The point to calculate to.</param>
         /// <returns>The list containing all the points that you should visit.</returns>
-        public LinkedList<Point> CalculatePath(Point p)
+        public CustomArrayList<Point> CalculatePath(Point p)
         {
             Vector2 offset = Game1.GetInstance().drawOffset;
-            LinkedList<Point> result = new LinkedList<Point>();
+            CustomArrayList<Point> result = new CustomArrayList<Point>();
             long ticks = DateTime.UtcNow.Ticks;
             if (Game1.GetInstance().map.collisionMap.IsCollisionBetween(this.originWaypoint, p))
             {
@@ -770,15 +775,16 @@ namespace PathfindingTest.Buildings
                 // Create temp nodes
                 Node start = new Node(game.map.collisionMap, (int)this.originWaypoint.X, (int)this.originWaypoint.Y, true);
                 Node end = new Node(game.map.collisionMap, p.X, p.Y, true);
-                LinkedList<PathfindingNode> nodes = new AStar(start, end).FindPath();
+                CustomArrayList<PathfindingNode> nodes = new AStar(start, end).FindPath();
                 if (nodes != null)
                 {
                     // Remove the first node, because that's the node we're currently on ..
-                    nodes.RemoveFirst();
+                    nodes.RemoveFirst(true);
                     // Clear our current waypoints
                     this.waypoints.Clear();
-                    foreach (Node n in nodes)
+                    for (int i = 0; i < nodes.Count(); i++)
                     {
+                        Node n = (Node)nodes.ElementAt(i);
                         result.AddLast(n.GetLocation());
                     }
                 }

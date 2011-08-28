@@ -163,7 +163,7 @@ namespace PathfindingTest.Units.Projectiles
             // Commented = code that makes the arrow die on impact with collision
             if (Math.Abs(x - waypoint.X) < movementSpeed && Math.Abs(y - waypoint.Y) < movementSpeed)
             {
-                
+
                 if (target is Unit && !((Unit)target).isDead)
                 {
                     this.waypoint = new Point((int)((Unit)target).x, (int)((Unit)target).y);
@@ -194,15 +194,17 @@ namespace PathfindingTest.Units.Projectiles
 
             Point collisionLocation = Util.GetPointOnCircle(this.GetLocation(), this.texture.Height / 2,
                         (float)(Util.GetHypoteneuseAngleDegrees(this.GetLocation(), this.waypoint)));
-            foreach (Player player in Game1.GetInstance().players)
+            for (int i = 0; i < Game1.GetInstance().players.Count(); i++)
             {
+                Player player = Game1.GetInstance().players.ElementAt(i);
                 if (player.alliance.members.Contains(parent.player)) continue;
                 else
                 {
                     if (target is Unit)
                     {
-                        foreach (Unit unit in player.units)
+                        for (int j = 0; j < player.units.Count(); j++)
                         {
+                            Unit unit = player.units.ElementAt(j);
                             // Check if the units are close enough
                             if (unit.DefineRectangle().Contains(collisionLocation))
                             // Front of projectile!
@@ -213,8 +215,9 @@ namespace PathfindingTest.Units.Projectiles
                     }
                     else if (target is Building)
                     {
-                        foreach (Building building in player.buildings)
+                        for (int j = 0; j < player.buildings.Count(); j++)
                         {
+                            Building building = player.buildings.ElementAt(j);
                             if (building.DefineRectangle().Contains(collisionLocation))
                             // Front of projectile!
                             {

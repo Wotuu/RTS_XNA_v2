@@ -12,6 +12,7 @@ using AStarCollisionMap.Collision;
 using PathfindingTest.Pathfinding;
 using AStarCollisionMap.Pathfinding;
 using System.Threading;
+using CustomLists.Lists;
 
 
 public delegate void OnLoadProgressChanged(GameMap source, int percentDone);
@@ -27,12 +28,12 @@ namespace PathfindingTest.Map
         public Texture2D[,] mapTiles { get; set; }
         public RTSCollisionMap collisionMap { get; set; }
 
-        public LinkedList<Rectangle> rectangleTiles = new LinkedList<Rectangle>();
+        public CustomArrayList<Rectangle> rectangleTiles = new CustomArrayList<Rectangle>();
         public Texture2D[] individualTiles { get; set; }
 
         public static int TILE_WIDTH = 20, TILE_HEIGHT = 20;
 
-        public LinkedList<Layer> layers = new LinkedList<Layer>();
+        public CustomArrayList<Layer> layers = new CustomArrayList<Layer>();
 
         public OnLoadProgressChanged onLoadProgressChangedListeners { get; set; }
 
@@ -207,7 +208,7 @@ namespace PathfindingTest.Map
         /// </summary>
         /// <param name="textures"></param>
         /// <returns></returns>
-        public Texture2D MergeTextures(LinkedList<Texture2D> textures)
+        public Texture2D MergeTextures(CustomArrayList<Texture2D> textures)
         {
             return this.MergeTextures(textures.ToArray());
         }
@@ -355,7 +356,7 @@ namespace PathfindingTest.Map
 
                 Layer currentLayer = new Layer(new int[mapwidth, mapheight]);
                 // Adjust the max progress
-                if (this.layers.Count == 0)
+                if (this.layers.Count() == 0)
                 {
                     // For every layer that we load
                     Game1.GetInstance().maxLoadProgress += mapwidth * mapheight * 3;
@@ -428,18 +429,18 @@ namespace PathfindingTest.Map
         /// </summary>
         public void MergeLayers()
         {
-            if (this.layers.Count == 0)
+            if (this.layers.Count() == 0)
             {
                 throw new Exception("Perform LoadLayers() first.");
             }
 
-            mapTiles = new Texture2D[this.layers.First.Value.data.GetLength(0), this.layers.First.Value.data.GetLength(1)];
-            for (int i = 0; i < this.layers.First.Value.data.GetLength(0); i++)
+            mapTiles = new Texture2D[this.layers.GetFirst().data.GetLength(0), this.layers.GetFirst().data.GetLength(1)];
+            for (int i = 0; i < this.layers.GetFirst().data.GetLength(0); i++)
             {
-                for (int j = 0; j < this.layers.First.Value.data.GetLength(1); j++)
+                for (int j = 0; j < this.layers.GetFirst().data.GetLength(1); j++)
                 {
-                    LinkedList<Texture2D> preBlend = new LinkedList<Texture2D>();
-                    for (int k = 0; k < this.layers.Count; k++)
+                    CustomArrayList<Texture2D> preBlend = new CustomArrayList<Texture2D>();
+                    for (int k = 0; k < this.layers.Count(); k++)
                     {
                         int data = this.layers.ElementAt(k).data[i, j];
                         if (data != -1) preBlend.AddLast(this.individualTiles[data]);

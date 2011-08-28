@@ -86,10 +86,14 @@ namespace PathfindingTest.UI.Commands
                         {
                             Engineer tempE = null;
 
-                            foreach (Engineer e in player.currentSelection.units)
+                            for (int i = 0; i < this.player.currentSelection.units.Count(); i++)
                             {
-                                tempE = e;
-                                break;
+                                if (this.player.currentSelection.units.ElementAt(i) is Engineer)
+                                {
+                                    Engineer e = (Engineer)this.player.currentSelection.units.ElementAt(i);
+                                    tempE = e;
+                                    break;
+                                }
                             }
 
                             if (tempE != null)
@@ -103,9 +107,9 @@ namespace PathfindingTest.UI.Commands
                     case Type.Move:
                         if (player.currentSelection != null)
                         {
-                            foreach (Unit u in player.currentSelection.units)
+                            for (int i = 0; i < this.player.currentSelection.units.Count(); i++)
                             {
-                                u.MoveToQueue(new Point((int)x, (int)y));
+                                this.player.currentSelection.units.ElementAt(i).MoveToQueue(new Point((int)x, (int)y));
                             }
                         }
                         this.Dispose();
@@ -118,8 +122,9 @@ namespace PathfindingTest.UI.Commands
                             {
                                 if (player.GetMouseOverUnit(player.units).player == this.player)
                                 {
-                                    foreach (Unit u in player.currentSelection.units)
+                                    for (int i = 0; i < this.player.currentSelection.units.Count(); i++)
                                     {
+                                        Unit u = this.player.currentSelection.units.ElementAt(i);
                                         u.Defend(player.GetMouseOverUnit(player.units));
                                         player.GetMouseOverUnit(player.units).friendliesProtectingMe.AddLast(u);
                                         u.MoveToQueue(new Point((int)x, (int)y));
@@ -139,9 +144,9 @@ namespace PathfindingTest.UI.Commands
                             {
                                 if (player.currentSelection != null)
                                 {
-                                    foreach (Unit u in player.currentSelection.units)
+                                    for (int i = 0; i < this.player.currentSelection.units.Count(); i++)
                                     {
-                                        u.AttackUnit(unitToAttack);
+                                        this.player.currentSelection.units.ElementAt(i).AttackUnit(unitToAttack);
                                     }
                                 }
                             }
@@ -154,9 +159,9 @@ namespace PathfindingTest.UI.Commands
                             {
                                 if (player.buildingSelection != null)
                                 {
-                                    foreach (Unit u in player.currentSelection.units)
+                                    for (int i = 0; i < this.player.currentSelection.units.Count(); i++)
                                     {
-                                        u.AttackBuilding(buildingToAttack);
+                                        this.player.currentSelection.units.ElementAt(i).AttackBuilding(buildingToAttack);
                                     }
                                 }
                             }
@@ -172,7 +177,7 @@ namespace PathfindingTest.UI.Commands
                                 offsettedMouseLocation,
                                 (int)Util.GetHypoteneuseAngleDegrees(offsettedMouseLocation, offsettedMouseLocation));
                             player.currentSelection.Assault(newPattern);
-                        }  
+                        }
                         this.Dispose();
                         break;
 
@@ -189,9 +194,8 @@ namespace PathfindingTest.UI.Commands
             {
                 int engineerCounter = 0;
 
-                foreach (Engineer e in player.currentSelection.units)
-                {
-                    engineerCounter++;
+                for( int i = 0; i < player.currentSelection.units.Count(); i++ ){
+                    if( player.currentSelection.units.ElementAt(i) is Engineer ) engineerCounter++;
                 }
 
                 if (engineerCounter < 1)

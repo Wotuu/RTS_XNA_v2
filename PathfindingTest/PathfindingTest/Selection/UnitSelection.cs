@@ -9,12 +9,13 @@ using PathfindingTest.Pathfinding;
 using PathfindingTest.UI;
 using PathfindingTest.Buildings;
 using PathfindingTest.Multiplayer.Data;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Selection
 {
     public class UnitSelection
     {
-        public LinkedList<Unit> units { get; set; }
+        public CustomArrayList<Unit> units { get; set; }
 
         /// <summary>
         /// Gets the point that is furthest away of a collcetion from a unit.
@@ -22,13 +23,14 @@ namespace PathfindingTest.Selection
         /// <param name="unit">The unit.</param>
         /// <param name="points">The list of points to chose from</param>
         /// <returns>The point.</returns>
-        private Point GetFarthestPoint(Unit unit, LinkedList<Point> points)
+        private Point GetFarthestPoint(Unit unit, CustomArrayList<Point> points)
         {
             Point farthestPoint = new Point(0, 0);
             double farthestDistance = 0;
             Point unitLocation = new Point((int)unit.x, (int)unit.y);
-            foreach (Point p in points)
+            for (int i = 0; i < points.Count(); i++)
             {
+                Point p = points.ElementAt(i);
                 double currentDistance = Util.GetHypoteneuseLength(p, unitLocation);
                 if (currentDistance > farthestDistance)
                 {
@@ -45,13 +47,13 @@ namespace PathfindingTest.Selection
         /// <param name="unit">The unit.</param>
         /// <param name="points">The list of points to chose from</param>
         /// <returns>The point.</returns>
-        private Point GetClosestPoint(Unit unit, LinkedList<Point> points)
+        private Point GetClosestPoint(Unit unit, CustomArrayList<Point> points)
         {
             Point closestPoint = new Point(0, 0);
             double closestDistance = Double.MaxValue;
             Point unitLocation = new Point((int)unit.x, (int)unit.y);
-            foreach (Point p in points)
-            {
+            for( int i = 0; i < points.Count(); i++){
+                Point p = points.ElementAt(i);
                 double currentDistance = Util.GetHypoteneuseLength(p, unitLocation);
                 if (currentDistance < closestDistance)
                 {
@@ -68,10 +70,11 @@ namespace PathfindingTest.Selection
         /// <param name="pattern">The pattern to use when calculating where the units should go.</param>
         public void MoveTo(UnitGroupPattern pattern)
         {
-            LinkedList<Point> points = pattern.ApplyPattern();
+            CustomArrayList<Point> points = pattern.ApplyPattern();
             int count = 0;
-            foreach (Unit unit in units)
+            for (int i = 0; i < units.Count(); i++)
             {
+                Unit unit = units.ElementAt(i);
                 unit.SetJob(Unit.Job.Moving);
                 // This part is used for checking whether an Engineer should stop constructing or not.
                 if (unit.type == Unit.Type.Engineer)
@@ -109,8 +112,9 @@ namespace PathfindingTest.Selection
         public void Assault(UnitGroupPattern pattern)
         {
             MoveTo(pattern);
-            foreach (Unit unit in units)
+            for (int i = 0; i < units.Count(); i++)
             {
+                Unit unit = units.ElementAt(i);
                 unit.SetAssaultLocation(pattern.location);
                 unit.SetJob(Unit.Job.Attacking);
             }
@@ -121,8 +125,9 @@ namespace PathfindingTest.Selection
         /// </summary>
         public void DeselectAll()
         {
-            foreach (Unit unit in units)
+            for (int i = 0; i < units.Count(); i++)
             {
+                Unit unit = units.ElementAt(i);
                 unit.selected = false;
             }
         }
@@ -132,18 +137,18 @@ namespace PathfindingTest.Selection
         /// </summary>
         public void SelectAll()
         {
-            foreach (Unit unit in units)
-            {
+            for( int i = 0; i < units.Count(); i++){
+                Unit unit = units.ElementAt(i);
                 unit.selected = true;
             }
         }
 
         public UnitSelection()
         {
-            this.units = new LinkedList<Unit>();
+            this.units = new CustomArrayList<Unit>();
         }
 
-        public UnitSelection(LinkedList<Unit> units)
+        public UnitSelection(CustomArrayList<Unit> units)
         {
             this.units = units;
         }

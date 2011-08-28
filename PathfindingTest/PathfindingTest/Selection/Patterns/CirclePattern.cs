@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework;
 using PathfindingTest.Units;
 using PathfindingTest.Pathfinding;
 using PathfindingTest.Collision;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Selection.Patterns
 {
@@ -23,19 +24,19 @@ namespace PathfindingTest.Selection.Patterns
         }
 
 
-        public override LinkedList<Point> ApplyPattern()
+        public override CustomArrayList<Point> ApplyPattern()
         {
-            LinkedList<Point> list = new LinkedList<Point>();
-            if (selection.units.Count == 1)
+            CustomArrayList<Point> list = new CustomArrayList<Point>();
+            if (selection.units.Count() == 1)
             {
                 list.AddLast(location);
                 return list;
             }
 
-            double angleStep = 360.0 / (double)selection.units.Count;
+            double angleStep = 360.0 / (double)selection.units.Count();
 
             double currentAngle = rotation;
-            for( int i = 0; i < selection.units.Count; i++ )
+            for( int i = 0; i < selection.units.Count(); i++ )
             {
                 Point p = Util.GetPointOnCircle(location, this.radius, currentAngle);
                 RTSCollisionMap c = Game1.GetInstance().map.collisionMap;

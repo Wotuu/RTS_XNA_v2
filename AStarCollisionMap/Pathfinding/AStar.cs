@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
+using CustomLists.Lists;
 
 namespace AStarCollisionMap.Pathfinding
 {
@@ -32,15 +33,15 @@ namespace AStarCollisionMap.Pathfinding
         private PathfindingNode start {get; set; }
         private PathfindingNode end {get; set; }
 
-        private LinkedList<PathfindingNode> closedList { get; set; }
-        private LinkedList<PathfindingNode> openList { get; set; }
+        private CustomArrayList<PathfindingNode> closedList { get; set; }
+        private CustomArrayList<PathfindingNode> openList { get; set; }
 
         public AStar(PathfindingNode start, PathfindingNode end)
         {
             this.start = start;
             this.end = end;
-            this.closedList = new LinkedList<PathfindingNode>();
-            this.openList = new LinkedList<PathfindingNode>();
+            this.closedList = new CustomArrayList<PathfindingNode>();
+            this.openList = new CustomArrayList<PathfindingNode>();
         }
 
         /**
@@ -48,7 +49,7 @@ namespace AStarCollisionMap.Pathfinding
          * Returns false if the start or end is null, or are not actual start or end points.<br>
          * @return The list containing all points that are required to be visited in order to reach the end.
          */
-        public LinkedList<PathfindingNode> FindPath()
+        public CustomArrayList<PathfindingNode> FindPath()
         {
             if (start == null || end == null)
             {
@@ -56,21 +57,22 @@ namespace AStarCollisionMap.Pathfinding
             }
             openList.AddLast(start);
 
-            while (openList.Count != 0 )
+            while (openList.Count() != 0 )
             {
                 PathfindingNode node = null;
-                foreach( PathfindingNode openNode in openList )
-                {
+                for( int i = 0; i < openList.Count(); i++ ){
+                    PathfindingNode openNode = openList.ElementAt(i);
                     if (node == null || node.score > openNode.score) node = openNode;
                 }
-                if (node == end) return node.BuildPath(start); 
+                if (node == end) return node.BuildPath(start);
 
-                openList.Remove(node);
+                openList.Remove(node, true);
                 closedList.AddLast(node);
 
+                CustomArrayList<PathfindingNode> connectedNodes = node.GetConnectedNodes();
+                for( int i = 0; i < connectedNodes.Count(); i++ ){
+                    PathfindingNode currentSuccessor = connectedNodes.ElementAt(i);
 
-                foreach (PathfindingNode currentSuccessor in node.GetConnectedNodes())
-                {
                     if( closedList.Contains( currentSuccessor ) ) continue;
                     int currentClosestDistance = node.costToStart + (int)PathfindingUtil.GetHypoteneuseLength(currentSuccessor.GetLocation(), node.GetLocation());
                     Boolean better = false;

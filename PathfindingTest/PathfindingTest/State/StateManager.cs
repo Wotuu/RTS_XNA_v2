@@ -17,6 +17,7 @@ using PathfindingTest.Buildings;
 using PathfindingTest.Collision;
 using PathfindingTest.Map;
 using System.Threading;
+using CustomLists.Lists;
 
 namespace PathfindingTest.State
 {
@@ -42,7 +43,7 @@ namespace PathfindingTest.State
                 else if (value == State.GameInit)
                 {
                     Game1 game = Game1.GetInstance();
-                    game.players = new LinkedList<Player>();
+                    game.players = new CustomArrayList<Player>();
 
                     String mapname = "";
                     if (game.IsMultiplayerGame())

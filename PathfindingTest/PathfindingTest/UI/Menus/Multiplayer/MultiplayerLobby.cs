@@ -15,13 +15,14 @@ using SocketLibrary.Users;
 using SocketLibrary.Multiplayer;
 using PathfindingTest.UI.Menus.Multiplayer.Panels;
 using PathfindingTest.UI.Menus.Multiplayer.Misc;
+using CustomLists.Lists;
 
 namespace PathfindingTest.UI.Menus.Multiplayer
 {
     public class MultiplayerLobby : XNAPanel
     {
         private XNATextField messagesTextField { get; set; }
-        private LinkedList<Message> messageLog = new LinkedList<Message>();
+        private CustomArrayList<Message> messageLog = new CustomArrayList<Message>();
 
         public XNAButton disconnectButton { get; set; }
         public XNAButton createGameButton { get; set; }
@@ -31,7 +32,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public XNAInputDialog gameNameInput { get; set; }
 
         public XNAPanel gamesPanel { get; set; }
-        public LinkedList<GameDisplayPanel> gameList = new LinkedList<GameDisplayPanel>();
+        public CustomArrayList<GameDisplayPanel> gameList = new CustomArrayList<GameDisplayPanel>();
 
 
         public MultiplayerLobby()
@@ -86,9 +87,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <returns>The game or null</returns>
         public MultiplayerGame GetGameByID(int gameID)
         {
-            foreach (GameDisplayPanel game in this.gameList)
-            {
-                if (game.multiplayerGame.id == gameID) return game.multiplayerGame;
+            for( int i = 0; i < this.gameList.Count(); i++){
+                GameDisplayPanel panel = this.gameList.ElementAt(i);
+                if (panel.multiplayerGame.id == gameID) return panel.multiplayerGame;
             }
             return null;
         }
@@ -126,7 +127,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <param name="id">The game ID to remove.</param>
         public void RemoveGameByID(int id)
         {
-            for (int i = 0; i < this.gameList.Count; i++)
+            for (int i = 0; i < this.gameList.Count(); i++)
             {
                 GameDisplayPanel panel = this.gameList.ElementAt(i);
                 if (panel.multiplayerGame.id == id) this.RemoveGame(panel.multiplayerGame);
@@ -140,7 +141,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public void RemoveGame(MultiplayerGame toRemove)
         {
             // Remove the panel.
-            for (int i = 0; i < this.gameList.Count; i++)
+            for (int i = 0; i < this.gameList.Count(); i++)
             {
                 GameDisplayPanel panel = this.gameList.ElementAt(i);
                 if (panel.multiplayerGame == toRemove)
@@ -151,7 +152,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             }
 
             // Re-arrange the panels.
-            for (int i = 0; i < this.gameList.Count; i++)
+            for (int i = 0; i < this.gameList.Count(); i++)
             {
                 this.gameList.ElementAt(i).index = i;
             }
@@ -163,7 +164,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <param name="toAdd">The game to add</param>
         public void AddGame(MultiplayerGame toAdd)
         {
-            this.gameList.AddLast(new GameDisplayPanel(gamesPanel, this.gameList.Count, toAdd));
+            this.gameList.AddLast(new GameDisplayPanel(gamesPanel, this.gameList.Count(), toAdd));
         }
         #endregion
 
@@ -260,7 +261,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             messageLog.AddLast(new Message(message));
             String result = "";
             // If it isn't the first one..
-            for (int i = 0; i < messageLog.Count; i++)
+            for (int i = 0; i < messageLog.Count(); i++)
             {
                 if (i != 0) result += "\n";
                 result += messageLog.ElementAt(i).GetComposedMessage();

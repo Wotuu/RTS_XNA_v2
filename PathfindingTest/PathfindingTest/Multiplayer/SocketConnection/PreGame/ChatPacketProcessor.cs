@@ -68,7 +68,7 @@ namespace PathfindingTest.Multiplayer.PreGame.SocketConnection
                             MultiplayerLobby lobby = ((MultiplayerLobby)menu);
                             MultiplayerGame game = lobby.GetGameByID(gameID);
                             game.mapname = mapName;
-                            for (int i = 0; i < lobby.gameList.Count; i++)
+                            for (int i = 0; i < lobby.gameList.Count(); i++)
                             {
                                 GameDisplayPanel panel = lobby.GetGameDisplayPanelByIndex(i);
                                 if (panel.multiplayerGame.id == gameID)

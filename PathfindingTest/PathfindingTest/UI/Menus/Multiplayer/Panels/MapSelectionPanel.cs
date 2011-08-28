@@ -12,6 +12,7 @@ using SocketLibrary.Packets;
 using SocketLibrary.Protocol;
 using Microsoft.Xna.Framework.Graphics;
 using PathfindingTest.UI.Menus.Multiplayer.Panels.PlayerLocation;
+using CustomLists.Lists;
 
 namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 {
@@ -31,7 +32,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 
 
         public XNARadioButtonGroup group { get; set; }
-        public LinkedList<MapEntryPanel> panels = new LinkedList<MapEntryPanel>();
+        public CustomArrayList<MapEntryPanel> panels = new CustomArrayList<MapEntryPanel>();
 
         public MapSelectionPanel(MapPreviewPanel previewPanel, String selectedMapName)
             : base()
@@ -44,15 +45,16 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 
             this.group = new XNARadioButtonGroup();
             int index = 0;
-            LinkedList<String> mapNames = LoadMapNames();
-            foreach (String map in mapNames)
-            {
+            CustomArrayList<String> mapNames = LoadMapNames();
+            for( int i = 0; i < mapNames.Count(); i++){
+                String map = mapNames.ElementAt(i);
+
                 this.panels.AddLast(new MapEntryPanel(this, map, index));
-                if (selectedMapName == map) this.panels.Last.Value.previewButton.selected = true;
+                if (selectedMapName == map) this.panels.GetLast().previewButton.selected = true;
                 index++;
             }
 
-            int panelHeight = (int)Math.Max(this.panels.Count * MapEntryPanel.ENTRY_HEIGHT + 100, 300);
+            int panelHeight = (int)Math.Max(this.panels.Count() * MapEntryPanel.ENTRY_HEIGHT + 100, 300);
             this.bounds = new Rectangle(((CLIENT_WINDOW_WIDTH / 2) - 250),
                 ((CLIENT_WINDOW_HEIGHT / 2) - (panelHeight / 2)),
                 500,
@@ -73,10 +75,10 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// Loads the mapnames from disk.
         /// </summary>
         /// <returns>The list of names.</returns>
-        public LinkedList<String> LoadMapNames()
+        public CustomArrayList<String> LoadMapNames()
         {
             DirectoryInfo di = new DirectoryInfo(Game1.MAPS_FOLDER_LOCATION);
-            LinkedList<String> names = new LinkedList<String>();
+            CustomArrayList<String> names = new CustomArrayList<String>();
             foreach (FileInfo fi in di.GetFiles())
             {
                 if (fi.Extension == ".xml") names.AddLast(fi.Name.Replace(".xml", ""));
@@ -90,8 +92,8 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <returns>The selected map, or null if none was selected.</returns>
         public String GetSelectedMap()
         {
-            foreach (MapEntryPanel panel in this.panels)
-            {
+            for( int i = 0; i < this.panels.Count(); i++){
+                MapEntryPanel panel = this.panels.ElementAt(i);
                 if (panel.previewButton.selected)
                 {
                     return panel.previewButton.text;
@@ -106,8 +108,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <returns>The map entry</returns>
         public MapEntryPanel GetSelectedMapEntry()
         {
-            foreach (MapEntryPanel panel in this.panels)
+            for (int i = 0; i < this.panels.Count(); i++)
             {
+                MapEntryPanel panel = this.panels.ElementAt(i);
                 if (panel.previewButton.selected)
                 {
                     return panel;

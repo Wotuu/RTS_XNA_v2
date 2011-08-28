@@ -15,13 +15,14 @@ using SocketLibrary.Multiplayer;
 using PathfindingTest.UI.Menus.Multiplayer.Panels;
 using SocketLibrary.Users;
 using PathfindingTest.UI.Menus.Multiplayer.Misc;
+using CustomLists.Lists;
 
 namespace PathfindingTest.UI.Menus.Multiplayer
 {
     public class GameLobby : XNAPanel
     {
 
-        private LinkedList<Message> messageLog = new LinkedList<Message>();
+        private CustomArrayList<Message> messageLog = new CustomArrayList<Message>();
 
         private XNATextField messagesTextField { get; set; }
         private XNATextField messageTextField { get; set; }
@@ -46,7 +47,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         }
 
         public XNAPanel gameOptionsPanel { get; set; }
-        public LinkedList<UserDisplayPanel> userDisplayPanels = new LinkedList<UserDisplayPanel>();
+        public CustomArrayList<UserDisplayPanel> userDisplayPanels = new CustomArrayList<UserDisplayPanel>();
         public double creationTime { get; set; }
 
         public GameLobby()
@@ -105,8 +106,8 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <returns></returns>
         public Boolean UserExists(User user)
         {
-            foreach (UserDisplayPanel p in userDisplayPanels)
-            {
+            for( int i = 0; i < this.userDisplayPanels.Count(); i ++){
+                UserDisplayPanel p = this.userDisplayPanels.ElementAt(i);
                 if (p.user == user) return true;
             }
             return false;
@@ -122,7 +123,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             if (!UserExists(user.id))
             {
                 // Console.Out.WriteLine(this.creationTime + ": " + user + " has joined the game lobby (from " + ChatServerConnectionManager.GetInstance().user + ")");
-                this.userDisplayPanels.AddLast(new UserDisplayPanel(gameOptionsPanel, user, this.userDisplayPanels.Count));
+                this.userDisplayPanels.AddLast(new UserDisplayPanel(gameOptionsPanel, user, this.userDisplayPanels.Count()));
                 // Console.Out.WriteLine(this.creationTime + ": " + "Users now in lobby: " + this.userDisplayPanels.Count);
             }
         }
@@ -135,7 +136,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         {
             // Console.Out.WriteLine(this.creationTime + ": " + user + " has left the game lobby (from " + ChatServerConnectionManager.GetInstance().user + ")");
             Boolean removed = false;
-            for (int i = 0; i < userDisplayPanels.Count; i++)
+            for (int i = 0; i < userDisplayPanels.Count(); i++)
             {
                 UserDisplayPanel p = userDisplayPanels.ElementAt(i);
                 if (removed)
@@ -145,7 +146,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
                 else if (p.user.id == user.id)
                 {
                     // Console.Out.WriteLine(this.creationTime + ": " + "Removed a panel from the list because " + p.user + " == " + user.id + "!");
-                    userDisplayPanels.Remove(p);
+                    userDisplayPanels.Remove(p, true);
                     // Console.Out.WriteLine(this.creationTime + ": " + "Users now in lobby: " + this.userDisplayPanels.Count);
                     p.Unload();
                     i--;
@@ -172,8 +173,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public void StartGame(XNAButton source)
         {
             Boolean isReady = true;
-            foreach (UserDisplayPanel panel in userDisplayPanels)
+            for (int i = 0; i < userDisplayPanels.Count(); i++)
             {
+                UserDisplayPanel panel = userDisplayPanels.ElementAt(i);
                 if (!panel.readyCheckBox.selected)
                 {
                     this.AddMessageToLog("Not all players are ready.");
@@ -252,7 +254,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             messageLog.AddLast(new Message(message));
             String result = "";
             // If it isn't the first one..
-            for (int i = 0; i < messageLog.Count; i++)
+            for (int i = 0; i < messageLog.Count(); i++)
             {
                 if (i != 0) result += "\n";
                 result += messageLog.ElementAt(i).GetComposedMessage();
@@ -266,7 +268,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <returns></returns>
         public int GetDisplayPanelCount()
         {
-            return this.userDisplayPanels.Count;
+            return this.userDisplayPanels.Count();
         }
 
         /// <summary>
@@ -276,8 +278,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <returns>The panel.</returns>
         public UserDisplayPanel GetDisplayPanelByUserId(int userID)
         {
-            foreach (UserDisplayPanel p in this.userDisplayPanels)
+            for (int i = 0; i < userDisplayPanels.Count(); i++)
             {
+                UserDisplayPanel p = userDisplayPanels.ElementAt(i);
                 if (p.user.id == userID) return p;
             }
             return null;
@@ -300,11 +303,10 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         /// <returns>The index, or -1 if that user doesn't exist currently.</returns>
         public int GetDisplayPanelIndexByUserID(int userID)
         {
-            int i = 0;
-            foreach (UserDisplayPanel p in this.userDisplayPanels)
+            for (int i = 0; i < userDisplayPanels.Count(); i++)
             {
+                UserDisplayPanel p = userDisplayPanels.ElementAt(i);
                 if (p.user.id == userID) return i;
-                i++;
             }
             return -1;
         }

@@ -18,6 +18,7 @@ using System.Diagnostics;
 using PathfindingTest.UI.Commands;
 using PathfindingTest.Units.Damage;
 using PathfindingTest.Map;
+using CustomLists.Lists;
 
 namespace PathfindingTest.Players
 {
@@ -31,9 +32,9 @@ namespace PathfindingTest.Players
         Texture2D selectedTex;
 
         public int resources { get; set; }
-        public LinkedList<Unit> units { get; set; }
+        public CustomArrayList<Unit> units { get; set; }
         public UnitSelection currentSelection { get; set; }
-        public LinkedList<Building> buildings { get; set; }
+        public CustomArrayList<Building> buildings { get; set; }
         public BuildingSelection buildingSelection { get; set; }
         public ArrowManager arrowManager;
 
@@ -83,8 +84,8 @@ namespace PathfindingTest.Players
             selectionTex = Game1.GetInstance().Content.Load<Texture2D>("Selection");
             selectedTex = Game1.GetInstance().Content.Load<Texture2D>("Selected");
 
-            units = new LinkedList<Unit>();
-            buildings = new LinkedList<Building>();
+            units = new CustomArrayList<Unit>();
+            buildings = new CustomArrayList<Building>();
             hud = new HUD(this, color);
             resources = 100000;
 
@@ -115,7 +116,7 @@ namespace PathfindingTest.Players
                 int unitCount = 25;
 
 
-                LinkedList<Unit> temp_units = new LinkedList<Unit>();
+                CustomArrayList<Unit> temp_units = new CustomArrayList<Unit>();
                 // +1 to compensate for the engineer
                 for (int i = 0; i < unitCount + 1; i++)
                 {
@@ -126,7 +127,7 @@ namespace PathfindingTest.Players
 
                 UnitSelection selection = new UnitSelection(temp_units);
                 UnitGroupPattern pattern = new CirclePattern(startLocation, selection, 90, 0);
-                LinkedList<Point> points = pattern.ApplyPattern();
+                CustomArrayList<Point> points = pattern.ApplyPattern();
 
                 for (int i = 0; i < unitCount; i++)
                 {
@@ -154,8 +155,9 @@ namespace PathfindingTest.Players
         {
             UnitSelection selection = new UnitSelection();
 
-            foreach (Unit unit in this.units)
+            for (int i = 0; i < this.units.Count(); i++)
             {
+                Unit unit = this.units.ElementAt(i);
                 Console.WriteLine("Unit added");
                 if (unit.selected) selection.units.AddLast(unit);
             }
@@ -167,8 +169,9 @@ namespace PathfindingTest.Players
         {
             BuildingSelection selection = new BuildingSelection();
 
-            foreach (Building b in this.buildings)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
+                Building b = this.buildings.ElementAt(i);
                 if (b.selected)
                 {
                     selection.buildings.AddLast(b);
@@ -178,18 +181,25 @@ namespace PathfindingTest.Players
             return selection;
         }
 
+        /// <summary>
+        /// Deselects all units.
+        /// </summary>
         public void DeselectAllUnits()
         {
-            foreach (Unit unit in this.units)
+            for (int i = 0; i < this.units.Count(); i++)
             {
-                unit.selected = false;
+                this.units.ElementAt(i).selected = false;
             }
         }
 
+        /// <summary>
+        /// Deselects all buildings.
+        /// </summary>
         public void DeselectAllBuildings()
         {
-            foreach (Building b in this.buildings)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
+                Building b = this.buildings.ElementAt(i);
                 b.selected = false;
             }
         }
@@ -203,7 +213,7 @@ namespace PathfindingTest.Players
         {
             try
             {
-                for (int i = 0; i < units.Count; i++)
+                for (int i = 0; i < units.Count(); i++)
                 {
                     units.ElementAt(i).Update(ks, ms);
                 }
@@ -212,7 +222,7 @@ namespace PathfindingTest.Players
 
             try
             {
-                for (int i = 0; i < buildings.Count; i++)
+                for (int i = 0; i < buildings.Count(); i++)
                 {
                     buildings.ElementAt(i).Update(ks, ms);
                 }
@@ -274,9 +284,10 @@ namespace PathfindingTest.Players
 
             if (previewPattern != null)
             {
-                LinkedList<Point> points = previewPattern.ApplyPattern();
-                foreach (Point p in points)
+                CustomArrayList<Point> points = previewPattern.ApplyPattern();
+                for (int i = 0; i < points.Count(); i++)
                 {
+                    Point p = points.ElementAt(i);
                     new PatternPreviewObject(p).Draw(sb);
                 }
             }
@@ -284,7 +295,7 @@ namespace PathfindingTest.Players
 
             try
             {
-                for (int i = 0; i < this.units.Count; i++)
+                for (int i = 0; i < this.units.Count(); i++)
                 {
                     Unit unit = units.ElementAt(i);
 
@@ -301,7 +312,7 @@ namespace PathfindingTest.Players
             {
                 try
                 {
-                    for (int i = 0; i < currentSelection.units.Count; i++)
+                    for (int i = 0; i < currentSelection.units.Count(); i++)
                     {
                         currentSelection.units.ElementAt(i).DrawHealthBar(sb);
                     }
@@ -312,8 +323,9 @@ namespace PathfindingTest.Players
             Unit mouseOver = GetMouseOverUnit();
             if (mouseOver != null) mouseOver.DrawHealthBar(sb);
 
-            foreach (Building b in buildings)
+            for (int i = 0; i < buildings.Count(); i++)
             {
+                Building b = buildings.ElementAt(i);
                 b.Draw(sb);
             }
         }
@@ -333,8 +345,9 @@ namespace PathfindingTest.Players
 
         public void DrawLights(SpriteBatch spriteBatch)
         {
-            foreach (Unit unit in this.units)
+            for (int i = 0; i < this.units.Count(); i++)
             {
+                Unit unit = this.units.ElementAt(i);
                 spriteBatch.Draw(
                     lightTexture,
                     new Vector2(unit.x - Game1.GetInstance().drawOffset.X,
@@ -348,8 +361,9 @@ namespace PathfindingTest.Players
                     1.0f);
             }
 
-            foreach (Building building in this.buildings)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
+                Building building = this.buildings.ElementAt(i);
                 if (building.state != Building.State.Preview)
                 {
                     spriteBatch.Draw(
@@ -369,9 +383,9 @@ namespace PathfindingTest.Players
 
         public void DrawMiniLights(SpriteBatch spriteBatch, MiniMap map)
         {
-            
-            foreach (Unit unit in this.units)
+            for (int i = 0; i < this.units.Count(); i++)
             {
+                Unit unit = this.units.ElementAt(i);
                 Point miniMapPoint = map.MapToMiniMap(unit.GetLocation());
                 spriteBatch.Draw(
                     lightTexture,
@@ -382,16 +396,17 @@ namespace PathfindingTest.Players
                     Color.White,
                     0f,
                     new Vector2(16, 16),
-                    (int) (unit.visionRange / lightTexture.Width / (2.1)),
+                    (int)(unit.visionRange / lightTexture.Width / (2.1)),
                     SpriteEffects.None,
                     1.0f);
             }
 
-            foreach (Building building in this.buildings)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
-                if (building.state != Building.State.Preview)
+                Building b = this.buildings.ElementAt(i);
+                if (b.state != Building.State.Preview)
                 {
-                    Point miniMapPoint = map.MapToMiniMap(building.GetLocation());
+                    Point miniMapPoint = map.MapToMiniMap(b.GetLocation());
                     spriteBatch.Draw(
                         lightTexture,
                         new Vector2(miniMapPoint.X,
@@ -400,7 +415,7 @@ namespace PathfindingTest.Players
                         Color.White,
                         0f,
                         new Vector2(16, 16),
-                        (int)(building.visionRange / lightTexture.Width / (2.1)),
+                        (int)(b.visionRange / lightTexture.Width / (2.1)),
                         SpriteEffects.None,
                         1.0f);
                 }
@@ -414,8 +429,9 @@ namespace PathfindingTest.Players
         /// <returns>Yes or no.</returns>
         public Boolean IsPreviewingBuilding()
         {
-            foreach (Building b in buildings)
+            for (int i = 0; i < buildings.Count(); i++)
             {
+                Building b = buildings.ElementAt(i);
                 if (b.state == Building.State.Preview) return true;
             }
             return false;
@@ -427,13 +443,15 @@ namespace PathfindingTest.Players
         /// <returns>The unit.</returns>
         public Unit GetMouseOverUnit()
         {
-            foreach (Player p in Game1.GetInstance().players)
+            MouseState state = Mouse.GetState();
+            for (int i = 0; i < Game1.GetInstance().players.Count(); i++)
             {
-                for (int i = 0; i < p.units.Count; i++)
+                Player p = Game1.GetInstance().players.ElementAt(i);
+                for (int j = 0; j < p.units.Count(); j++)
                 {
-                    Unit u = p.units.ElementAt(i);
+                    Unit u = p.units.ElementAt(j);
 
-                    if (u.GetDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                    if (u.GetDrawRectangle().Contains(state.X, state.Y))
                     {
                         return u;
                     }
@@ -448,11 +466,13 @@ namespace PathfindingTest.Players
         /// if it is, it'll return it. =D
         /// </summary>
         /// <returns>The unit, or null if there was no unit!</returns>
-        public Unit GetMouseOverUnit(LinkedList<Unit> units)
+        public Unit GetMouseOverUnit(CustomArrayList<Unit> units)
         {
-            foreach (Unit u in units)
+            MouseState state = Mouse.GetState();
+            for (int i = 0; i < this.units.Count(); i++)
             {
-                if (u.GetDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return u;
+                Unit u = this.units.ElementAt(i);
+                if (u.GetDrawRectangle().Contains(state.X, state.Y)) return u;
             }
             return null;
         }
@@ -462,20 +482,24 @@ namespace PathfindingTest.Players
         /// if it is, it'll return it. =D
         /// </summary>
         /// <returns>The unit, or null if there was no unit!</returns>
-        public Building GetMouseOverBuilding(LinkedList<Building> buildings)
+        public Building GetMouseOverBuilding(CustomArrayList<Building> buildings)
         {
-            foreach (Building b in buildings)
+            MouseState state = Mouse.GetState();
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
-                if (b.DefineDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y)) return b;
+                Building b = this.buildings.ElementAt(i);
+                if (b.DefineDrawRectangle().Contains(state.X, state.Y)) return b;
             }
             return null;
         }
 
         public Building IsMouseOverFriendlyBuilding()
         {
-            foreach (Building b in buildings)
+            MouseState state = Mouse.GetState();
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
-                if (b.DefineDrawRectangle().Contains(Mouse.GetState().X, Mouse.GetState().Y))
+                Building b = this.buildings.ElementAt(i);
+                if (b.DefineDrawRectangle().Contains(state.X, state.Y))
                 {
                     return b;
                 }
@@ -487,9 +511,10 @@ namespace PathfindingTest.Players
 
         public UnitSelection GetUnits()
         {
-            UnitSelection selection = new UnitSelection(new LinkedList<Unit>());
-            foreach (Unit unit in units)
+            UnitSelection selection = new UnitSelection(new CustomArrayList<Unit>());
+            for (int i = 0; i < this.units.Count(); i++)
             {
+                Unit unit = this.units.ElementAt(i);
                 if (this.selectBox.GetRectangle().Intersects(unit.GetDrawRectangle()))
                 {
                     selection.units.AddLast(unit);
@@ -500,10 +525,11 @@ namespace PathfindingTest.Players
 
         public BuildingSelection GetBuildings()
         {
-            BuildingSelection selection = new BuildingSelection(new LinkedList<Building>());
+            BuildingSelection selection = new BuildingSelection(new CustomArrayList<Building>());
 
-            foreach (Building b in this.buildings)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
+                Building b = this.buildings.ElementAt(i);
                 if (this.selectBox.GetRectangle().Contains((int)b.x, (int)b.y))
                 {
                     selection.buildings.AddLast(b);
@@ -518,12 +544,12 @@ namespace PathfindingTest.Players
         /// </summary>
         public void RemovePreviewBuildings()
         {
-            for (int i = 0; i < this.buildings.Count; i++)
+            for (int i = 0; i < this.buildings.Count(); i++)
             {
-                Building build = this.buildings.ElementAt(i);
-                if (build.state == Building.State.Preview)
+                Building building = this.buildings.ElementAt(i);
+                if (building.state == Building.State.Preview)
                 {
-                    build.Dispose();
+                    building.Dispose();
                     i--;
                 }
             }
@@ -559,7 +585,7 @@ namespace PathfindingTest.Players
                     Unit mouseOverUnit = this.GetMouseOverUnit(this.units);
                     if (mouseOverUnit == null)
                     {
-                        if (this.currentSelection != null && this.currentSelection.units.Count != 0 &&
+                        if (this.currentSelection != null && this.currentSelection.units.Count() != 0 &&
                             !this.hud.IsMouseOverBuilding() && !this.IsPreviewingBuilding())
                         {
                             this.DeselectAllUnits();
@@ -573,17 +599,18 @@ namespace PathfindingTest.Players
                         // Performed a double click!
                         if (Game1.GetInstance().frames - lastBtn1ClickFrames < 20)
                         {
-                            LinkedList<Unit> selectionUnits = new LinkedList<Unit>();
-                            foreach (Unit unit in units)
+                            CustomArrayList<Unit> selectionUnits = new CustomArrayList<Unit>();
+                            for (int i = 0; i < this.units.Count(); i++)
                             {
-                                if (Game1.GetInstance().IsOnScreen( unit.DefineDrawRectangle() ) && mouseOverUnit.type == unit.type) 
+                                Unit unit = this.units.ElementAt(i);
+                                if (Game1.GetInstance().IsOnScreen(unit.DefineDrawRectangle()) && mouseOverUnit.type == unit.type)
                                     selectionUnits.AddLast(unit);
                             }
                             this.currentSelection = new UnitSelection(selectionUnits);
                         }
                         else if (!mouseOverUnit.selected)
                         {
-                            LinkedList<Unit> selectionUnits = new LinkedList<Unit>();
+                            CustomArrayList<Unit> selectionUnits = new CustomArrayList<Unit>();
                             selectionUnits.AddLast(mouseOverUnit);
                             this.currentSelection = new UnitSelection(selectionUnits);
                         }
@@ -592,7 +619,7 @@ namespace PathfindingTest.Players
                     Building mouseOverBuilding = this.IsMouseOverFriendlyBuilding();
                     if (mouseOverBuilding == null)
                     {
-                        if (this.buildingSelection != null && this.buildingSelection.buildings.Count != 0 &&
+                        if (this.buildingSelection != null && this.buildingSelection.buildings.Count() != 0 &&
                             !this.IsPreviewingBuilding())
                         {
                             this.DeselectAllBuildings();
@@ -606,17 +633,18 @@ namespace PathfindingTest.Players
                         // Performed a double click!
                         if (Game1.GetInstance().frames - lastBtn1ClickFrames < 20)
                         {
-                            LinkedList<Building> selectionBuildings = new LinkedList<Building>();
-                            foreach (Building b in buildings)
+                            CustomArrayList<Building> selectionBuildings = new CustomArrayList<Building>();
+                            for (int i = 0; i < this.buildings.Count(); i++)
                             {
-                                if (Game1.GetInstance().IsOnScreen( b.DefineDrawRectangle() ) && mouseOverBuilding.type == b.type)
+                                Building b = this.buildings.ElementAt(i);
+                                if (Game1.GetInstance().IsOnScreen(b.DefineDrawRectangle()) && mouseOverBuilding.type == b.type)
                                     selectionBuildings.AddLast(b);
                             }
                             this.buildingSelection = new BuildingSelection(selectionBuildings);
                         }
                         else if (!mouseOverBuilding.selected)
                         {
-                            LinkedList<Building> selectionBuildings = new LinkedList<Building>();
+                            CustomArrayList<Building> selectionBuildings = new CustomArrayList<Building>();
                             selectionBuildings.AddLast(mouseOverBuilding);
                             this.buildingSelection = new BuildingSelection(selectionBuildings);
                             this.buildingSelection.SelectAll();
@@ -641,7 +669,7 @@ namespace PathfindingTest.Players
                 this.currentSelection = this.GetUnits();
                 this.currentSelection.SelectAll();
 
-                if (currentSelection.units.Count == 0)
+                if (currentSelection.units.Count() == 0)
                 {
                     this.buildingSelection = this.GetBuildings();
                     this.buildingSelection.SelectAll();
@@ -649,18 +677,21 @@ namespace PathfindingTest.Players
             }
             selectBox = null;
             ///unitz
-            if (this.currentSelection != null && this.currentSelection.units.Count != 0
+            if (this.currentSelection != null && this.currentSelection.units.Count() != 0
                 && (m.button == MouseEvent.MOUSE_BUTTON_3))
             {
-                foreach (Player player in Game1.GetInstance().players)
+                for (int i = 0; i < Game1.GetInstance().players.Count(); i++)
                 {
+                    Player player = Game1.GetInstance().players.ElementAt(i);
                     if (player.alliance.members.Contains(this))
                     {
                         Unit selectedFriendly = GetMouseOverUnit(player.units);
                         if (selectedFriendly != null)
                         {
-                            foreach (Unit unit in currentSelection.units)
+                            for (int j = 0; j < this.currentSelection.units.Count(); j++)
                             {
+                                Unit unit = this.currentSelection.units.ElementAt(j);
+
                                 unit.Defend(selectedFriendly);
                                 selectedFriendly.friendliesProtectingMe.AddLast(unit);
                             }
@@ -671,8 +702,10 @@ namespace PathfindingTest.Players
                         Unit selectedEnemy = GetMouseOverUnit(player.units);
                         if (selectedEnemy != null && (this.command == null || (this.command != null && this.command.type != Command.Type.Defend)))
                         {
-                            foreach (Unit unit in currentSelection.units)
+                            for (int j = 0; j < this.currentSelection.units.Count(); j++)
                             {
+                                Unit unit = this.currentSelection.units.ElementAt(j);
+
                                 unit.AttackUnit(selectedEnemy);
                             }
                             return;
@@ -682,8 +715,10 @@ namespace PathfindingTest.Players
                             Building enemyBuilding = GetMouseOverBuilding(player.buildings);
                             if (enemyBuilding != null)
                             {
-                                foreach (Unit unit in currentSelection.units)
+                                for (int j = 0; j < this.currentSelection.units.Count(); j++)
                                 {
+                                    Unit unit = this.currentSelection.units.ElementAt(j);
+
                                     unit.AttackBuilding(enemyBuilding);
                                 }
                                 return;
@@ -707,11 +742,12 @@ namespace PathfindingTest.Players
                 }
             }
 
-            if (this.buildingSelection != null && this.buildingSelection.buildings.Count != 0
+            if (this.buildingSelection != null && this.buildingSelection.buildings.Count() != 0
                 && m.button == MouseEvent.MOUSE_BUTTON_3)
             {
-                foreach (Building b in buildingSelection.buildings)
+                for (int i = 0; i < this.buildings.Count(); i++)
                 {
+                    Building b = this.buildings.ElementAt(i);
                     if (b.type != Building.Type.Resources && b.type != Building.Type.Sentry)
                     {
                         Point p = new Point(m.location.X + (int)Game1.GetInstance().drawOffset.X, m.location.Y + (int)Game1.GetInstance().drawOffset.Y);
@@ -723,8 +759,10 @@ namespace PathfindingTest.Players
 
         public void stopUnitSelection()
         {
-            foreach (Unit unit in currentSelection.units)
+            for (int i = 0; i < this.currentSelection.units.Count(); i++)
             {
+                Unit unit = this.currentSelection.units.ElementAt(i);
+
                 unit.unitToDefend = null;
                 unit.unitToStalk = null;
                 unit.waypoints.Clear();
@@ -826,8 +864,10 @@ namespace PathfindingTest.Players
 
         public void DrawLights(GameTime gameTime, SpriteBatch spriteBatch, Texture2D lightTexture)
         {
-            foreach (Unit unit in this.units)
+            for (int i = 0; i < this.units.Count(); i++)
             {
+                Unit unit = this.units.ElementAt(i);
+
                 spriteBatch.Draw(
                     lightTexture,
                     new Vector2(unit.x, unit.y),
