@@ -46,7 +46,8 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
             this.group = new XNARadioButtonGroup();
             int index = 0;
             CustomArrayList<String> mapNames = LoadMapNames();
-            for( int i = 0; i < mapNames.Count(); i++){
+            for (int i = 0; i < mapNames.Count(); i++)
+            {
                 String map = mapNames.ElementAt(i);
 
                 this.panels.AddLast(new MapEntryPanel(this, map, index));
@@ -92,7 +93,8 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         /// <returns>The selected map, or null if none was selected.</returns>
         public String GetSelectedMap()
         {
-            for( int i = 0; i < this.panels.Count(); i++){
+            for (int i = 0; i < this.panels.Count(); i++)
+            {
                 MapEntryPanel panel = this.panels.ElementAt(i);
                 if (panel.previewButton.selected)
                 {
@@ -161,16 +163,16 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         {
             base.Draw(sb);
 
-            this.previewTextureBounds = 
+            this.previewTextureBounds =
                 new Rectangle(this.bounds.X + MapEntryPanel.ENTRY_WIDTH + 20, this.bounds.Y + 10,
                     (int)previewTextureSize.X, (int)previewTextureSize.Y);
 
-            if( previewTexture == null ) return;
+            if (previewTexture == null) return;
 
-            sb.Draw(this.previewTexture, 
+            sb.Draw(this.previewTexture,
                 this.previewTextureBounds,
                 null, Color.White, 0f, Vector2.Zero, SpriteEffects.None, this.z - 0.001f);
-            
+
             /*
             // Ugly, but whatever .. there's a bug somewhere I can't be bothered to fix.
             if (draws < 5)

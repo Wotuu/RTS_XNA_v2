@@ -69,8 +69,6 @@ namespace XNAInterfaceComponents.ChildComponents
                     (int)(drawRect.Y + this.bounds.Height - this.checkBoxSize.Y),
                 (int)this.checkBoxSize.X, (int)this.checkBoxSize.Y);
             }
-            // Draw the outer line of the checkbox
-            ComponentUtil.DrawClearRectangle(sb, checkBoxBounds, 1, Color.Black, this.z);
             // Draw the cross, if selected
             if (this.selected)
             {
@@ -91,6 +89,8 @@ namespace XNAInterfaceComponents.ChildComponents
                         drawRect.Y + (drawRect.Height / 2) - (this.font.MeasureString(this.text).Y / 2)),
                         this.fontColor, 0f, Vector2.Zero, 1f, SpriteEffects.None, this.z - 0.01f);
             }
+            // Draw the outer line of the checkbox
+            ComponentUtil.DrawClearRectangle(sb, checkBoxBounds, 1, Color.Black, this.z - 0.01f);
         }
 
         private void DrawCross(SpriteBatch sb, Rectangle checkBoxBounds)

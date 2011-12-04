@@ -70,15 +70,13 @@ namespace XNAInterfaceComponents.AbstractComponents
         public void OnFocusReceived()
         {
             this.isFocussed = true;
-
-            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenLocation() + " grabbed focus!");
+            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenBounds() + " grabbed focus!");
         }
 
         public void OnFocusLost()
         {
             this.isFocussed = false;
-
-            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenLocation() + " lost focus!");
+            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenBounds() + " lost focus!");
         }
 
         public void OnMouseClick(MouseEvent m_event)
@@ -102,13 +100,13 @@ namespace XNAInterfaceComponents.AbstractComponents
         public override void OnMouseEnter(MouseEvent m_event)
         {
             if( this.enabled ) this.isMouseOver = true;
-            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenLocation() + " mouse entered!");
+            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenBounds() + " mouse entered!");
         }
 
         public override void OnMouseExit(MouseEvent m_event)
         {
             if( this.enabled ) this.isMouseOver = false;
-            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenLocation() + " mouse exitted!");
+            // Console.Out.WriteLine("XNA Button @ " + this.GetScreenBounds() + " mouse exitted!");
         }
 
         public override void Unload()

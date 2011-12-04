@@ -20,7 +20,9 @@ namespace PathfindingTest.Pathfinding
         /// </summary>
         public void StartThread()
         {
-            new Thread(this.Process).Start();
+            Thread t = new Thread(this.Process);
+            t.IsBackground = true;
+            t.Start();
         }
 
         public static new SmartPathfindingNodeProcessor GetInstance()

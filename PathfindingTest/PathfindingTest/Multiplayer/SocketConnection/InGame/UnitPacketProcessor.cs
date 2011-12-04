@@ -59,9 +59,10 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
                             unit.MoveToQueue(target);
                         }
 
-                        if (Math.Abs(unit.x - currentX) > 20 || Math.Abs(unit.y - currentY) > 20)
+                        if ((currentX == targetX && currentY == targetY ) || 
+                            (Math.Abs(unit.x - currentX) > 20 || Math.Abs(unit.y - currentY) > 20))
                         {
-                            // Uhoh .. we're too far apart :(
+                            // Uhoh .. we're too far apart, or a unit has notified that he has arrived at location
                             unit.x = currentX;
                             unit.y = currentY;
                         }

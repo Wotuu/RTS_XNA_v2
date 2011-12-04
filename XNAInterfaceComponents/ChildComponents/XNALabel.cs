@@ -29,6 +29,7 @@ namespace XNAInterfaceComponents.ChildComponents
         {
             this.text = text;
             this.backgroundColor = Color.Transparent;
+            this.border = null;
         }
 
         public override void Draw(SpriteBatch sb)

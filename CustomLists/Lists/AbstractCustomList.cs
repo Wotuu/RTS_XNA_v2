@@ -13,6 +13,7 @@ namespace CustomLists.Lists
         public abstract int Count();
         public abstract T ElementAt(int index);
         public abstract Boolean Contains(T item);
+        public abstract int IndexOf(T item);
 
         public abstract T GetFirst();
         public abstract T GetLast();
@@ -31,6 +32,7 @@ namespace CustomLists.Lists
         public abstract void PrintAll();
         public abstract T[] ToArray();
 
+        public abstract CustomArrayList<T> Copy();
         public abstract LinkedList<T> ToLinkedList();
     }
 }

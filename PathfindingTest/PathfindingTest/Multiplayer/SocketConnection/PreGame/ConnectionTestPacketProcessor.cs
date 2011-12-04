@@ -48,19 +48,8 @@ namespace PathfindingTest.Multiplayer.SocketConnection.PreGame
                             TestConnectionMenu testMenu = ((TestConnectionMenu)menu);
 
                             String hash = PacketUtil.DecodePacketString(p, 0);
-                            foreach (Packet toTest in testMenu.malformPacketsSent)
-                            {
-                                if (toTest == null)
-                                {
-                                    Console.Out.WriteLine("Unable to find packet with hash = " + hash);
-                                    break;
-                                }
-                                if (PacketUtil.DecodePacketString(toTest, 0) == hash)
-                                {
-                                    testMenu.malformPacketTestBar.currentValue++;
-                                    break;
-                                }
-                            }
+                            testMenu.hashesReceived[testMenu.malformPacketsReceivedCount] = hash;
+                            testMenu.malformPacketsReceivedCount++;
                         }
                         break;
                     }

@@ -160,6 +160,8 @@ namespace SocketLibrary.Packets
                 fullData.AddLast(b);
             }
 
+            fullData.AddLast(SocketClient.END_OF_PACKET);
+
             return fullData.ToArray();
         }
 

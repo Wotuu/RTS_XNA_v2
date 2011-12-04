@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using XNAInterfaceComponents.AbstractComponents;
 using Microsoft.Xna.Framework;
 using XNAInterfaceComponents.ChildComponents;
+using System.Diagnostics;
 
 namespace XNAInterfaceComponents.Misc
 {
@@ -28,13 +29,13 @@ namespace XNAInterfaceComponents.Misc
                 this.index = Math.Min(textLengthAtRow, this.index);
             }
         }
-        public int blinkTicks { get; set; }
+        public int blinkMS { get; set; }
         public XNATextField parent { get; set; }
         public Color color { get; set; }
 
         private Boolean visible { get; set; }
 
-        private long previousBlinkTicks { get; set; }
+        private double previousBlinkMS { get; set; }
 
         public int GetCaretArrayIndex()
         {
@@ -63,8 +64,8 @@ namespace XNAInterfaceComponents.Misc
         public Caret(XNATextField parent)
         {
             this.parent = parent;
-            previousBlinkTicks = System.DateTime.UtcNow.Ticks;
-            blinkTicks = 5000000;
+            previousBlinkMS = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
+            blinkMS = 500;
             this.color = Color.Black;
             this.width = 1;
             this.visible = true;
@@ -74,10 +75,11 @@ namespace XNAInterfaceComponents.Misc
         {
             if (!this.parent.isFocussed) return;
             // Console.Out.WriteLine(System.DateTime.UtcNow.Millisecond + " > " + (previousBlinkTicks + blinkTicks));
-            if (System.DateTime.UtcNow.Ticks > (previousBlinkTicks + blinkTicks))
+            double now = new TimeSpan(DateTime.UtcNow.Ticks).TotalMilliseconds;
+            if (now > (previousBlinkMS + blinkMS))
             {
                 this.visible = !this.visible;
-                previousBlinkTicks = System.DateTime.UtcNow.Ticks;
+                previousBlinkMS = now;
             }
         }
 

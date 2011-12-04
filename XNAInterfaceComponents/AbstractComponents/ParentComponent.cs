@@ -91,12 +91,13 @@ namespace XNAInterfaceComponents.AbstractComponents
         public Boolean RequestFocusAt(Point p)
         {
             Component focussedComponent = null;
+            Boolean focussedAComponent = false;
             foreach (Component child in this.children)
             {
                 if (!child.visible) continue;
                 if (child is Focusable)
                 {
-                    if (child.GetScreenBounds().Contains(p))
+                    if (!focussedAComponent && child.GetScreenBounds().Contains(p))
                     {
                         Focusable f = ((Focusable)child);
                         if (!child.isFocussed) f.OnFocusReceived();
@@ -109,8 +110,8 @@ namespace XNAInterfaceComponents.AbstractComponents
                 }
                 else if (child is ParentComponent)
                 {
-                    Boolean result = ((ParentComponent)child).RequestFocusAt(p);
-                    if (result) return result;
+                    focussedAComponent = ((ParentComponent)child).RequestFocusAt(p);
+                    // if (result) return result;
                 }
             }
             return focussedComponent != null;

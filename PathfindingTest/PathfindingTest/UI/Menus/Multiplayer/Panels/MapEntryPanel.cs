@@ -24,7 +24,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
         public MapPlayerLocationGroup mapPlayerLocationGroup { get; set; }
 
         public MapEntryPanel(MapSelectionPanel parent, String mapname, int index) :
-            base( parent, new Rectangle() )
+            base(parent, new Rectangle())
         {
             this.bounds = new Rectangle(5, index * (ENTRY_HEIGHT + padding) + padding, ENTRY_WIDTH, ENTRY_HEIGHT);
 
@@ -37,7 +37,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
 
             Stream stream = new FileStream(Game1.MAPS_FOLDER_LOCATION + "/" + mapname + "/" +
                         mapname + "_preview.png", FileMode.Open);
-            this.previewTexture = Texture2D.FromStream(Game1.GetInstance().GraphicsDevice, 
+            this.previewTexture = Texture2D.FromStream(Game1.GetInstance().GraphicsDevice,
                    stream);
             stream.Close();
             stream.Dispose();

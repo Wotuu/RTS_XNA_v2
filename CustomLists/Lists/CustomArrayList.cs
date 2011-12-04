@@ -300,7 +300,12 @@ namespace CustomLists.Lists
             {
                 this.elements[0] = this.GetLast();
             }
-            this.currentIndex--;
+            // Null the last element, just in case
+            if (currentIndex > 0)
+            {
+                this.elements[currentIndex - 1] = default(T);
+                this.currentIndex--;
+            }
         }
 
         /// <summary>
@@ -318,6 +323,20 @@ namespace CustomLists.Lists
         }
 
         /// <summary>
+        /// Copies this list to a new one.
+        /// </summary>
+        /// <returns>The Linked List</returns>
+        public override CustomArrayList<T> Copy()
+        {
+            CustomArrayList<T> list = new CustomArrayList<T>();
+            for (int i = 0; i < this.currentIndex; i++)
+            {
+                list.AddLast(this.elements[i]);
+            }
+            return list;
+        }
+
+        /// <summary>
         /// Converts this CustomArrayList to a LinkedList.
         /// </summary>
         /// <returns>The Linked List</returns>
@@ -329,6 +348,20 @@ namespace CustomLists.Lists
                 list.AddLast(this.elements[i]);
             }
             return list;
+        }
+
+        /// <summary>
+        /// Gets the index of given item, or -1 otherwise.
+        /// </summary>
+        /// <param name="item">The item to search for.</param>
+        /// <returns>The index, or -1 otherwise.</returns>
+        public override int IndexOf(T item)
+        {
+            for (int i = 0; i < this.currentIndex; i++)
+            {
+                if (this.elements[i].Equals(item)) return i;
+            }
+            return -1;
         }
     }
 }

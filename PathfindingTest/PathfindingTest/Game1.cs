@@ -175,6 +175,8 @@ namespace PathfindingTest
             DrawUtil.lineTexture = TextureManager.GetInstance().GetSolidTexture();
             font = Content.Load<SpriteFont>("Fonts/Arial");
             ChildComponent.DEFAULT_FONT = font;
+            XNAMessageDialog.CLIENT_WINDOW_WIDTH = graphics.PreferredBackBufferWidth;
+            XNAMessageDialog.CLIENT_WINDOW_HEIGHT = graphics.PreferredBackBufferHeight;
 
             basicFogOfWarEffect = Content.Load<Effect>("Fog/BasicFogOfWar");
             basicMiniFogOfWarEffect = Content.Load<Effect>("Fog/BasicFogOfWar");
@@ -182,8 +184,6 @@ namespace PathfindingTest
             mainTarget = CreateRenderTarget();
             lightTarget = CreateRenderTarget();
 
-            XNAMessageDialog.CLIENT_WINDOW_WIDTH = graphics.PreferredBackBufferWidth;
-            XNAMessageDialog.CLIENT_WINDOW_HEIGHT = graphics.PreferredBackBufferHeight;
             graphics.PreferMultiSampling = true;
 
             StateManager.GetInstance().gameState = StateManager.State.MainMenu;

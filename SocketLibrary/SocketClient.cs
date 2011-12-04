@@ -14,21 +14,25 @@ namespace SocketLibrary
     {
         public Socket Sock;
         public string SocketName;
-        private byte[] buff = new byte[1024];
+        private byte[] buff = new byte[131071];
         public bool Receiving = true;
         private readonly object SyncRecv;
         private readonly object SyncSend;
         public OnDisconnectListeners onDisconnectListeners { get; set; }
         public Logger log { get; set; }
 
+        public Boolean confirmPackets = false;
+
         public PacketProcessor packetProcessor { get; set; }
         public OnPacketSend onPacketSendListeners { get; set; }
+
+        public readonly static byte END_OF_PACKET = (byte)'|';
 
         public SocketClient(Socket _sock, string _socketname)
         {
             SocketName = _socketname;
             Sock = _sock;
-            Sock.NoDelay = true;
+            // Sock.NoDelay = true;
             SyncRecv = new object();
             SyncSend = new object();
             log = new Logger();
@@ -62,12 +66,12 @@ namespace SocketLibrary
                         }
                         if (size == 0)
                         {
-                            Disable();
+                            // Disable();
                             Show("Will not accept 'byte[i <= 0]'");
-                            Receiving = false;
-                            break;
+                            // Receiving = false;
+                            // break;
                         }
-                        if (size < 1000)
+                        else if (size < 131071)
                         {
                             byte[] data = new byte[size];
                             Array.Copy(buff, data, size);
@@ -75,10 +79,10 @@ namespace SocketLibrary
                         }
                         else
                         {
-                            Disable();
-                            Show("Cannot accept 'bytes[i > 1000]'");
-                            Receiving = false;
-                            break;
+                            // Disable();
+                            Show("Cannot accept 'bytes[i > 131071]'");
+                            // Receiving = false;
+                            // break;
                         }
                     }
                 }
@@ -123,8 +127,11 @@ namespace SocketLibrary
                         log.Log(packet, false);
                         if (onPacketSendListeners != null) onPacketSendListeners(packet);
 
-                        if( packet.GetHeader() != Headers.PACKET_RECEIVED )
-                            this.packetProcessor.SentPacket(packet, this);
+                        if (confirmPackets)
+                        {
+                            if (packet.GetHeader() != Headers.PACKET_RECEIVED)
+                                this.packetProcessor.SentPacket(packet, this);
+                        }
                         // Console.Out.WriteLine("Sent a packet with header " + packet.GetHeader() + " and ID " + packet.GetPacketID());
                     }
                     catch (Exception ex)
@@ -155,7 +162,7 @@ namespace SocketLibrary
                 result = "SOCKET DISPOSED";
             }
             return result;
-        } 
+        }
 
         /// <summary>
         /// Disables the socket client.

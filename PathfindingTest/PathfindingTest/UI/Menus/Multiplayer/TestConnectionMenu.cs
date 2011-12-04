@@ -17,7 +17,6 @@ namespace PathfindingTest.UI.Menus.Multiplayer
 {
     public class TestConnectionMenu : XNAPanel
     {
-
         public XNALabel ipLbl { get; set; }
         public XNATextField ipTF { get; set; }
         public XNAButton startBtn { get; set; }
@@ -34,7 +33,10 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public XNALabel malformPacketTestLbl { get; set; }
         public XNAProgressBar malformPacketTestBar { get; set; }
 
-        public Packet[] malformPacketsSent { get; set; }
+        public readonly object malformPacketsSendSyncLock = new object();
+        public String[] hashesSent { get; set; }
+        public int malformPacketsReceivedCount { get; set; }
+        public String[] hashesReceived { get; set; }
 
 
 
@@ -100,8 +102,6 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             malformPacketTestBar.progressDisplayLabel.font = MenuManager.PROGRESSBAR_FONT;
             malformPacketTestBar.progressDisplayLabel.fontColor = Color.White;
 
-            malformPacketsSent = new Packet[malformTestMaxCount];
-
 
 
 
@@ -113,6 +113,9 @@ namespace PathfindingTest.UI.Menus.Multiplayer
 
             backBtn = new XNAButton(this, new Rectangle(this.bounds.Width / 2 - 50, this.bounds.Height - 40, 100, 30), "Back");
             backBtn.onClickListeners += this.OnBackBtnClick;
+
+
+
         }
 
         /// <summary>
@@ -127,7 +130,11 @@ namespace PathfindingTest.UI.Menus.Multiplayer
             ChatServerConnectionManager.GetInstance().ConnectToServer();
             this.statusLbl.text = "Connecting..";
 
-            Thread.Sleep(2000);
+            hashesSent = new String[malformTestMaxCount];
+            hashesReceived = new String[malformTestMaxCount];
+            malformPacketsReceivedCount = 0;
+
+            Thread.Sleep(500);
 
             if (ChatServerConnectionManager.GetInstance().connection == null)
             {
@@ -215,17 +222,38 @@ namespace PathfindingTest.UI.Menus.Multiplayer
         public void RunMalformTest()
         {
             int count = 0;
+            Random random = new Random(DateTime.Now.Millisecond);
             while (count < malformTestMaxCount)
             {
-                this.statusLbl.text = "Running burst test " + (count + 1) + " / " + steadyTestMaxCount;
+                this.statusLbl.text = "Running malform test " + (count + 1) + " / " + steadyTestMaxCount + " (results after full completion)";
                 Packet p = new Packet(TestHeaders.MALFORM_TEST);
-                p.AddString(this.MD5Encode(new Random(DateTime.Now.Millisecond).Next() + ""));
+                String hash = this.MD5Encode(random.Next() + "");
+                p.AddString(hash);
                 ChatServerConnectionManager.GetInstance().SendPacket(p);
-                malformPacketsSent[count] = p;
+                // Console.Out.WriteLine("Sending hash: " + hash);
+                //lock (malformPacketsSendSyncLock)
+                //{
+                    hashesSent[count] = hash;
+                //}
 
                 Thread.Sleep(10);
                 count++;
             }
+
+            foreach (String sent in this.hashesSent)
+            {
+                foreach (String received in this.hashesReceived)
+                {
+                    if (sent == received)
+                    {
+                        this.malformPacketsReceivedCount++;
+                        this.malformPacketTestBar.currentValue++;
+                        break;
+                    }
+                }
+            }
+
+            this.statusLbl.text = "Testing finished.";
         }
 
         public String MD5Encode(String originalPassword)

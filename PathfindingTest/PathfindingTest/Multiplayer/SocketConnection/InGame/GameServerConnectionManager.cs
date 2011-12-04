@@ -64,6 +64,9 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
         public void ConnectToServer()
         {
             TcpClient sock = new TcpClient();
+            // Thanks Trevor Blom
+            sock.ReceiveBufferSize = 131071;
+            sock.SendBufferSize = 131071;
             try
             {
                 sock.Connect(this.serverLocation, this.serverPort);
@@ -76,7 +79,10 @@ namespace PathfindingTest.Multiplayer.SocketConnection.InGame
             }
 
             this.connection = new SocketClient(sock.Client, "rts_client");
-            new Thread(this.connection.Enable).Start();
+            Thread t = new Thread(this.connection.Enable);
+            t.Name = "rts_client";
+            t.IsBackground = true;
+            t.Start();
 
             // Give the above thread some time to start running! 
             // Else we'll get a nullpointer right here.

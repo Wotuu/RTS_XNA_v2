@@ -12,6 +12,7 @@ using XNAInputLibrary.KeyboardInput;
 using Microsoft.Xna.Framework.Input;
 
 public delegate void OnTextFieldKeyPressed(KeyEvent e);
+public delegate void OnTextFieldValueChanged();
 
 namespace XNAInterfaceComponents.ChildComponents
 {
@@ -27,6 +28,7 @@ namespace XNAInterfaceComponents.ChildComponents
         public int maxLength { get; set; }
         public Boolean isEditable { get; set; }
         public OnTextFieldKeyPressed onTextFieldKeyPressedListeners { get; set; }
+        public OnTextFieldValueChanged onTextFieldValueChangedListeners { get; set; }
 
         private String _text = "";
         public new String text
@@ -43,6 +45,7 @@ namespace XNAInterfaceComponents.ChildComponents
                     if (this.font.Characters.Contains(c) || c == '\n') result += c;
                 }
                 _text = result;
+                if (onTextFieldValueChangedListeners != null) onTextFieldValueChangedListeners();
                 if (_text != null)
                 {
                     this.verticalTextDisplayOffset = Math.Max((_text.Split('\n').Length - this.rows), 0);
@@ -95,7 +98,7 @@ namespace XNAInterfaceComponents.ChildComponents
 
             MouseManager.GetInstance().mouseClickedListeners += this.OnMouseClick;
             MouseManager.GetInstance().mouseReleasedListeners += this.OnMouseRelease;
-            //this.text = "abcdefghijklmnopqrstuvwxyz \nnext line";
+
             this.hiddenCharacters = "";
         }
 
@@ -144,6 +147,7 @@ namespace XNAInterfaceComponents.ChildComponents
                 }
 
                 this.previousDisplayText = this.text;
+                this.hiddenCharacters = "";
                 return this.text;
             }
 

@@ -174,8 +174,6 @@ namespace XNAInterfaceComponents.ParentComponents
                     if (i != selectedIndex)
                     {
                         SelectItem(i - 1);
-                        if (onOptionSelectedChangedListeners != null)
-                            onOptionSelectedChangedListeners();
                     }
                     this.isExpanded = false;
                     break;
@@ -194,6 +192,8 @@ namespace XNAInterfaceComponents.ParentComponents
             XNAButton button = ((XNAButton)this.children.ElementAt(this.selectedIndex));
             shownButton.text = button.text;
             shownButton.backgroundColor = button.backgroundColor;
+            if (onOptionSelectedChangedListeners != null)
+                onOptionSelectedChangedListeners();
         }
 
         /// <summary>

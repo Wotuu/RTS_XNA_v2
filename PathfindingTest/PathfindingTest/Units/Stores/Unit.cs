@@ -315,6 +315,7 @@ namespace PathfindingTest.Units
                 else
                 {
                     hasToMove = false;
+                    Synchronizer.GetInstance().QueueUnit(this);
                 }
             }
 

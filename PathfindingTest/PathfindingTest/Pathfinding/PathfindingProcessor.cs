@@ -131,7 +131,9 @@ namespace PathfindingTest.Pathfinding
         private PathfindingProcessor()
         {
             toProcess = new LinkedList<ObjectProcess>();
-            new Thread(this.Process).Start();
+            Thread t = new Thread(this.Process);
+            t.IsBackground = true;
+            t.Start();
         }
 
         private struct ObjectProcess

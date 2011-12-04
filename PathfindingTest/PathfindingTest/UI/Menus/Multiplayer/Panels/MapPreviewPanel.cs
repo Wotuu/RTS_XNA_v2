@@ -93,7 +93,7 @@ namespace PathfindingTest.UI.Menus.Multiplayer.Panels
                 tries++;
             }
             if (this.playerLocationGroup != null) this.playerLocationGroup.Unload();
-            this.playerLocationGroup = new MapPlayerLocationGroup(this, new Point( 10, 10 ), mapname);
+            this.playerLocationGroup = new MapPlayerLocationGroup(this, new Point(10, 10), mapname);
         }
     }
 }
